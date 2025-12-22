@@ -13,9 +13,20 @@
 RhodesDWMAudioProcessorEditor::RhodesDWMAudioProcessorEditor (RhodesDWMAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    //ablak mérete
+    setSize (900, 600);
+
+    addAndMakeVisible(runTestsButton);
+    runTestsButton.onClick = [this] {
+        runner.runAllTests();
+        textResults.setText(runner.getFullResults());
+    };
+
+    addAndMakeVisible(textResults);
+    textResults.setMultiLine(true);
+    textResults.setReadOnly(true);
+    textResults.setReturnKeyStartsNewLine(true);
+    
 }
 
 RhodesDWMAudioProcessorEditor::~RhodesDWMAudioProcessorEditor()
@@ -27,14 +38,12 @@ void RhodesDWMAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (15.0f));
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void RhodesDWMAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    auto area = getLocalBounds().reduced(10);
+    runTestsButton.setBounds(area.removeFromTop(40));
+    textResults.setBounds(area.removeFromTop(getHeight() / 2).withTrimmedTop(10));
+
 }

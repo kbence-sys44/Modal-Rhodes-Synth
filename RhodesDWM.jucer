@@ -4,6 +4,12 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="JHWxRr" name="RhodesDWM">
     <GROUP id="{AB6CD702-9356-685F-D99C-3629DBB14DC6}" name="Source">
+      <GROUP id="{7388A61B-9184-7EF7-EDFB-AD064607BF58}" name="Tests">
+        <FILE id="jTqS0e" name="DelayLineTest.cpp" compile="1" resource="0"
+              file="Source/DelayLineTest.cpp"/>
+        <FILE id="UE33cC" name="DelayLineTest.h" compile="0" resource="0" file="Source/DelayLineTest.h"/>
+        <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
+      </GROUP>
       <FILE id="u7AO1m" name="DelayLineModule.cpp" compile="1" resource="0"
             file="Source/DelayLineModule.cpp"/>
       <FILE id="FWW9u5" name="DelayLineModule.h" compile="0" resource="0"

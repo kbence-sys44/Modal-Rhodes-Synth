@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "TestRunner.h"
 
 //==============================================================================
 /**
@@ -25,9 +26,12 @@ public:
     void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
+
     RhodesDWMAudioProcessor& audioProcessor;
+
+    juce::TextButton runTestsButton{ "Run all tests" };
+    juce::TextEditor textResults;
+    CustomTestRunner runner;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RhodesDWMAudioProcessorEditor)
 };

@@ -8,6 +8,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "DelayLineTest.h"
 
 //==============================================================================
 RhodesDWMAudioProcessor::RhodesDWMAudioProcessor()
@@ -22,6 +23,8 @@ RhodesDWMAudioProcessor::RhodesDWMAudioProcessor()
                        )
 #endif
 {
+    auto* forcelink = &delayLineTestInstance;
+    juce::ignoreUnused(forcelink);
 }
 
 RhodesDWMAudioProcessor::~RhodesDWMAudioProcessor()

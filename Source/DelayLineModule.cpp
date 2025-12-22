@@ -58,9 +58,11 @@ float DelayLineModule::processSample(float inputSample, float gain) {
     
     auto filteredDelayedSample = IIRfilter.processSample(delayedSample);
     auto feedbackSample = filteredDelayedSample * gain;
-
     
-    delayLine.pushSample(0, inputSample + feedbackSample);
+
+    auto outputSample = inputSample + feedbackSample;
+    
+    delayLine.pushSample(0, outputSample);
 
     return delayedSample;
 }

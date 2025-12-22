@@ -29,8 +29,8 @@ private:
 
     juce::dsp::DelayLine<float> delayLine;
 
-    juce::dsp::IIR::Filter<float> IIRfilter; //csillapításért felelõs szûrõ
+    juce::dsp::IIR::Filter<float> IIRfilter; //csillapÃ­tÃ¡sÃ©rt felelÃµs szÃ»rÃµ
 
-    JUCE_LEAK_DETECTOR(DelayLineModule) //instance leak elkerülése végett
+    JUCE_LEAK_DETECTOR(DelayLineModule) //instance leak elkerÃ¼lÃ©se vÃ©gett
 };
 
