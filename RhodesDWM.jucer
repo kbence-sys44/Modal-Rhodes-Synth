@@ -8,8 +8,15 @@
         <FILE id="jTqS0e" name="DelayLineTest.cpp" compile="1" resource="0"
               file="Source/DelayLineTest.cpp"/>
         <FILE id="UE33cC" name="DelayLineTest.h" compile="0" resource="0" file="Source/DelayLineTest.h"/>
+        <FILE id="qpSUwO" name="HammerTest.cpp" compile="1" resource="0" file="Source/HammerTest.cpp"/>
+        <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
         <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
       </GROUP>
+      <FILE id="ymCcc0" name="DWMVoice.cpp" compile="1" resource="0" file="Source/DWMVoice.cpp"/>
+      <FILE id="qnQheu" name="DWMVoice.h" compile="0" resource="0" file="Source/DWMVoice.h"/>
+      <FILE id="SAYRO9" name="HammerModule.cpp" compile="1" resource="0"
+            file="Source/HammerModule.cpp"/>
+      <FILE id="fzlNPK" name="HammerModule.h" compile="0" resource="0" file="Source/HammerModule.h"/>
       <FILE id="u7AO1m" name="DelayLineModule.cpp" compile="1" resource="0"
             file="Source/DelayLineModule.cpp"/>
       <FILE id="FWW9u5" name="DelayLineModule.h" compile="0" resource="0"
