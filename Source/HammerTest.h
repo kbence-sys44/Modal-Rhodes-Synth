@@ -9,3 +9,16 @@
 */
 
 #pragma once
+
+#include <JuceHeader.h>
+#include "HammerModule.h"
+
+class HammerTest : public juce::UnitTest{
+public:
+    HammerTest() : juce::UnitTest("Hammer Test") {}
+    void runTest() override;
+private:
+    JUCE_LEAK_DETECTOR(HammerTest)
+};
+
+extern HammerTest hammerTestInstance;

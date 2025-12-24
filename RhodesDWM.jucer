@@ -12,6 +12,8 @@
         <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
         <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
       </GROUP>
+      <FILE id="ymCcc0" name="DWMVoice.cpp" compile="1" resource="0" file="Source/DWMVoice.cpp"/>
+      <FILE id="qnQheu" name="DWMVoice.h" compile="0" resource="0" file="Source/DWMVoice.h"/>
       <FILE id="SAYRO9" name="HammerModule.cpp" compile="1" resource="0"
             file="Source/HammerModule.cpp"/>
       <FILE id="fzlNPK" name="HammerModule.h" compile="0" resource="0" file="Source/HammerModule.h"/>
