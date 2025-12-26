@@ -12,16 +12,15 @@
 
 void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition) {
 
-    //frekvencia kinyerÈse a midi hangbÛl
+    //frekvencia kinyer√©se a midi hangb√≥l
     float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
 
-    //delay kisz·mol·sa (h˙r hossztÛl f¸gg)
+    //delay kisz√°mol√°sa (h√∫r hosszt√≥l f√ºgg)
     float delaySamples = static_cast<float>(getSampleRate() / frequency);
-    //delay ·tad·sa a delayline modulnak
+    //delay √°tad√°sa a delayline modulnak
     dlModule.setDelayForDelayLine(delaySamples);
 
-    //kalap·cs¸tÈs
-    hammerModule.prepareHammer(getSampleRate());
+    //kalap√°cs√ºt√©s
     hammerModule.triggerHammer(velocity);
 
     noteCurrentlyActive = true;
@@ -36,7 +35,7 @@ void DWMVoice::stopNote(float velocity, bool tailOffAllowed) {
     }
 }
 
-//tÈnyleges hanggener·l·s
+//t√©nyleges hanggener√°l√°s
 void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSample) {
 
     if (!noteCurrentlyActive) return;
@@ -45,16 +44,16 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         
         float hammerSample = hammerModule.getNextSample();
 
-        //0.997f ·tmeneti ÈrtÈk - sustainÈrt felel
+        //0.997f √°tmeneti √©rt√©k - sustain√©rt felel
         float soundSample = dlModule.processSample(hammerSample, 0.997f);
 
-        //csatorn·nkÈnt hozz·adjuk a sample-t
+        //csatorn√°nk√©nt hozz√°adjuk a sample-t
         for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel) {
             outputBuffer.addSample(channel, startSample + sample, soundSample * 0.2f);
 
         }
 
-        //ha m·r le·llt a kalap·cs Ès a delayline nagyon alacsony ÈrtÈket ad, le·llÌtjuk
+        //ha m√°r le√°llt a kalap√°cs √©s a delayline nagyon alacsony √©rt√©ket ad, le√°ll√≠tjuk
         if (!hammerModule.isHammerActive() && std::abs(soundSample) < 0.0001f) {
             noteCurrentlyActive = false;
             clearCurrentNote();
@@ -62,4 +61,11 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         }
 
     }
+}
+
+void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
+
+    dlModule.prepareDelayLine(specs);
+
+    hammerModule.prepareHammer(specs.sampleRate);
 }

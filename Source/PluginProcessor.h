@@ -9,6 +9,8 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "DWMVoice.h"
+#include "DWMSound.h"
 
 //==============================================================================
 /**
@@ -55,5 +57,7 @@ public:
 
 private:
     //==============================================================================
+    juce::Synthesiser rhodesSynth;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RhodesDWMAudioProcessor)
 };

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="vqjvoD" name="RhodesDWM" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildStandalone,buildVST3"
+              pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="JHWxRr" name="RhodesDWM">
     <GROUP id="{AB6CD702-9356-685F-D99C-3629DBB14DC6}" name="Source">
       <GROUP id="{7388A61B-9184-7EF7-EDFB-AD064607BF58}" name="Tests">
@@ -12,6 +13,7 @@
         <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
         <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
       </GROUP>
+      <FILE id="hDiaBj" name="DWMSound.h" compile="0" resource="0" file="Source/DWMSound.h"/>
       <FILE id="ymCcc0" name="DWMVoice.cpp" compile="1" resource="0" file="Source/DWMVoice.cpp"/>
       <FILE id="qnQheu" name="DWMVoice.h" compile="0" resource="0" file="Source/DWMVoice.h"/>
       <FILE id="SAYRO9" name="HammerModule.cpp" compile="1" resource="0"

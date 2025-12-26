@@ -18,10 +18,16 @@ class DWMVoice : public juce::SynthesiserVoice
 public:
     DWMVoice() {}
 
+    void prepare(const juce::dsp::ProcessSpec& specs);
+
     void startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition) override;
     void stopNote(float velocity, bool tailOffAllowed) override;
 
     void renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSample) override;
+
+    bool canPlaySound(juce::SynthesiserSound* sound) override { return true; }
+    void pitchWheelMoved(int newPitchWheelValue) override {};
+    void controllerMoved(int controllerNumber, int newControllerValue) override {};
 
 private:
     DelayLineModule dlModule;

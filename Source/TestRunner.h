@@ -11,6 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "DelayLineTest.h"
+#include "HammerTest.h"
 
 
 class CustomTestRunner : public juce::UnitTestRunner
