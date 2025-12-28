@@ -55,6 +55,8 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    juce::MidiKeyboardState keyboardState;
+
 private:
     //==============================================================================
     juce::Synthesiser rhodesSynth;

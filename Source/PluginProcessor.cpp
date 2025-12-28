@@ -150,6 +150,9 @@ bool RhodesDWMAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 
 void RhodesDWMAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    //vizuális billenytû funkciónalitásához
+    keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
+
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();

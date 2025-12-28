@@ -11,11 +11,13 @@
 
 //==============================================================================
 RhodesDWMAudioProcessorEditor::RhodesDWMAudioProcessorEditor (RhodesDWMAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+    : AudioProcessorEditor (&p), audioProcessor (p),
+    keyboardComponent(p.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
     //ablak mérete
-    setSize (900, 600);
+    setSize (900, 500);
 
+    //teszt elemek
     addAndMakeVisible(runTestsButton);
     runTestsButton.onClick = [this] {
         runner.runAllTests();
@@ -26,6 +28,11 @@ RhodesDWMAudioProcessorEditor::RhodesDWMAudioProcessorEditor (RhodesDWMAudioProc
     textResults.setMultiLine(true);
     textResults.setReadOnly(true);
     textResults.setReturnKeyStartsNewLine(true);
+
+    //keyboard
+    keyboardComponent.setAvailableRange(48, 108);
+    keyboardComponent.setKeyWidth(24.45);
+    addAndMakeVisible(keyboardComponent);
     
 }
 
@@ -44,6 +51,8 @@ void RhodesDWMAudioProcessorEditor::resized()
 {
     auto area = getLocalBounds().reduced(10);
     runTestsButton.setBounds(area.removeFromTop(40));
-    textResults.setBounds(area.removeFromTop(getHeight() / 2).withTrimmedTop(10));
+    textResults.setBounds(area.removeFromTop(getHeight() / 3).withTrimmedTop(10));
+
+    keyboardComponent.setBounds(area.removeFromBottom(getHeight() / 4).withTrimmedBottom(10));
 
 }
