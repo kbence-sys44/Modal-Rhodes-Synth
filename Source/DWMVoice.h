@@ -33,6 +33,7 @@ private:
     DelayLineModule dlModule;
     HammerModule hammerModule;
     bool noteCurrentlyActive = false;
+    bool isKeyHeld = false;
 
     JUCE_LEAK_DETECTOR(DWMVoice)
 };
