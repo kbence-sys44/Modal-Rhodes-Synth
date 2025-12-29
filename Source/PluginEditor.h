@@ -29,6 +29,9 @@ private:
 
     RhodesDWMAudioProcessor& audioProcessor;
 
+    //vizuális billenytû
+    juce::MidiKeyboardComponent keyboardComponent;
+
     juce::TextButton runTestsButton{ "Run all tests" };
     juce::TextEditor textResults;
     CustomTestRunner runner;
