@@ -15,8 +15,11 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
     //frekvencia kinyerése a midi hangból
     float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
 
+    float detune = (juce::Random::getSystemRandom().nextFloat() * 1.0f) - 0.5f;
+    float detunedFrequency = frequency + detune;
+
     //delay kiszámolása (húr hossztól függ)
-    float delaySamples = static_cast<float>(getSampleRate() / frequency);
+    float delaySamples = static_cast<float>(getSampleRate() / detunedFrequency);
     //delay átadása a delayline modulnak
     dlModule.setDelayForDelayLine(delaySamples);
 
@@ -55,16 +58,24 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
             feedback = 0.7f;
         }
 
-        float soundSample = dlModule.processSample(hammerSample, feedback);
+        float rawSample = dlModule.processSample(hammerSample, feedback);
+
+        //szaturáció
+
+        float drive = 2.5f;
+        float saturatedSample = std::tanh(rawSample * drive);
+
+        //a szaturáció hangosít, ezért kompenzálni kell
+        saturatedSample *= 0.7f;
 
         //csatornánként hozzáadjuk a sample-t
         for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel) {
-            outputBuffer.addSample(channel, startSample + sample, soundSample * 0.2f);
+            outputBuffer.addSample(channel, startSample + sample, saturatedSample * 0.2f);
 
         }
 
         //ha már leállt a kalapács és a delayline nagyon alacsony értéket ad, leállítjuk
-        if (!hammerModule.isHammerActive() && !isKeyHeld && std::abs(soundSample) < 0.00001f) {
+        if (!hammerModule.isHammerActive() && !isKeyHeld && std::abs(saturatedSample) < 0.00001f) {
             noteCurrentlyActive = false;
             clearCurrentNote();
             break;
