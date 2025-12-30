@@ -15,8 +15,8 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
     //frekvencia kinyerése a midi hangból
     float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
 
-    float detune = (juce::Random::getSystemRandom().nextFloat() * 1.0f) - 0.5f;
-    float detunedFrequency = frequency + detune;
+    float detune = 1.0f + ((juce::Random::getSystemRandom().nextFloat() * 0.001f) - 0.0005f);
+    float detunedFrequency = frequency * detune;
 
     //delay kiszámolása (húr hossztól függ)
     float delaySamples = static_cast<float>(getSampleRate() / detunedFrequency);
@@ -62,7 +62,7 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         float tineSample = dlModule.processSample(hammerSample, feedback);
 
         //arányok nem véglegesek
-        float rawSample = (tineSample * 0.4f) + (toneBarSample * 0.6f);
+        float rawSample = (tineSample * 0.5f) + (toneBarSample * 0.5f);
 
         //pickup, ide majd kell még szűrés
         float pickupSample = rawSample;

@@ -23,6 +23,7 @@ void DelayLineModule::prepareDelayLine(const juce::dsp::ProcessSpec& specificati
 
     delayLine.setMaximumDelayInSamples(maxDelayInSamples);
     delayLine.prepare(specifications);
+
     delayLine.reset();
 
 
@@ -48,7 +49,12 @@ void DelayLineModule::resetDelayLine() {
 void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
     //esetünkben a delay = sampleRate / frekvencia
 
-    currentDelay = juce::jlimit(1.0f, (float)delayLine.getMaximumDelayInSamples() - 1.0f, delayInSamples);
+    //1.0 és 2.0 között kísérletezni kell vele
+    float filterDelayCompensation = 1.3f;
+
+    float targetDelay = delayInSamples - filterDelayCompensation;
+
+    currentDelay = juce::jlimit(1.0f, (float)delayLine.getMaximumDelayInSamples() - 1.0f, targetDelay);
 
     delayLine.setDelay(currentDelay);
 
@@ -65,7 +71,7 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
 
     //allpass szűrő
 
-    float stiffness = 300.0f; //freq
+    float stiffness = 100.0f; //freq
 
     allpassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeAllPass(sampleRate, stiffness);
 }

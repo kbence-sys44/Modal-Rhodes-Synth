@@ -27,7 +27,7 @@ private:
     double sampleRate{ 0.0 };
     float currentDelay{ 1.0f };
 
-    juce::dsp::DelayLine<float> delayLine;
+    juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Lagrange3rd> delayLine;
 
     juce::dsp::IIR::Filter<float> IIRfilter; //csillapításért felelõs szûrõ
 
