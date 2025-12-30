@@ -28,11 +28,16 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
 
     //kalapácsütés
     hammerModule.triggerHammer(velocity);
+
+    //tonebar rezegtetés indítása
+    toneBarModule.triggerToneBar(detunedFrequency, velocity);
     
 }
 
 void DWMVoice::stopNote(float velocity, bool tailOffAllowed) {
     isKeyHeld = false;
+
+    toneBarModule.releaseToneBar();
 
     if (!tailOffAllowed) {
         noteCurrentlyActive = false;
@@ -50,15 +55,14 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         
         float hammerSample = hammerModule.getNextSample();
 
+        float toneBarSample = toneBarModule.getNextSample();
+
         //alapértelmezett sustain;
-        float feedback = 0.999f;
+        float feedback = isKeyHeld ? 0.999f : 0.8f;
+        float tineSample = dlModule.processSample(hammerSample, feedback);
 
-        //természetes elhalás
-        if (!isKeyHeld) {
-            feedback = 0.7f;
-        }
-
-        float rawSample = dlModule.processSample(hammerSample, feedback);
+        //arányok nem véglegesek
+        float rawSample = (tineSample * 0.4f) + (toneBarSample * 0.6f);
 
         //pickup, ide majd kell még szűrés
         float pickupSample = rawSample;
@@ -77,7 +81,7 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         }
 
         //ha már leállt a kalapács és a delayline nagyon alacsony értéket ad, leállítjuk
-        if (!hammerModule.isHammerActive() && !isKeyHeld && std::abs(saturatedSample) < 0.00001f) {
+        if (!hammerModule.isHammerActive() && !toneBarModule.isToneBarActive() && !isKeyHeld && std::abs(rawSample) < 0.00001f) {
             noteCurrentlyActive = false;
             clearCurrentNote();
             break;
@@ -91,4 +95,6 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     dlModule.prepareDelayLine(specs);
 
     hammerModule.prepareHammer(specs.sampleRate);
+
+    toneBarModule.prepareToneBar(specs.sampleRate);
 }
