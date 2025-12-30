@@ -60,10 +60,13 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
 
         float rawSample = dlModule.processSample(hammerSample, feedback);
 
-        //szaturáció
+        //pickup
+        float pickupSample = rawSample - lastOutputSample;
+        lastOutputSample = rawSample;
 
+        //szaturáció
         float drive = 2.5f;
-        float saturatedSample = std::tanh(rawSample * drive);
+        float saturatedSample = std::tanh(pickupSample * drive);
 
         //a szaturáció hangosít, ezért kompenzálni kell
         saturatedSample *= 0.7f;

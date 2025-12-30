@@ -31,6 +31,8 @@ private:
 
     juce::dsp::IIR::Filter<float> IIRfilter; //csillapításért felelõs szûrõ
 
+    juce::dsp::IIR::Filter<float> allpassFilter;
+
     JUCE_LEAK_DETECTOR(DelayLineModule) //instance leak elkerülése végett
 };
 

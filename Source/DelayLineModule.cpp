@@ -27,11 +27,14 @@ void DelayLineModule::prepareDelayLine(const juce::dsp::ProcessSpec& specificati
 
 
 
-    //szűrő inicializálása
+    //szűrők inicializálása
     IIRfilter.prepare(specifications);
+    allpassFilter.prepare(specifications);
 
     //egyszerű aluláteresztő szűrő beállítása
     IIRfilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 2500.0f);
+
+    
 
 }
 
@@ -59,6 +62,12 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
     cutoffFrequency = juce::jlimit(200.0f, 18000.0f, cutoffFrequency);
 
     IIRfilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, cutoffFrequency);
+
+    //allpass szűrő
+
+    float stiffness = 300.0f; //freq
+
+    allpassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeAllPass(sampleRate, stiffness);
 }
 
 float DelayLineModule::processSample(float inputSample, float gain) {
@@ -69,7 +78,10 @@ float DelayLineModule::processSample(float inputSample, float gain) {
     //a kimenet egy részét visszavezetjük a bemenetre és szűrjük a csillapítás miatt
     
     auto filteredDelayedSample = IIRfilter.processSample(delayedSample);
-    auto feedbackSample = filteredDelayedSample * gain;
+    //+ allpass
+    auto stiffSample = allpassFilter.processSample(filteredDelayedSample);
+
+    auto feedbackSample = stiffSample * gain;
     
 
     auto outputSample = inputSample + feedbackSample;
