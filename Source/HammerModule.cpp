@@ -38,10 +38,15 @@ float HammerModule::getNextSample() {
     //egyszerû fehér zaj generálás
     float noise = (random.nextFloat() * 2.0f - 1.0f);
 
+    float filteredNoise = (noise + lastOutput) * 0.5f;
+    lastOutput = filteredNoise;
+
     //elhalás - a sample fogyásával halkul az ütés
     float envelope = static_cast<float>(remainingSamples) / (0.008f * static_cast<float>(sampleRate));
 
-    float output = noise * envelope * currentVelocity;
+    float velocityAdjust = currentVelocity * currentVelocity;
+
+    float output = noise * envelope * velocityAdjust;
 
     return output;
 }

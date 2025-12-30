@@ -27,6 +27,7 @@ private:
     double sampleRate = 44100.0;
     int remainingSamples = 0;
     float currentVelocity = 0.0f;
+    float lastOutput = 0.0f;
 
     juce::Random random;
 
