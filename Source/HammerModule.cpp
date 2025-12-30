@@ -22,6 +22,8 @@ void HammerModule::triggerHammer(float velocity) {
     remainingSamples = static_cast<int>(0.008 * sampleRate); 
     currentVelocity = velocity; 
 
+    //kicsi vel -> nagy coeff, nagy vel -> kicsi coeff
+    filterCoefficient = 0.95f - (velocity * 0.75f);
 
     //leütés konzisztencia miatt fázis reset
     random.setSeed(static_cast<juce::int64>(velocity * 1000.0f));
@@ -38,15 +40,13 @@ float HammerModule::getNextSample() {
     //egyszerû fehér zaj generálás
     float noise = (random.nextFloat() * 2.0f - 1.0f);
 
-    float filteredNoise = (noise + lastOutput) * 0.5f;
+    float filteredNoise = (lastOutput * filterCoefficient) + (noise * (1.0f - filterCoefficient));
     lastOutput = filteredNoise;
 
     //elhalás - a sample fogyásával halkul az ütés
     float envelope = static_cast<float>(remainingSamples) / (0.008f * static_cast<float>(sampleRate));
 
-    float velocityAdjust = currentVelocity * currentVelocity;
-
-    float output = noise * envelope * velocityAdjust;
+    float output = noise * envelope * currentVelocity;
 
     return output;
 }

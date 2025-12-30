@@ -60,9 +60,8 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
 
         float rawSample = dlModule.processSample(hammerSample, feedback);
 
-        //pickup
-        float pickupSample = rawSample - lastOutputSample;
-        lastOutputSample = rawSample;
+        //pickup, ide majd kell még szűrés
+        float pickupSample = rawSample;
 
         //szaturáció
         float drive = 2.5f;

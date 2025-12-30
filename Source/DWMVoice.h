@@ -34,7 +34,6 @@ private:
     HammerModule hammerModule;
     bool noteCurrentlyActive = false;
     bool isKeyHeld = false;
-    float lastOutputSample;
 
     JUCE_LEAK_DETECTOR(DWMVoice)
 };
