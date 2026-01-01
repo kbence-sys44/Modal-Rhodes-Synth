@@ -50,7 +50,7 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
     //esetünkben a delay = sampleRate / frekvencia
 
     //1.0 és 2.0 között kísérletezni kell vele
-    float filterDelayCompensation = 1.3f;
+    float filterDelayCompensation = 1.2f;
 
     float targetDelay = delayInSamples - filterDelayCompensation;
 
@@ -62,7 +62,7 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
     float noteFrequency = (float)sampleRate / delayInSamples;
 
     //hangmagasság alapján meghatározott filter ütésenként
-    float cutoffFrequency = noteFrequency * 4.0f;
+    float cutoffFrequency = noteFrequency * 8.0f;
 
     //lekorlátozzuk
     cutoffFrequency = juce::jlimit(200.0f, 18000.0f, cutoffFrequency);
@@ -70,8 +70,7 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
     IIRfilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, cutoffFrequency);
 
     //allpass szűrő
-
-    float stiffness = 100.0f; //freq
+    float stiffness = 10.0f;
 
     allpassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeAllPass(sampleRate, stiffness);
 }

@@ -17,7 +17,7 @@ public:
 	HammerModule() = default;
 	
     void prepareHammer(double sRate);
-    void triggerHammer(float velocity);
+    void triggerHammer(float velocity, float length);
 
     float getNextSample();
 

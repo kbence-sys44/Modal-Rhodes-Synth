@@ -27,7 +27,7 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
     isKeyHeld = true;
 
     //kalapácsütés
-    hammerModule.triggerHammer(velocity);
+    hammerModule.triggerHammer(velocity, delaySamples);
 
     //tonebar rezegtetés indítása
     toneBarModule.triggerToneBar(detunedFrequency, velocity);
@@ -62,7 +62,7 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         float tineSample = dlModule.processSample(hammerSample, feedback);
 
         //arányok nem véglegesek
-        float rawSample = (tineSample * 0.5f) + (toneBarSample * 0.5f);
+        float rawSample = (tineSample * 0.6f) - (toneBarSample * 0.4f);
 
         //pickup, ide majd kell még szűrés
         float pickupSample = rawSample;

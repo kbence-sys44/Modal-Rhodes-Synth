@@ -15,11 +15,17 @@ void HammerModule::prepareHammer(double sRate) {
 }
 
 //ütés elinítása
-void HammerModule::triggerHammer(float velocity) {
+void HammerModule::triggerHammer(float velocity, float length) {
 
-    // az ideális leütési idõtartam 5-10ms
-    // jelen esetben 8ms
-    remainingSamples = static_cast<int>(0.008 * sampleRate); 
+    //a kalapács hossza kb 60%-a húrnak
+    int dynamicLength = static_cast<int>(length * 0.6f);
+
+    //leütési idõtartam
+    int minLen = static_cast<int>(0.002 * sampleRate);
+    int maxLen = static_cast<int>(0.008 * sampleRate);
+
+    remainingSamples = juce::jlimit(minLen, maxLen, dynamicLength);
+
     currentVelocity = velocity; 
 
     //kicsi vel -> nagy coeff, nagy vel -> kicsi coeff
