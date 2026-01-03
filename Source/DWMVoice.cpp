@@ -64,19 +64,12 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         //arányok nem véglegesek
         float rawSample = (tineSample * 0.6f) - (toneBarSample * 0.4f);
 
-        //pickup, ide majd kell még szűrés
-        float pickupSample = rawSample;
-
-        //szaturáció
-        float drive = 2.5f;
-        float saturatedSample = std::tanh(pickupSample * drive);
-
-        //a szaturáció hangosít, ezért kompenzálni kell
-        saturatedSample *= 0.7f;
+        //pickup
+        float pickupSample = pickupModule.processSignal(rawSample);
 
         //csatornánként hozzáadjuk a sample-t
         for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel) {
-            outputBuffer.addSample(channel, startSample + sample, saturatedSample * 0.2f);
+            outputBuffer.addSample(channel, startSample + sample, pickupSample * 0.2f);
 
         }
 
@@ -97,4 +90,6 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     hammerModule.prepareHammer(specs.sampleRate);
 
     toneBarModule.prepareToneBar(specs.sampleRate);
+
+    pickupModule.preparePickup(specs.sampleRate);
 }

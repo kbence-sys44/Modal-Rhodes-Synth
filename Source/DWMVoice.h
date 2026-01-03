@@ -13,6 +13,7 @@
 #include "HammerModule.h"
 #include "DelayLineModule.h"
 #include "ToneBarModule.h"
+#include "PickupModule.h"
 
 class DWMVoice : public juce::SynthesiserVoice
 {
@@ -34,6 +35,8 @@ private:
     DelayLineModule dlModule;
     HammerModule hammerModule;
     ToneBarModule toneBarModule;
+    PickupModule pickupModule;
+
     bool noteCurrentlyActive = false;
     bool isKeyHeld = false;
 

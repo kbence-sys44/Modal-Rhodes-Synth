@@ -70,7 +70,7 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
     IIRfilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, cutoffFrequency);
 
     //allpass szűrő
-    float stiffness = 10.0f;
+    float stiffness = (delayInSamples > 150.0f) ? 60.0f : 15.0f;
 
     allpassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeAllPass(sampleRate, stiffness);
 }

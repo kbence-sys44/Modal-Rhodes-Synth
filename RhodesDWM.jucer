@@ -13,6 +13,9 @@
         <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
         <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
       </GROUP>
+      <FILE id="Jryn0m" name="PickupModule.cpp" compile="1" resource="0"
+            file="Source/PickupModule.cpp"/>
+      <FILE id="R9Jvfo" name="PickupModule.h" compile="0" resource="0" file="Source/PickupModule.h"/>
       <FILE id="eLsgZi" name="ToneBarModule.cpp" compile="1" resource="0"
             file="Source/ToneBarModule.cpp"/>
       <FILE id="mZVc9z" name="ToneBarModule.h" compile="0" resource="0" file="Source/ToneBarModule.h"/>
