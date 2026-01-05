@@ -33,17 +33,17 @@ void PickupModule::setDrive(float newDrive) {
 
 float PickupModule::processSignal(float inputSample) {
 
-    //pickup pozíció
+    //pickup poz
     float filteredSample = inputSample - (lastInputSample * 0.3f);
     lastInputSample = inputSample;
 
     //tone
     filteredSample = toneFilter.processSample(filteredSample);
 
-    //szaturáció
+    //szaturci
     float saturatedSample = std::tanh(filteredSample * drive);
 
-    //kompenzálás
+    //kompenzls
     float output = saturatedSample * (1 / sqrt(drive));
 
     return output;
