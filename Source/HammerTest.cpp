@@ -18,7 +18,7 @@ void HammerTest::runTest() {
     beginTest("Trigger, Duration Test");
     {
         float velocity = 1.0f;
-        hammer.triggerHammer(velocity);
+        hammer.triggerHammer(velocity, 100.0f);
 
         expect(hammer.isHammerActive(), "A kalapacsnak aktivnak kell lennie a triggereles utan");
 
@@ -26,15 +26,15 @@ void HammerTest::runTest() {
         int sampleCount = 0;
         bool nonZeroSample = false;
 
-        //addig fut ameddig tart az ütés, 8ms - kb 353 minta
+        //addig fut ameddig tart az utes, 8ms - kb 353 minta
         while (hammer.isHammerActive())
         {
             float s = hammer.getNextSample();
-            //nem lehetnek 0 értékû sample
+            //nem lehetnek 0 erteku sample
             if (std::abs(s) > 0.0f) nonZeroSample = true;
             sampleCount++;
 
-            //végtelen ciklus ellen
+            //vegtelen ciklus ellen
             if (sampleCount > 1000) break;
         }
 
@@ -46,7 +46,7 @@ void HammerTest::runTest() {
     beginTest("Velocity Scale Test");
     {
         //alacsony velocity
-        hammer.triggerHammer(0.5f);
+        hammer.triggerHammer(0.5f, 100.0f);
         float maxAmpLowVelocity = 0.0f;
         while (hammer.isHammerActive())
         {
@@ -54,7 +54,7 @@ void HammerTest::runTest() {
         }
 
         //magas velocity
-        hammer.triggerHammer(1.0f);
+        hammer.triggerHammer(1.0f, 100.0f);
         float maxAmpHighVelocity = 0.0f;
         while (hammer.isHammerActive())
         {

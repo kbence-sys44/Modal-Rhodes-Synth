@@ -11,11 +11,12 @@
 #pragma once
 #include <JuceHeader.h>
 
+//ennek a fajlnak nincs jelentossege csak muszaj felulirni az synthsound-ot hogy lefusson
 class DWMSound : public juce::SynthesiserSound
 {
 public:
     DWMSound() {}
-    //minden midi hangra 	csatornra 	rv	nyes
+    
     bool appliesToNote(int /*midiNoteNumber*/) override { return true; }
     bool appliesToChannel(int /*midiChannel*/) override { return true; }
 };

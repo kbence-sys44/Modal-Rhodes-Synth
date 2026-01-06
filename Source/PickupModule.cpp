@@ -11,12 +11,13 @@
 #include "PickupModule.h"
 
 
-void PickupModule::preparePickup(double sampleRate) {
-    this->sampleRate = sampleRate;
+void PickupModule::preparePickup(double sr) {
+    sampleRate = sr;
     reset();
 
-    toneFilter.prepare({sampleRate, 512, 1});
-    toneFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 6000.0f);
+    toneFilter.prepare({ sampleRate, 512, 2 });
+
+    toneFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 1.5f, 2.0f);
 }
 
 void PickupModule::reset() {
@@ -31,19 +32,16 @@ void PickupModule::setDrive(float newDrive) {
 
 }
 
+//a hangszedo fo feldolgozo fuggvenye
 float PickupModule::processSignal(float inputSample) {
 
-    //pickup poz
-    float filteredSample = inputSample - (lastInputSample * 0.3f);
-    lastInputSample = inputSample;
+    float filteredSample = toneFilter.processSample(inputSample);
 
-    //tone
-    filteredSample = toneFilter.processSample(filteredSample);
+    float pickupSample = filteredSample - (lastInputSample * 0.5f);
+    lastInputSample = filteredSample;
 
-    //szaturci
-    float saturatedSample = std::tanh(filteredSample * drive);
+    float saturatedSample = std::tanh(pickupSample * drive + (pickupSample * pickupSample * 0.2f));
 
-    //kompenzls
     float output = saturatedSample * (1 / sqrt(drive));
 
     return output;

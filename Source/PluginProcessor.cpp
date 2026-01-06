@@ -25,7 +25,7 @@ RhodesDWMAudioProcessor::RhodesDWMAudioProcessor()
     auto forcelink = &delayLineTestInstance;
     auto forcelink2 = &hammerTestInstance;
 
-    //16 hang hozzáadása (polifónia)
+    //16 hang hozzaadasa (polifonia)
     for (int i = 0; i < 16; ++i) {
         rhodesSynth.addVoice(new DWMVoice());
     }
@@ -150,7 +150,7 @@ bool RhodesDWMAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 
 void RhodesDWMAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    //vizuális billenytû funkciónalitásához
+    //vizualis billenytu funkcionalitasahoz
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
 
     juce::ScopedNoDenormals noDenormals;

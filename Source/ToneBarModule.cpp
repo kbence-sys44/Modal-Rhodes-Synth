@@ -24,7 +24,7 @@ void ToneBarModule::resetToneBar() {
 }
 
 void ToneBarModule::triggerToneBar(float frequency, float velocity) {
-    //lépések kiszámítása : 2*PI*freq/sr
+    //lepesek kiszamitasa : 2*PI*freq/sr
 
     phaseIncrement = (frequency / sampleRate) * juce::MathConstants<double>::twoPi;
 

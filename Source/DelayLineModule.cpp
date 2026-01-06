@@ -10,15 +10,15 @@
 
 #include "DelayLineModule.h"
 
-//Ez az osztály felel a kétirányú hullám megvalósításáért
+//Ez az osztaly felel a ketiranyu hullam megvalositasaert
 
 
-//DelayLine modul elõkészítése
-//specifications - sample rate és blokkméretet tartalmaz
+//DelayLine modul elokeszitese
+//specifications - sample rate es blokkmeretet tartalmaz
 void DelayLineModule::prepareDelayLine(const juce::dsp::ProcessSpec& specifications) {
     sampleRate = specifications.sampleRate;
 
-    auto maxDelayInSamples = (int)(2.0 * sampleRate); //max késleltelés - jelenleg 2mp
+    auto maxDelayInSamples = (int)(2.0 * sampleRate); //max keslelteles - jelenleg 2mp
 
 
     delayLine.setMaximumDelayInSamples(maxDelayInSamples);
@@ -28,11 +28,11 @@ void DelayLineModule::prepareDelayLine(const juce::dsp::ProcessSpec& specificati
 
 
 
-    //szűrők inicializálása
+    //szurok inicializalasa
     IIRfilter.prepare(specifications);
     allpassFilter.prepare(specifications);
 
-    //egyszerű aluláteresztő szűrő beállítása
+    //egyszeru alulatereszto szuro beallitasa
     IIRfilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 2500.0f);
 
     
@@ -40,16 +40,16 @@ void DelayLineModule::prepareDelayLine(const juce::dsp::ProcessSpec& specificati
 }
 
 
-//mindent visszaállít
+//mindent visszaallit
 void DelayLineModule::resetDelayLine() {
     delayLine.reset();
     IIRfilter.reset();
 }
 
 void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
-    //esetünkben a delay = sampleRate / frekvencia
+    //esetunkben a delay = sampleRate / frekvencia
 
-    //1.0 és 2.0 között kísérletezni kell vele
+    //1.0 es 2.0 kozott kiserletezni kell vele
     float filterDelayCompensation = 1.2f;
 
     float targetDelay = delayInSamples - filterDelayCompensation;
@@ -61,15 +61,15 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
 
     float noteFrequency = (float)sampleRate / delayInSamples;
 
-    //hangmagasság alapján meghatározott filter ütésenként
+    //hangmagassag alapjan meghatarozott filter utesenkent
     float cutoffFrequency = noteFrequency * 8.0f;
 
-    //lekorlátozzuk
+    //lekorlatozzuk
     cutoffFrequency = juce::jlimit(200.0f, 18000.0f, cutoffFrequency);
 
     IIRfilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, cutoffFrequency);
 
-    //allpass szűrő
+    //allpass szuro
     float stiffness = (delayInSamples > 150.0f) ? 60.0f : 15.0f;
 
     allpassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeAllPass(sampleRate, stiffness);
@@ -77,11 +77,10 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
 
 float DelayLineModule::processSample(float inputSample, float gain) {
 
-    //a lineáris interpolációt a delayLine osztály automatikusan kezeli
+    //a linearis interpolaciot a delayLine osztaly automatikusan kezeli
     auto delayedSample = delayLine.popSample(0);
 
-    //a kimenet egy részét visszavezetjük a bemenetre és szűrjük a csillapítás miatt
-    
+    //a kimenet egy reszet visszavezetjuk a bemenetre es szurjuk a csillapitas miatt
     auto filteredDelayedSample = IIRfilter.processSample(delayedSample);
     //+ allpass
     auto stiffSample = allpassFilter.processSample(filteredDelayedSample);

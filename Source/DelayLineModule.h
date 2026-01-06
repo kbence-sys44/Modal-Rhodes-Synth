@@ -29,10 +29,10 @@ private:
 
     juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Lagrange3rd> delayLine;
 
-    juce::dsp::IIR::Filter<float> IIRfilter; //csillapításért felelõs szûrõ
+    juce::dsp::IIR::Filter<float> IIRfilter; //csillapitasert felelos szuro
 
     juce::dsp::IIR::Filter<float> allpassFilter;
 
-    JUCE_LEAK_DETECTOR(DelayLineModule) //instance leak elkerülése végett
+    JUCE_LEAK_DETECTOR(DelayLineModule) //instance leak elkerulese vegett
 };
 

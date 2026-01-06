@@ -14,13 +14,12 @@ void HammerModule::prepareHammer(double sRate) {
     sampleRate = sRate;
 }
 
-//ütés elinítása
+//utes elinditasa
 void HammerModule::triggerHammer(float velocity, float length) {
 
-    //a kalapács hossza kb 60%-a húrnak
+    //a kalapacs hossza kb 60%-a hurnak
     int dynamicLength = static_cast<int>(length * 0.6f);
 
-    //leütési idõtartam
     int minLen = static_cast<int>(0.002 * sampleRate);
     int maxLen = static_cast<int>(0.008 * sampleRate);
 
@@ -31,25 +30,24 @@ void HammerModule::triggerHammer(float velocity, float length) {
     //kicsi vel -> nagy coeff, nagy vel -> kicsi coeff
     filterCoefficient = 0.95f - (velocity * 0.75f);
 
-    //leütés konzisztencia miatt fázis reset
+    //leutes konzisztencia miatt fazis reset
     random.setSeed(static_cast<juce::int64>(velocity * 1000.0f));
 }
 
 
-//ütés lezajlásáért felelõs függvény
+//utes lezajlasaert felelos fuggveny
 float HammerModule::getNextSample() {
-
     if (remainingSamples <= 0) return 0.0f;
 
     remainingSamples--;
 
-    //egyszerû fehér zaj generálás
+    //egyszeru feher zaj generalas
     float noise = (random.nextFloat() * 2.0f - 1.0f);
-
+    
     float filteredNoise = (lastOutput * filterCoefficient) + (noise * (1.0f - filterCoefficient));
     lastOutput = filteredNoise;
 
-    //elhalás - a sample fogyásával halkul az ütés
+    //elhalas - a sample fogyasaval halkul az utes
     float envelope = static_cast<float>(remainingSamples) / (0.008f * static_cast<float>(sampleRate));
 
     float output = noise * envelope * currentVelocity;

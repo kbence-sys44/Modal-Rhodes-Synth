@@ -39,6 +39,6 @@ private:
     float decayRate = 0.9999f;
     bool isReleased = false;
 
-    const float releaseDecay = 0.95f; //billenytû elengedésekor, gyors
-    const float naturalDecay = 0.9996f; //billenytû nyomás alatt, lassú
+    const float releaseDecay = 0.95f; //billenytu elengedesekor, gyors
+    const float naturalDecay = 0.9996f; //billenytu nyomas alatt, lassu
 };

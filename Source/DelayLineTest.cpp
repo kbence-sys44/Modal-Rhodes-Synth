@@ -28,7 +28,7 @@
             dl.prepareDelayLine(specifications);
 
 
-            //sample késleltetés
+            //sample kesleltetes
             const int  testDelay = 50;
             dl.setDelayForDelayLine((float)testDelay);
 
@@ -36,7 +36,7 @@
             //a 0-dik minta egy magas impulzus
             inputSignal[0] = 1.0f;
 
-            //késleltetõ vonal
+            //keslelteto vonal
             std::vector<float> outputSignal(testDelay + 50, 0.0f);
 
             for (int i = 0; i < outputSignal.size(); ++i) {
@@ -53,7 +53,7 @@
             DelayLineModule dl;
             dl.prepareDelayLine(specifications);
 
-            //100.5 sample késleltetés
+            //100.5 sample kesleltetes
             const float  testDelay = 100.5f;
             dl.setDelayForDelayLine(testDelay);
 
@@ -76,14 +76,13 @@
             DelayLineModule dl;
             dl.prepareDelayLine(specifications);
 
-            //100.5 sample késleltetés
+            //100.5 sample kesleltetes
             const int  testDelay = 100;
             dl.setDelayForDelayLine((float)testDelay);
 
             float inputSample = 1.0f;
             float outputSample = 0.0f;
 
-            //eros visszacsatolas
             float feedback = 0.99f;
 
             for (int i = 0; i < 1000; ++i) {

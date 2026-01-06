@@ -10,33 +10,31 @@
 
 #include "DWMVoice.h"
 
-void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition) {
+//ez az egyik fo hanggeneralo modul amely a tobbit osszekoti
 
-    //frekvencia kinyerése a midi hangból
+void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition) {
+    //frekvencia kinyerese a midi hangbol
     float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
 
     float detune = 1.0f + ((juce::Random::getSystemRandom().nextFloat() * 0.001f) - 0.0005f);
     float detunedFrequency = frequency * detune;
 
-    //delay kiszámolása (húr hossztól függ)
+    //delay kiszamolasa (hur hossztol fugg)
     float delaySamples = static_cast<float>(getSampleRate() / detunedFrequency);
-    //delay átadása a delayline modulnak
     dlModule.setDelayForDelayLine(delaySamples);
 
     noteCurrentlyActive = true;
     isKeyHeld = true;
 
-    //kalapácsütés
     hammerModule.triggerHammer(velocity, delaySamples);
 
-    //tonebar rezegtetés indítása
+
     toneBarModule.triggerToneBar(detunedFrequency, velocity);
     
 }
 
 void DWMVoice::stopNote(float velocity, bool tailOffAllowed) {
     isKeyHeld = false;
-
     toneBarModule.releaseToneBar();
 
     if (!tailOffAllowed) {
@@ -46,7 +44,7 @@ void DWMVoice::stopNote(float velocity, bool tailOffAllowed) {
     }
 }
 
-//tényleges hanggenerálás
+//tenyleges hanggeneralas
 void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSample) {
 
     if (!noteCurrentlyActive) return;
@@ -57,23 +55,21 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
 
         float toneBarSample = toneBarModule.getNextSample();
 
-        //alapértelmezett sustain;
+        //alapertelmezett sustain;
         float feedback = isKeyHeld ? 0.999f : 0.8f;
         float tineSample = dlModule.processSample(hammerSample, feedback);
 
-        //arányok nem véglegesek
         float rawSample = (tineSample * 0.6f) - (toneBarSample * 0.4f);
 
-        //pickup
         float pickupSample = pickupModule.processSignal(rawSample);
-
-        //csatornánként hozzáadjuk a sample-t
+        
+        //csatornankent hozzaadjuk a sample-t
         for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel) {
             outputBuffer.addSample(channel, startSample + sample, pickupSample * 0.2f);
 
         }
 
-        //ha már leállt a kalapács és a delayline nagyon alacsony értéket ad, leállítjuk
+        //ha mar leallt a kalapacs es a delayline nagyon alacsony erteket ad, leallitjuk
         if (!hammerModule.isHammerActive() && !toneBarModule.isToneBarActive() && !isKeyHeld && std::abs(rawSample) < 0.00001f) {
             noteCurrentlyActive = false;
             clearCurrentNote();

@@ -14,7 +14,7 @@ RhodesDWMAudioProcessorEditor::RhodesDWMAudioProcessorEditor (RhodesDWMAudioProc
     : AudioProcessorEditor (&p), audioProcessor (p),
     keyboardComponent(p.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
-    //ablak mérete
+    //ablak merete
     setSize (900, 500);
 
     //teszt elemek

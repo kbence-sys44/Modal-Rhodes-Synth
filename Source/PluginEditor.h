@@ -29,7 +29,7 @@ private:
 
     RhodesDWMAudioProcessor& audioProcessor;
 
-    //vizuális billenytû
+    //vizualis billenytu
     juce::MidiKeyboardComponent keyboardComponent;
 
     juce::TextButton runTestsButton{ "Run all tests" };
