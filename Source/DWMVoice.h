@@ -14,6 +14,7 @@
 #include "DelayLineModule.h"
 #include "ToneBarModule.h"
 #include "PickupModule.h"
+#include "Tremolo.h"
 
 class DWMVoice : public juce::SynthesiserVoice
 {
@@ -36,6 +37,7 @@ private:
     HammerModule hammerModule;
     ToneBarModule toneBarModule;
     PickupModule pickupModule;
+    Tremolo tremolo;
 
     bool noteCurrentlyActive = false;
     bool isKeyHeld = false;

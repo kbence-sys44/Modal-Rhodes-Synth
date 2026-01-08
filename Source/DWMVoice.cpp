@@ -44,7 +44,7 @@ void DWMVoice::stopNote(float velocity, bool tailOffAllowed) {
     }
 }
 
-//tenyleges hanggeneralas
+//tenyleges hanggeneralas, a kulonbozo modulok egybefonodasa itt tortenik
 void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int startSample, int numSample) {
 
     if (!noteCurrentlyActive) return;
@@ -55,22 +55,24 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
 
         float toneBarSample = toneBarModule.getNextSample();
 
-        //alapertelmezett sustain;
         float feedback = isKeyHeld ? 0.999f : 0.8f;
         float tineSample = dlModule.processSample(hammerSample, feedback);
 
         float rawSample = (tineSample * 0.9f) - (toneBarSample * 0.2f);
 
         float pickupSample = pickupModule.processSignal(rawSample);
-        
-        //csatornankent hozzaadjuk a sample-t
-        for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel) {
-            outputBuffer.addSample(channel, startSample + sample, pickupSample * 0.2f);
 
+        Stereo stereoOutput = tremolo.process(pickupSample);
+
+        if (outputBuffer.getNumChannels() >= 1) {
+            outputBuffer.addSample(0, startSample + sample, stereoOutput.left * 0.5f);
+        }
+        if (outputBuffer.getNumChannels() >= 1) {
+            outputBuffer.addSample(1, startSample + sample, stereoOutput.right * 0.5f);
         }
 
-        //ha mar leallt a kalapacs es a delayline nagyon alacsony erteket ad, leallitjuk
-        if (!hammerModule.isHammerActive() && !toneBarModule.isToneBarActive() && !isKeyHeld && std::abs(rawSample) < 0.00001f) {
+        //hang leallitasi feltetelek
+        if (!hammerModule.isHammerActive() && !toneBarModule.isToneBarActive() && !isKeyHeld && std::abs(pickupSample) < 0.00001f) {
             noteCurrentlyActive = false;
             clearCurrentNote();
             break;
@@ -88,4 +90,8 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     toneBarModule.prepareToneBar(specs.sampleRate);
 
     pickupModule.preparePickup(specs.sampleRate);
+
+    tremolo.prepare(specs.sampleRate);
+    tremolo.setTremRate(6.0f);
+    tremolo.setDepth(0.7f);
 }
