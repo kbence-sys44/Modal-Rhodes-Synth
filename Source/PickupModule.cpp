@@ -11,23 +11,34 @@
 #include "PickupModule.h"
 
 
-void PickupModule::preparePickup(double sr) {
-    sampleRate = sr;
+void PickupModule::preparePickup(const juce::dsp::ProcessSpec& specs) {
+    sampleRate = specs.sampleRate;
     reset();
 
-    toneFilter.prepare({ sampleRate, 512, 1 });
+    bassFilter.prepare(specs);
+    bassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 120.0f, 1.0f, 2.0f);
 
-    toneFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 1.5f, 2.0f);
+    midFilter.prepare(specs);
+    midFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 500.0f, 0.8f, 0.5f);
+
+    trebleFilter.prepare(specs);
+    trebleFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 1.5f, 2.0f);
+
+    //toneFilter.prepare(specs);
+    //toneFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 1.5f, 2.0f);
 
     pickupDL.setMaximumDelayInSamples(100);
-    pickupDL.prepare({ sampleRate, 512, 1 });
+    pickupDL.prepare(specs);
     pickupDL.setDelay(14.0f);
 }
 
 void PickupModule::reset() {
     lastInputSample = 0.0f;
-    toneFilter.reset();
+    //toneFilter.reset();
 
+    bassFilter.reset();
+    midFilter.reset();
+    trebleFilter.reset();
 }
 
 void PickupModule::setDrive(float newDrive) {
@@ -39,12 +50,15 @@ void PickupModule::setDrive(float newDrive) {
 //a hangszedo fo feldolgozo fuggvenye
 float PickupModule::processSignal(float inputSample) {
 
-    float filteredSample = toneFilter.processSample(inputSample);
+    float sample = inputSample;
+    sample = bassFilter.processSample(sample);
+    sample = midFilter.processSample(sample);
+    sample = trebleFilter.processSample(sample);
 
-    pickupDL.pushSample(0, filteredSample);
+    pickupDL.pushSample(0, sample);
     float delayedSample = pickupDL.popSample(0);
 
-    float pickupSample = filteredSample - (delayedSample * 0.5f);
+    float pickupSample = sample - (delayedSample * 0.4f);
 
     float saturatedSample = std::tanh(pickupSample * drive + (pickupSample * pickupSample * 0.2f));
 

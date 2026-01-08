@@ -89,7 +89,7 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
 
     toneBarModule.prepareToneBar(specs.sampleRate);
 
-    pickupModule.preparePickup(specs.sampleRate);
+    pickupModule.preparePickup(specs);
 
     tremolo.prepare(specs.sampleRate);
     tremolo.setTremRate(6.0f);

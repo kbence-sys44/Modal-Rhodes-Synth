@@ -28,7 +28,11 @@ void HammerModule::triggerHammer(float velocity, float length) {
     currentVelocity = velocity; 
 
     //kicsi vel -> nagy coeff, nagy vel -> kicsi coeff
-    filterCoefficient = 0.95f - (velocity * 0.75f);
+    float velocityBrigtness = 0.95f - (velocity * 0.75f);
+    //pitch alapu tompitas
+    float pitchDamping = juce::jmap(length, 100.0f, 1000.0f, 0.0f, 0.04f);
+
+    filterCoefficient = juce::jlimit(0.1f, 0.99f, velocityBrigtness + pitchDamping);
 
     //leutes konzisztencia miatt fazis reset
     random.setSeed(static_cast<juce::int64>(velocity * 1000.0f));
