@@ -58,7 +58,7 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         float feedback = isKeyHeld ? 0.999f : 0.8f;
         float tineSample = dlModule.processSample(hammerSample, feedback);
 
-        float rawSample = (tineSample * 0.9f) - (toneBarSample * 0.2f);
+        float rawSample = (tineSample * 0.7f) - (toneBarSample * 0.3f);
 
         float pickupSample = pickupModule.processSignal(rawSample);
 

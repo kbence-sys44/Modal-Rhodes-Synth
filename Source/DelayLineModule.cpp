@@ -60,12 +60,12 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples, float velocity)
 
 
     float noteFrequency = (float)sampleRate / delayInSamples;
-    float brightness = juce::jmap(velocity, 0.0f, 1.0f, 2.0f, 12.0f);
+    float brightness = juce::jmap(velocity, 0.0f, 1.0f, 1.5f, 6.0f);
 
     
-    float cutoffFrequency = 1500.0f + (noteFrequency * brightness); // a melyebb hangokat hozzaadjuk hogy megmaradjanak es ne vagjuk le
+    float cutoffFrequency = 800.0f + (noteFrequency * brightness); // a melyebb hangokat hozzaadjuk hogy megmaradjanak es ne vagjuk le
 
-    cutoffFrequency = juce::jlimit(200.0f, 16000.0f, cutoffFrequency);
+    cutoffFrequency = juce::jlimit(200.0f, 12000.0f, cutoffFrequency);
 
     IIRfilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, cutoffFrequency);
 

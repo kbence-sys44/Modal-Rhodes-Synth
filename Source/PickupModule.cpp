@@ -19,10 +19,10 @@ void PickupModule::preparePickup(const juce::dsp::ProcessSpec& specs) {
     bassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 120.0f, 1.0f, 2.0f);
 
     midFilter.prepare(specs);
-    midFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 500.0f, 0.8f, 0.5f);
+    midFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 500.0f, 0.8f, 0.7f);
 
     trebleFilter.prepare(specs);
-    trebleFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 1.5f, 2.0f);
+    trebleFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 1.0f, 1.4f);
 
     //toneFilter.prepare(specs);
     //toneFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 1.5f, 2.0f);
@@ -58,7 +58,7 @@ float PickupModule::processSignal(float inputSample) {
     pickupDL.pushSample(0, sample);
     float delayedSample = pickupDL.popSample(0);
 
-    float pickupSample = sample - (delayedSample * 0.4f);
+    float pickupSample = sample - (delayedSample * 0.25f);
 
     float saturatedSample = std::tanh(pickupSample * drive + (pickupSample * pickupSample * 0.2f));
 
