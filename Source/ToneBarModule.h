@@ -33,6 +33,7 @@ private:
     //Osc
     double currentPhase = 0.0;
     double phaseIncrement = 0.0;
+    int sampleCountSinceTrigger = 0;
 
     //envelope
     float currentAmplitude = 0.0f;

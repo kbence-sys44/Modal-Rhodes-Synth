@@ -27,6 +27,7 @@ void ToneBarModule::triggerToneBar(float frequency, float velocity) {
     //lepesek kiszamitasa : 2*PI*freq/sr
 
     phaseIncrement = (frequency / sampleRate) * juce::MathConstants<double>::twoPi;
+    sampleCountSinceTrigger = 0;
 
     currentPhase = 0.0;
     currentAmplitude = velocity;
@@ -44,7 +45,15 @@ float ToneBarModule::getNextSample() {
 
     if (currentAmplitude < 0.0001f) return 0.0f;
 
-    float tonebarSample = std::sin(currentPhase) * currentAmplitude;
+
+    //hajlitas a hang elején
+    double bend = 0.0;
+    if (sampleCountSinceTrigger < 1000) {
+        bend = (1.0 - (sampleCountSinceTrigger / 1000.0)) * 0.05; // 5%
+    }
+    sampleCountSinceTrigger++;
+
+    float tonebarSample = std::sin(currentPhase * (1.0 + bend)) * currentAmplitude;
 
     currentPhase += phaseIncrement;
     if (currentPhase >= juce::MathConstants<double>::twoPi) {

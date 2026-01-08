@@ -18,7 +18,7 @@ void HammerTest::runTest() {
     beginTest("Trigger, Duration Test");
     {
         float velocity = 1.0f;
-        hammer.triggerHammer(velocity, 100.0f);
+        hammer.triggerHammer(velocity, 1000.0f);
 
         expect(hammer.isHammerActive(), "A kalapacsnak aktivnak kell lennie a triggereles utan");
 
@@ -46,7 +46,7 @@ void HammerTest::runTest() {
     beginTest("Velocity Scale Test");
     {
         //alacsony velocity
-        hammer.triggerHammer(0.5f, 100.0f);
+        hammer.triggerHammer(0.5f, 1000.0f);
         float maxAmpLowVelocity = 0.0f;
         while (hammer.isHammerActive())
         {
@@ -54,7 +54,7 @@ void HammerTest::runTest() {
         }
 
         //magas velocity
-        hammer.triggerHammer(1.0f, 100.0f);
+        hammer.triggerHammer(1.0f, 1000.0f);
         float maxAmpHighVelocity = 0.0f;
         while (hammer.isHammerActive())
         {

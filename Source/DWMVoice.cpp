@@ -21,7 +21,7 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
 
     //delay kiszamolasa (hur hossztol fugg)
     float delaySamples = static_cast<float>(getSampleRate() / detunedFrequency);
-    dlModule.setDelayForDelayLine(delaySamples);
+    dlModule.setDelayForDelayLine(delaySamples, velocity);
 
     noteCurrentlyActive = true;
     isKeyHeld = true;
@@ -59,7 +59,7 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         float feedback = isKeyHeld ? 0.999f : 0.8f;
         float tineSample = dlModule.processSample(hammerSample, feedback);
 
-        float rawSample = (tineSample * 0.6f) - (toneBarSample * 0.4f);
+        float rawSample = (tineSample * 0.9f) - (toneBarSample * 0.2f);
 
         float pickupSample = pickupModule.processSignal(rawSample);
         

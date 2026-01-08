@@ -46,7 +46,7 @@ void DelayLineModule::resetDelayLine() {
     IIRfilter.reset();
 }
 
-void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
+void DelayLineModule::setDelayForDelayLine(float delayInSamples, float velocity) {
     //esetunkben a delay = sampleRate / frekvencia
 
     //1.0 es 2.0 kozott kiserletezni kell vele
@@ -61,8 +61,11 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
 
     float noteFrequency = (float)sampleRate / delayInSamples;
 
+
+    float brightness = juce::jmap(velocity, 0.0f, 1.0f, 2.0f, 12.0f);
+
     //hangmagassag alapjan meghatarozott filter utesenkent
-    float cutoffFrequency = noteFrequency * 8.0f;
+    float cutoffFrequency = noteFrequency * brightness;
 
     //lekorlatozzuk
     cutoffFrequency = juce::jlimit(200.0f, 18000.0f, cutoffFrequency);
@@ -70,7 +73,8 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples) {
     IIRfilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, cutoffFrequency);
 
     //allpass szuro
-    float stiffness = (delayInSamples > 150.0f) ? 60.0f : 15.0f;
+    float stiffness = juce::jmap(delayInSamples, 50.0f, 300.0f, 10.0f, 80.0f);
+    stiffness = juce::jlimit(5.0f, 100.0f, stiffness);
 
     allpassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeAllPass(sampleRate, stiffness);
 }

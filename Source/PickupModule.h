@@ -29,4 +29,5 @@ private:
     float drive = 2.5f;
 
     juce::dsp::IIR::Filter<float> toneFilter;
+    juce::dsp::DelayLine<float> pickupDL{ 100 };
 };

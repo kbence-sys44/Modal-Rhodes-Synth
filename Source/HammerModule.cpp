@@ -47,10 +47,14 @@ float HammerModule::getNextSample() {
     float filteredNoise = (lastOutput * filterCoefficient) + (noise * (1.0f - filterCoefficient));
     lastOutput = filteredNoise;
 
+    float click = noise * 0.3f * currentVelocity;
+
+    float combined = filteredNoise + click;
+
     //elhalas - a sample fogyasaval halkul az utes
     float envelope = static_cast<float>(remainingSamples) / (0.008f * static_cast<float>(sampleRate));
 
-    float output = noise * envelope * currentVelocity;
+    float output = combined * envelope * currentVelocity;
 
     return output;
 }
