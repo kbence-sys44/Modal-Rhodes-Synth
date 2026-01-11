@@ -14,8 +14,6 @@
 
 void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition) {
 
-    
-
     //frekvencia kinyerese a midi hangbol
     float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
 
@@ -58,10 +56,13 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
 
     noteCurrentlyActive = true;
     isKeyHeld = true;
+    triggerThump = true;
+    thumpLevel = velocity * 0.5f;
 
     hammerModule.triggerHammer(velocity, delaySamples);
     toneBarModule.triggerToneBar(detunedFrequency, velocity);
-    
+
+
 }
 
 void DWMVoice::stopNote(float velocity, bool tailOffAllowed) {
@@ -100,11 +101,22 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         float finalFeedback = isKeyHeld ? feedback : 0.8f;
 
 
-        float tineSample = dlModule.processSample(hammerSample, feedback);
+        float tineSample = dlModule.processSample(hammerSample, finalFeedback);
         float tineMix = 1.0f - tonebarMix;
         float rawSample = (tineSample * tineMix) - (toneBarSample * tonebarMix);
 
-        float pickupSample = pickupModule.processSignal(rawSample);
+        float thump = 0.0f;
+        //duborges generalas
+        if (triggerThump && thumpLevel > 0.001f) {
+            float noise = (random.nextFloat() * 2.0f - 1.0f);
+            thump = thumpFilter.processSample(noise * thumpLevel);
+            //lecsenges
+            thumpLevel *= 0.95f;
+        }
+
+        float inputForPickup = rawSample + (thump * 0.8f);
+
+        float pickupSample = pickupModule.processSignal(inputForPickup);
         Stereo stereoOutput = tremolo.process(pickupSample);
 
         float cleanLeft = dcBlocker.processSample(stereoOutput.left);
@@ -142,5 +154,8 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     tremolo.setDepth(0.7f);
 
     dcBlocker.prepare(specs);
-    dcBlocker.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass(specs.sampleRate, 40.0f);
+    dcBlocker.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass(specs.sampleRate, 10.0f);
+
+    thumpFilter.prepare(specs);
+    thumpFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(specs.sampleRate, 80.0f);
 }

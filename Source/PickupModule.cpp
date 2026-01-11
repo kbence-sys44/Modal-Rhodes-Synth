@@ -13,8 +13,7 @@
 
 void PickupModule::preparePickup(const juce::dsp::ProcessSpec& specs) {
     sampleRate = specs.sampleRate;
-    reset();
-
+    
     bassFilter.prepare(specs);
     bassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 90.0f, 0.7f, 1.0f);
 
@@ -29,16 +28,20 @@ void PickupModule::preparePickup(const juce::dsp::ProcessSpec& specs) {
 
     pickupDL.setMaximumDelayInSamples(100);
     pickupDL.prepare(specs);
-    pickupDL.setDelay(14.0f);
+
+    reset();
 }
 
 void PickupModule::reset() {
     lastInputSample = 0.0f;
+    envelopeFollow = 0.0f;
 
     bassFilter.reset();
     midFilter.reset();
     trebleFilter.reset();
     physicalFilter.reset();
+
+    pickupDL.setDelay(baseDelay);
 }
 
 void PickupModule::setDrive(float newDrive) {
@@ -52,7 +55,7 @@ void PickupModule::setBassGain(float newGain) {
 }
 
 void PickupModule::setBaseDelay(float newDelay) {
-    baseDelay = newDelay;
+    baseDelay = juce::jlimit(1.0f, 90.0f, newDelay);
 }
 
 //a hangszedo fo feldolgozo fuggvenye
@@ -74,12 +77,16 @@ float PickupModule::processSignal(float inputSample) {
     pickupDL.pushSample(0, sample);
     float delayedSample = pickupDL.popSample(0);
 
-    float pickupSample = sample - (delayedSample * 0.4f);
+    float pickupSample = sample - (delayedSample * 0.3f);
 
-    //eltolas, asszimetrikus torzitas miatt, kevesbe gitarszeru
+    //magneses szaturacio nem jo
+    /*
+    float hotSignal = pickupSample * 5.0f * drive;
+    float asymmetry = 0.6f;
+    float quadraticSignal = hotSignal + (asymmetry * hotSignal * hotSignal);*/
+    
     float bias = 0.3f;
     float biasSignal = pickupSample * bias;
-
     float saturatedSample = std::tanh(biasSignal * drive);
 
     //dc offset elkerulese
@@ -88,7 +95,5 @@ float PickupModule::processSignal(float inputSample) {
 
     float compensationSample = saturatedSample * (1.2f / (1.0f + (drive * 0.15f)));
 
-    float output = physicalFilter.processSample(compensationSample);
-
-    return output;
+    return physicalFilter.processSample(compensationSample);
 }

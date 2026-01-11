@@ -43,11 +43,14 @@ private:
     float currentFrequency = 0.0f;
     float lastHammer = 0.0f;
     float voiceVolume = 0.7f;
+    float thumpLevel = 0.5f;
 
     bool noteCurrentlyActive = false;
     bool isKeyHeld = false;
+    bool triggerThump = true;
 
     juce::dsp::IIR::Filter<float> dcBlocker;
+    juce::dsp::IIR::Filter<float> thumpFilter;
     juce::Random random;
 
     JUCE_LEAK_DETECTOR(DWMVoice)

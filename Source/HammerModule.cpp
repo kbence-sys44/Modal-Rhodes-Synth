@@ -32,7 +32,7 @@ void HammerModule::triggerHammer(float velocity, float length) {
     currentVelocity = velocity; 
 
     //kicsi vel -> puha kalapacs, nagy vel -> kemenyebb
-    float velocityBrigtness = 0.4f * (velocity*0.58f);
+    float velocityBrigtness = 0.2f + (velocity*0.75f);
     //pitch alapu tompitas
     float pitchDamping = juce::jmap(length, 100.0f, 1000.0f, 0.0f, 0.05f);
 
