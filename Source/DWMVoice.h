@@ -39,6 +39,11 @@ private:
     PickupModule pickupModule;
     Tremolo tremolo;
 
+    float tonebarMix = 0.5f;
+    float currentFrequency = 0.0f;
+    float lastHammer = 0.0f;
+    float masterVolume = 0.7f;
+
     bool noteCurrentlyActive = false;
     bool isKeyHeld = false;
 

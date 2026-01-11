@@ -19,6 +19,7 @@ public:
     void reset();
 
     void setDrive(float newDrive);
+    void setBassGain(float newGain);
 
     float processSignal(float inputSample);
 
@@ -33,6 +34,8 @@ private:
     juce::dsp::IIR::Filter<float> bassFilter;
     juce::dsp::IIR::Filter<float> midFilter;
     juce::dsp::IIR::Filter<float> trebleFilter;
+
+    juce::dsp::IIR::Filter<float> physicalFilter;
 
     juce::dsp::DelayLine<float> pickupDL{ 100 };
 };

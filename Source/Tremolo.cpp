@@ -16,7 +16,7 @@ void Tremolo::prepare(double sr) {
     
 
     //alap ertekek
-    setTremRate(2.0f);
+    setTremRate(1.0f);
     setDepth(0.8f);
 }
 

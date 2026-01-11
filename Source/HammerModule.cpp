@@ -12,30 +12,31 @@
 
 void HammerModule::prepareHammer(double sRate) {
     sampleRate = sRate;
+    random.setSeedRandomly();
 }
 
 //utes elinditasa
 void HammerModule::triggerHammer(float velocity, float length) {
 
     //a kalapacs hossza kb 60%-a hurnak
-    int dynamicLength = static_cast<int>(length * 0.6f);
+    float baseLength = length * 0.6f;
+    float velFactor = juce::jmap(velocity, 0.0f, 1.0f, 1.0f, 0.7f);
+    int dynamicLength = static_cast<int>(baseLength * velFactor);
 
-    int minLen = static_cast<int>(0.002 * sampleRate);
-    int maxLen = static_cast<int>(0.008 * sampleRate);
+    int minLen = static_cast<int>(0.001 * sampleRate);
+    int maxLen = static_cast<int>(0.020 * sampleRate);
 
-    remainingSamples = juce::jlimit(minLen, maxLen, dynamicLength);
+    totalDur = juce::jlimit(minLen, maxLen, dynamicLength);
+    remainingSamples = totalDur;
 
     currentVelocity = velocity; 
 
-    //kicsi vel -> nagy coeff, nagy vel -> kicsi coeff
-    float velocityBrigtness = 0.95f - (velocity * 0.75f);
+    //kicsi vel -> puha kalapacs, nagy vel -> kemenyebb
+    float velocityBrigtness = 0.9f * velocity;
     //pitch alapu tompitas
-    float pitchDamping = juce::jmap(length, 100.0f, 1000.0f, 0.0f, 0.04f);
+    float pitchDamping = juce::jmap(length, 100.0f, 1000.0f, 0.1f, 0.0f);
 
-    filterCoefficient = juce::jlimit(0.1f, 0.99f, velocityBrigtness + pitchDamping);
-
-    //leutes konzisztencia miatt fazis reset
-    random.setSeed(static_cast<juce::int64>(velocity * 1000.0f));
+    filterCoefficient = juce::jlimit(0.05f, 0.95f, velocityBrigtness + pitchDamping);
 }
 
 
@@ -43,24 +44,24 @@ void HammerModule::triggerHammer(float velocity, float length) {
 float HammerModule::getNextSample() {
     if (remainingSamples <= 0) return 0.0f;
 
+    //burkologorbe
+    float pos = 1.0f - (static_cast<float>(remainingSamples) / static_cast<float>(totalDur));
+    float env = std::sin(pos * juce::MathConstants<float>::pi);
+
     remainingSamples--;
 
     //egyszeru feher zaj generalas
     float noise = (random.nextFloat() * 2.0f - 1.0f);
     
-    float filteredNoise = (lastOutput * filterCoefficient) + (noise * (1.0f - filterCoefficient));
+    float filteredNoise = (lastOutput * (1.0f - filterCoefficient)) + (noise * filterCoefficient);
     lastOutput = filteredNoise;
 
-    float click = noise * 0.3f * currentVelocity;
+    float clickAmount = currentVelocity * currentVelocity;
+    float click = noise * 0.5f * clickAmount * env;
 
-    float combined = filteredNoise + click;
+    float output = (filteredNoise + click) * env * currentVelocity;
 
-    //elhalas - a sample fogyasaval halkul az utes
-    float envelope = static_cast<float>(remainingSamples) / (0.008f * static_cast<float>(sampleRate));
-
-    float output = combined * envelope * currentVelocity;
-
-    return output;
+    return output * 2.0f;
 }
 
 bool HammerModule::isHammerActive() const {

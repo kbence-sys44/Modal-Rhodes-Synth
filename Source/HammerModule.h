@@ -29,6 +29,7 @@ private:
     float currentVelocity = 0.0f;
     float lastOutput = 0.0f;
     float filterCoefficient = 0.5f;
+    float totalDur = 0.0f;
 
     juce::Random random;
 

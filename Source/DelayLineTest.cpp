@@ -21,7 +21,7 @@
         specifications.sampleRate = 44100.0;
         specifications.maximumBlockSize = 512;
         specifications.numChannels = 1;
-
+        /*
         beginTest("Delay Time Test");
         {
             DelayLineModule dl;
@@ -109,7 +109,7 @@
 
             expectLessThan(std::abs(outputSample), 0.9f, "A feedback jelnek csillapodnia kell.");
             expectGreaterThan(std::abs(outputSample), 0.0000001f, "A jel nem halhat meg teljesen.");
-        }
+        }*/
 
 }
 

@@ -19,6 +19,26 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
     float detune = 1.0f + ((juce::Random::getSystemRandom().nextFloat() * 0.001f) - 0.0005f);
     float detunedFrequency = frequency * detune;
 
+    currentFrequency = detunedFrequency;
+
+    float bassGain = 1.5f;
+
+    if (currentFrequency > 400.0f) {
+        bassGain = 1.0f;
+    }
+    pickupModule.setBassGain(bassGain);
+
+    lastHammer = 0.0f;
+    if (frequency < 100.0f) {
+        tonebarMix = 0.5f;
+    }
+    else if (frequency < 500.0f) {
+        tonebarMix = juce::jmap(frequency, 100.0f, 500.0f, 0.5f, 0.2f);
+    }
+    else {
+        tonebarMix = 0.15f;
+    }
+
     //delay kiszamolasa (hur hossztol fugg)
     float delaySamples = static_cast<float>(getSampleRate() / detunedFrequency);
     dlModule.setDelayForDelayLine(delaySamples, velocity);
@@ -27,8 +47,6 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
     isKeyHeld = true;
 
     hammerModule.triggerHammer(velocity, delaySamples);
-
-
     toneBarModule.triggerToneBar(detunedFrequency, velocity);
     
 }
@@ -53,22 +71,34 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         
         float hammerSample = hammerModule.getNextSample();
 
+        if (currentFrequency > 600.0f) {
+            float filteredHammer = hammerSample - (lastHammer * 0.95f);
+            lastHammer = hammerSample;
+            hammerSample = filteredHammer * 2.5f;
+        }
+
         float toneBarSample = toneBarModule.getNextSample();
 
-        float feedback = isKeyHeld ? 0.999f : 0.8f;
-        float tineSample = dlModule.processSample(hammerSample, feedback);
+        float feedback = 0.999f;
+        if (currentFrequency > 100.0f) {
+            feedback = 0.999f - (currentFrequency * 0.000010f);
+        }
+        feedback = juce::jmax(0.985f, feedback);
+        float finalFeedback = isKeyHeld ? feedback : 0.8f;
 
-        float rawSample = (tineSample * 0.7f) - (toneBarSample * 0.3f);
+
+        float tineSample = dlModule.processSample(hammerSample, feedback);
+        float tineMix = 1.0f - tonebarMix;
+        float rawSample = (tineSample * tineMix) - (toneBarSample * tonebarMix);
 
         float pickupSample = pickupModule.processSignal(rawSample);
-
         Stereo stereoOutput = tremolo.process(pickupSample);
 
         if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(0, startSample + sample, stereoOutput.left * 0.5f);
+            outputBuffer.addSample(0, startSample + sample, stereoOutput.left * masterVolume);
         }
         if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(1, startSample + sample, stereoOutput.right * 0.5f);
+            outputBuffer.addSample(1, startSample + sample, stereoOutput.right * masterVolume);
         }
 
         //hang leallitasi feltetelek

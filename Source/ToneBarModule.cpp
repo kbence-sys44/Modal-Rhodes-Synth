@@ -17,21 +17,22 @@ void ToneBarModule::prepareToneBar(double sampleRate) {
 
 void ToneBarModule::resetToneBar() {
     currentAmplitude = 0.0f;
-    currentPhase = 0.0;
-    phaseIncrement = 0.0;
+    oscState1 = 0.0f;
+    oscState2 = 0.0f;
+    oscCoeff = 0.0f;
     isReleased = false;
 
 }
 
 void ToneBarModule::triggerToneBar(float frequency, float velocity) {
-    //lepesek kiszamitasa : 2*PI*freq/sr
+    //coeff kiszamitasa : 2*cos(2*PI*freq/sr)
+    double omega = juce::MathConstants<double>::twoPi * frequency / sampleRate;
+    oscCoeff = (float)(2.0 * std::cos(omega));
 
-    phaseIncrement = (frequency / sampleRate) * juce::MathConstants<double>::twoPi;
-    sampleCountSinceTrigger = 0;
+    oscState1 = 0.0f;
+    oscState2 = std::sin(omega)*velocity;
 
-    currentPhase = 0.0;
     currentAmplitude = velocity;
-
     decayRate = naturalDecay;
     isReleased = false;
 }
@@ -45,9 +46,20 @@ float ToneBarModule::getNextSample() {
 
     if (currentAmplitude < 0.0001f) return 0.0f;
 
+    float nextVal = (oscCoeff * oscState2) - oscState1;
 
-    //hajlitas a hang elején
-    double bend = 0.0;
+    oscState1 = oscState2;
+    oscState2 = nextVal;
+
+    oscState1 *= decayRate;
+    oscState2 *= decayRate;
+
+    currentAmplitude *= decayRate;
+
+    return nextVal;
+
+    //regi verzio
+   /* double bend = 0.0;
     if (sampleCountSinceTrigger < 1000) {
         bend = (1.0 - (sampleCountSinceTrigger / 1000.0)) * 0.05; // 5%
     }
@@ -62,7 +74,7 @@ float ToneBarModule::getNextSample() {
 
     currentAmplitude *= decayRate;
 
-    return tonebarSample;
+    return tonebarSample;*/
 }
 
 bool ToneBarModule::isToneBarActive() const

@@ -17,11 +17,8 @@ public:
 
     void prepareToneBar(double sampleRate);
     void resetToneBar();
-
     void triggerToneBar(float frequency, float velocity);
-
     void releaseToneBar();
-
     float getNextSample();
 
     bool isToneBarActive() const;
@@ -30,10 +27,9 @@ private:
 
     double sampleRate = 44100.0;
 
-    //Osc
-    double currentPhase = 0.0;
-    double phaseIncrement = 0.0;
-    int sampleCountSinceTrigger = 0;
+    float oscState1 = 0.0f;
+    float oscState2 = 0.0f;
+    float oscCoeff = 0.0f;
 
     //envelope
     float currentAmplitude = 0.0f;
@@ -41,5 +37,5 @@ private:
     bool isReleased = false;
 
     const float releaseDecay = 0.95f; //billenytu elengedesekor, gyors
-    const float naturalDecay = 0.9996f; //billenytu nyomas alatt, lassu
+    const float naturalDecay = 0.9998f; //billenytu nyomas alatt, lassu
 };
