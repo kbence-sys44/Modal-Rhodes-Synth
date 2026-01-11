@@ -20,16 +20,18 @@ public:
 
     void setDrive(float newDrive);
     void setBassGain(float newGain);
+    void setBaseDelay(float newDelay);
 
     float processSignal(float inputSample);
 
 private:
     double sampleRate = 44100.0;
 
+    float envelopeFollow = 0.0f;
     float lastInputSample = 0.0f;
     float drive = 2.5f;
 
-    //juce::dsp::IIR::Filter<float> toneFilter;
+    float baseDelay = 14.0f;
 
     juce::dsp::IIR::Filter<float> bassFilter;
     juce::dsp::IIR::Filter<float> midFilter;
@@ -37,5 +39,5 @@ private:
 
     juce::dsp::IIR::Filter<float> physicalFilter;
 
-    juce::dsp::DelayLine<float> pickupDL{ 100 };
+    juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Lagrange3rd> pickupDL{ 100 };
 };

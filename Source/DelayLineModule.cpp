@@ -49,17 +49,17 @@ void DelayLineModule::resetDelayLine() {
 void DelayLineModule::setDelayForDelayLine(float delayInSamples, float velocity) {
     //alap adatok, szurok bealliasa
     float noteFrequency = float(sampleRate) / delayInSamples;
-    float brightness = juce::jmap(velocity, 0.0f, 1.0f, 1.5f, 6.0f);
-    float cutoffOffset = (delayInSamples > 200.0f) ? 800.0f : 200.0f;
+    float brightness = juce::jmap(velocity, 0.0f, 1.0f, 8.0f, 25.0f);
+    float cutoffOffset = (delayInSamples > 200.0f) ? 600.0f : 200.0f;
     float cutoffFrequency = cutoffOffset + (noteFrequency * brightness); // a melyebb hangokat hozzaadjuk hogy megmaradjanak es ne vagjuk le
-    cutoffFrequency = juce::jlimit(200.0f, 18000.0f, cutoffFrequency);
+    cutoffFrequency = juce::jlimit(200.0f, 14000.0f, cutoffFrequency);
 
     auto newLPCiacs = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, cutoffFrequency);
     IIRfilter.coefficients = newLPCiacs;
 
     //allpass szuro
-    float stiffness = juce::jmap(delayInSamples, 50.0f, 1500.0f, 10.0f, 40.0f);
-    stiffness = juce::jlimit(5.0f, 100.0f, stiffness);
+    float stiffness = juce::jmap(delayInSamples, 50.0f, 1500.0f, 10.0f, 45.0f);
+    stiffness = juce::jlimit(5.0f, 60.0f, stiffness);
 
     auto newAPCiacs = juce::dsp::IIR::Coefficients<float>::makeAllPass(sampleRate, stiffness);
     allpassFilter.coefficients = newAPCiacs;

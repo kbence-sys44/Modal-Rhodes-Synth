@@ -16,18 +16,16 @@ void PickupModule::preparePickup(const juce::dsp::ProcessSpec& specs) {
     reset();
 
     bassFilter.prepare(specs);
+    bassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 90.0f, 0.7f, 1.0f);
 
     midFilter.prepare(specs);
-    midFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 500.0f, 0.8f, 0.7f);
+    midFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 500.0f, 0.6f, 0.85f);
 
     trebleFilter.prepare(specs);
-    trebleFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 0.7f, 1.5f);
+    trebleFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 2200.0f, 1.0f, 1.3f);
 
     physicalFilter.prepare(specs);
-    physicalFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 5500.0f);
-
-    //toneFilter.prepare(specs);
-    //toneFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 1.5f, 2.0f);
+    physicalFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 3200.0f, 1.1f);
 
     pickupDL.setMaximumDelayInSamples(100);
     pickupDL.prepare(specs);
@@ -36,7 +34,6 @@ void PickupModule::preparePickup(const juce::dsp::ProcessSpec& specs) {
 
 void PickupModule::reset() {
     lastInputSample = 0.0f;
-    //toneFilter.reset();
 
     bassFilter.reset();
     midFilter.reset();
@@ -51,7 +48,11 @@ void PickupModule::setDrive(float newDrive) {
 }
 
 void PickupModule::setBassGain(float newGain) {
-    bassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 70.0f, 1.0f, newGain);
+    bassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 90.0f, 0.6f, newGain);
+}
+
+void PickupModule::setBaseDelay(float newDelay) {
+    baseDelay = newDelay;
 }
 
 //a hangszedo fo feldolgozo fuggvenye
@@ -62,17 +63,32 @@ float PickupModule::processSignal(float inputSample) {
     sample = midFilter.processSample(sample);
     sample = trebleFilter.processSample(sample);
 
+    float inputAbs = std::abs(sample);
+    envelopeFollow = (envelopeFollow * 0.999f) + (inputAbs * 0.001f);
+
+    //delay modulacio
+    float modulatedDelay = baseDelay + (envelopeFollow * 40.0f);
+    modulatedDelay = juce::jlimit(1.0f, 99.0f, modulatedDelay);
+    pickupDL.setDelay(modulatedDelay);
+
     pickupDL.pushSample(0, sample);
     float delayedSample = pickupDL.popSample(0);
 
-    float pickupSample = sample - (delayedSample * 0.15f);
+    float pickupSample = sample - (delayedSample * 0.4f);
 
-    float saturatedSample = std::tanh(pickupSample * drive + (pickupSample * pickupSample * 0.2f));
+    //eltolas, asszimetrikus torzitas miatt, kevesbe gitarszeru
+    float bias = 0.3f;
+    float biasSignal = pickupSample * bias;
 
-    float compensationSample = saturatedSample * (1 / sqrt(drive));
+    float saturatedSample = std::tanh(biasSignal * drive);
+
+    //dc offset elkerulese
+    float dcCorrection = std::tanh(bias * drive);
+    saturatedSample -= dcCorrection;
+
+    float compensationSample = saturatedSample * (1.2f / (1.0f + (drive * 0.15f)));
 
     float output = physicalFilter.processSample(compensationSample);
-    float outputFinal = physicalFilter.processSample(output);
 
-    return outputFinal;
+    return output;
 }

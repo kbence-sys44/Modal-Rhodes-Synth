@@ -42,10 +42,13 @@ private:
     float tonebarMix = 0.5f;
     float currentFrequency = 0.0f;
     float lastHammer = 0.0f;
-    float masterVolume = 0.7f;
+    float voiceVolume = 0.7f;
 
     bool noteCurrentlyActive = false;
     bool isKeyHeld = false;
+
+    juce::dsp::IIR::Filter<float> dcBlocker;
+    juce::Random random;
 
     JUCE_LEAK_DETECTOR(DWMVoice)
 };

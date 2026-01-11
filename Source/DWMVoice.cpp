@@ -13,8 +13,21 @@
 //ez az egyik fo hanggeneralo modul amely a tobbit osszekoti
 
 void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition) {
+
+    
+
     //frekvencia kinyerese a midi hangbol
     float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
+
+    float pickupDelay = 14.0f;
+    if (frequency < 200.0f) {
+        pickupDelay = 10.0f + random.nextFloat() * 8.0f;
+    }
+    else {
+        pickupDelay = 6.0f + random.nextFloat() * 4.0f;
+    }
+
+    pickupModule.setBaseDelay(pickupDelay);
 
     float detune = 1.0f + ((juce::Random::getSystemRandom().nextFloat() * 0.001f) - 0.0005f);
     float detunedFrequency = frequency * detune;
@@ -29,11 +42,11 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
     pickupModule.setBassGain(bassGain);
 
     lastHammer = 0.0f;
-    if (frequency < 100.0f) {
-        tonebarMix = 0.5f;
+    if (frequency < 200.0f) {
+        tonebarMix = 0.4f;
     }
     else if (frequency < 500.0f) {
-        tonebarMix = juce::jmap(frequency, 100.0f, 500.0f, 0.5f, 0.2f);
+        tonebarMix = juce::jmap(frequency, 200.0f, 2000.0f, 0.4f, 0.2f);
     }
     else {
         tonebarMix = 0.15f;
@@ -94,11 +107,14 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         float pickupSample = pickupModule.processSignal(rawSample);
         Stereo stereoOutput = tremolo.process(pickupSample);
 
+        float cleanLeft = dcBlocker.processSample(stereoOutput.left);
+        float cleanRight = dcBlocker.processSample(stereoOutput.right);
+
         if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(0, startSample + sample, stereoOutput.left * masterVolume);
+            outputBuffer.addSample(0, startSample + sample, cleanLeft * voiceVolume);
         }
         if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(1, startSample + sample, stereoOutput.right * masterVolume);
+            outputBuffer.addSample(1, startSample + sample, cleanRight * voiceVolume);
         }
 
         //hang leallitasi feltetelek
@@ -124,4 +140,7 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     tremolo.prepare(specs.sampleRate);
     tremolo.setTremRate(6.0f);
     tremolo.setDepth(0.7f);
+
+    dcBlocker.prepare(specs);
+    dcBlocker.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass(specs.sampleRate, 40.0f);
 }
