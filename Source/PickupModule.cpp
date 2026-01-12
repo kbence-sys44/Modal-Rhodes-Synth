@@ -79,11 +79,7 @@ float PickupModule::processSignal(float inputSample) {
 
     float pickupSample = sample - (delayedSample * 0.3f);
 
-    //magneses szaturacio nem jo
     /*
-    float hotSignal = pickupSample * 5.0f * drive;
-    float asymmetry = 0.6f;
-    float quadraticSignal = hotSignal + (asymmetry * hotSignal * hotSignal);*/
     
     float bias = 0.3f;
     float biasSignal = pickupSample * bias;
@@ -91,9 +87,10 @@ float PickupModule::processSignal(float inputSample) {
 
     //dc offset elkerulese
     float dcCorrection = std::tanh(bias * drive);
-    saturatedSample -= dcCorrection;
+    saturatedSample -= dcCorrection;*/
 
-    float compensationSample = saturatedSample * (1.2f / (1.0f + (drive * 0.15f)));
+    //float compensationSample = saturatedSample * (1.2f / (1.0f + (drive * 0.15f)));
 
-    return physicalFilter.processSample(compensationSample);
+
+    return physicalFilter.processSample(pickupSample);
 }

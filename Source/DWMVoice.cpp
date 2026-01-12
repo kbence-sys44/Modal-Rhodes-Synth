@@ -117,6 +117,9 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         float inputForPickup = rawSample + (thump * 0.8f);
 
         float pickupSample = pickupModule.processSignal(inputForPickup);
+
+        float ampedSample = preamp.processSample(pickupSample);
+
         Stereo stereoOutput = tremolo.process(pickupSample);
 
         float cleanLeft = dcBlocker.processSample(stereoOutput.left);
@@ -148,6 +151,9 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     toneBarModule.prepareToneBar(specs.sampleRate);
 
     pickupModule.preparePickup(specs);
+
+    preamp.prepare(specs);
+    preamp.setDrive(4.0f);
 
     tremolo.prepare(specs.sampleRate);
     tremolo.setTremRate(6.0f);

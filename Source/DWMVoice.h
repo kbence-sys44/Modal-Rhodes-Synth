@@ -15,6 +15,7 @@
 #include "ToneBarModule.h"
 #include "PickupModule.h"
 #include "Tremolo.h"
+#include "Preamp.h"
 
 class DWMVoice : public juce::SynthesiserVoice
 {
@@ -38,6 +39,7 @@ private:
     ToneBarModule toneBarModule;
     PickupModule pickupModule;
     Tremolo tremolo;
+    Preamp preamp;
 
     float tonebarMix = 0.5f;
     float currentFrequency = 0.0f;

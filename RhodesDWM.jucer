@@ -13,6 +13,8 @@
         <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
         <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
       </GROUP>
+      <FILE id="HNinPQ" name="Preamp.cpp" compile="1" resource="0" file="Source/Preamp.cpp"/>
+      <FILE id="Up8xvS" name="Preamp.h" compile="0" resource="0" file="Source/Preamp.h"/>
       <FILE id="rp7CVY" name="Tremolo.cpp" compile="1" resource="0" file="Source/Tremolo.cpp"/>
       <FILE id="sl9GN2" name="Tremolo.h" compile="0" resource="0" file="Source/Tremolo.h"/>
       <FILE id="Jryn0m" name="PickupModule.cpp" compile="1" resource="0"
