@@ -29,6 +29,8 @@ private:
 
     juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Lagrange3rd> delayLine;
 
+    juce::Random random; //tokeletes jelek "koszolasahoz"
+
     juce::dsp::IIR::Filter<float> IIRfilter; //csillapitasert felelos szuro
 
     juce::dsp::IIR::Filter<float> allpassFilter;

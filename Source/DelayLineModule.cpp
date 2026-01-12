@@ -49,19 +49,26 @@ void DelayLineModule::resetDelayLine() {
 void DelayLineModule::setDelayForDelayLine(float delayInSamples, float velocity) {
     //alap adatok, szurok bealliasa
     float noteFrequency = float(sampleRate) / delayInSamples;
-    float brightness = juce::jmap(velocity, 0.0f, 1.0f, 8.0f, 25.0f);
-    float cutoffOffset = (delayInSamples > 200.0f) ? 600.0f : 200.0f;
+    float brightness = juce::jmap(velocity, 0.0f, 1.0f, 15.0f, 45.0f);
+    float cutoffOffset = (delayInSamples > 200.0f) ? 500.0f : 200.0f;
     float cutoffFrequency = cutoffOffset + (noteFrequency * brightness); // a melyebb hangokat hozzaadjuk hogy megmaradjanak es ne vagjuk le
-    cutoffFrequency = juce::jlimit(200.0f, 14000.0f, cutoffFrequency);
+    cutoffFrequency = juce::jlimit(400.0f, 16000.0f, cutoffFrequency);
 
     auto newLPCiacs = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, cutoffFrequency);
     IIRfilter.coefficients = newLPCiacs;
 
     //allpass szuro
-    float stiffness = juce::jmap(delayInSamples, 50.0f, 1500.0f, 10.0f, 45.0f);
-    stiffness = juce::jlimit(5.0f, 60.0f, stiffness);
+    float stiffness;
+    if (delayInSamples > 800.0f) {
+        stiffness = juce::jmap(delayInSamples, 800.0f, 3000.0f, 40.0f, 150.0f);
+    }
+    else {
+       stiffness = juce::jmap(delayInSamples, 50.0f, 80000.0f, 5.0f, 40.0f);
+    }
 
-    auto newAPCiacs = juce::dsp::IIR::Coefficients<float>::makeAllPass(sampleRate, stiffness);
+    float apFreq = stiffness * 100.0f;
+    apFreq = juce::jlimit(200.0f, 18000.0f, apFreq);
+    auto newAPCiacs = juce::dsp::IIR::Coefficients<float>::makeAllPass(sampleRate, apFreq);
     allpassFilter.coefficients = newAPCiacs;
 
     //phase delay comp
@@ -83,12 +90,15 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples, float velocity)
 
 float DelayLineModule::processSample(float inputSample, float gain) {
 
-    //a linearis interpolaciot a delayLine osztaly automatikusan kezeli
-    auto delayedSample = delayLine.popSample(0);
+    //random zaj
+    float jitterAmount = 0.1f;
+    float jitter = (random.nextFloat() * 2.0f - 1.0f) * jitterAmount;
 
-    //a kimenet egy reszet visszavezetjuk a bemenetre es szurjuk a csillapitas miatt
+    delayLine.setDelay(currentDelay + jitter);
+
+
+    auto delayedSample = delayLine.popSample(0);
     auto filteredDelayedSample = IIRfilter.processSample(delayedSample);
-    //+ allpass
     auto stiffSample = allpassFilter.processSample(filteredDelayedSample);
 
     auto feedbackSample = stiffSample * gain;

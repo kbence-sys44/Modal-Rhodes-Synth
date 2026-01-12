@@ -32,11 +32,11 @@ void HammerModule::triggerHammer(float velocity, float length) {
     currentVelocity = velocity; 
 
     //kicsi vel -> puha kalapacs, nagy vel -> kemenyebb
-    float velocityBrigtness = 0.2f + (velocity*0.75f);
+    float velocityBrigtness = 0.1f + (velocity*0.6f);
     //pitch alapu tompitas
-    float pitchDamping = juce::jmap(length, 100.0f, 1000.0f, 0.0f, 0.05f);
+    float pitchDamping = juce::jmap(length, 100.0f, 1000.0f, 0.0f, 0.02f);
 
-    filterCoefficient = juce::jlimit(0.1f, 0.99f, velocityBrigtness - pitchDamping);
+    filterCoefficient = juce::jlimit(0.1f, 0.85f, velocityBrigtness - pitchDamping);
 }
 
 
@@ -52,15 +52,17 @@ float HammerModule::getNextSample() {
 
     float rawNoise = (random.nextFloat() * 2.0f - 1.0f);
     
-    float filteredNoise = (lastOutput * 0.9f) + (rawNoise * 0.1f * (1.0f + currentVelocity));
+    float filteredNoise = (lastOutput * filterCoefficient) + (rawNoise * (1.0f - filterCoefficient));
     lastOutput = filteredNoise;
 
-    float clickAmount = currentVelocity * currentVelocity * currentVelocity;
-    float click = rawNoise * 0.4f * clickAmount;
+    float clickAmount = currentVelocity * currentVelocity;
+    float highFreqClick = (rawNoise - filteredNoise) * 0.5f;
+
+    float click = highFreqClick *clickAmount * 2.0f;
 
     float output = (filteredNoise + click) * env * currentVelocity;
 
-    return output * 2.0f;
+    return output * 3.0f;
 }
 
 bool HammerModule::isHammerActive() const {

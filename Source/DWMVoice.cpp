@@ -27,7 +27,7 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
 
     pickupModule.setBaseDelay(pickupDelay);
 
-    float detune = 1.0f + ((juce::Random::getSystemRandom().nextFloat() * 0.001f) - 0.0005f);
+    float detune = 1.0f + ((juce::Random::getSystemRandom().nextFloat() * 0.0006f) - 0.0003f);
     float detunedFrequency = frequency * detune;
 
     currentFrequency = detunedFrequency;
@@ -41,13 +41,13 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
 
     lastHammer = 0.0f;
     if (frequency < 200.0f) {
-        tonebarMix = 0.4f;
+        tonebarMix = 0.65f;
     }
     else if (frequency < 500.0f) {
-        tonebarMix = juce::jmap(frequency, 200.0f, 2000.0f, 0.4f, 0.2f);
+        tonebarMix = juce::jmap(frequency, 200.0f, 500.0f, 0.65f, 0.4f);
     }
     else {
-        tonebarMix = 0.15f;
+        tonebarMix = 0.25f;
     }
 
     //delay kiszamolasa (hur hossztol fugg)
