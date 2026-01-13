@@ -24,16 +24,20 @@ public:
     float processSample(float inputSample, float gain);
 
 private:
-    double sampleRate{ 0.0 };
+    double sampleRate = 44100.0;
     float currentDelay{ 1.0f };
 
     juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Lagrange3rd> delayLine;
 
+    std::vector<juce::dsp::FirstOrderTPTFilter<float>> allpassChain;
+    juce::dsp::StateVariableTPTFilter<float> lowpassFilter;
+
+    double getTPTPhase(double frequency, double cutoff);
+
     juce::Random random; //tokeletes jelek "koszolasahoz"
 
-    juce::dsp::IIR::Filter<float> IIRfilter; //csillapitasert felelos szuro
-
-    juce::dsp::IIR::Filter<float> allpassFilter;
+    //juce::dsp::IIR::Filter<float> IIRfilter; //csillapitasert felelos szuro
+    //juce::dsp::IIR::Filter<float> allpassFilter;
 
     JUCE_LEAK_DETECTOR(DelayLineModule) //instance leak elkerulese vegett
 };

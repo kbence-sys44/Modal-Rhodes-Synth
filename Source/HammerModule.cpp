@@ -13,6 +13,10 @@
 void HammerModule::prepareHammer(double sRate) {
     sampleRate = sRate;
     random.setSeedRandomly();
+
+    hammerFilter.prepare({ sRate, 512, 1 });
+    hammerFilter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
+    hammerFilter.setResonance(0.5f);
 }
 
 //utes elinditasa
@@ -32,11 +36,15 @@ void HammerModule::triggerHammer(float velocity, float length) {
     currentVelocity = velocity; 
 
     //kicsi vel -> puha kalapacs, nagy vel -> kemenyebb
-    float velocityBrigtness = 0.1f + (velocity*0.6f);
-    //pitch alapu tompitas
-    float pitchDamping = juce::jmap(length, 100.0f, 1000.0f, 0.0f, 0.02f);
+    float velocityBrightness = 0.1f + (velocity*0.8f);
+    float baseFreq = 4000.0f * velocityBrightness;
+    hammerFilter.setCutoffFrequency(baseFreq);
+    hammerFilter.reset();
 
-    filterCoefficient = juce::jlimit(0.1f, 0.85f, velocityBrigtness - pitchDamping);
+    //pitch alapu tompitas
+    //float pitchDamping = juce::jmap(length, 100.0f, 1000.0f, 0.0f, 0.05f);
+
+    //filterCoefficient = juce::jlimit(0.1f, 0.98f, velocityBrightness - pitchDamping);
 }
 
 
@@ -47,18 +55,16 @@ float HammerModule::getNextSample() {
     //burkologorbe
     float pos = 1.0f - (static_cast<float>(remainingSamples) / static_cast<float>(totalDur));
     float env = std::sin(pos * juce::MathConstants<float>::pi);
-
     remainingSamples--;
 
     float rawNoise = (random.nextFloat() * 2.0f - 1.0f);
     
-    float filteredNoise = (lastOutput * filterCoefficient) + (rawNoise * (1.0f - filterCoefficient));
-    lastOutput = filteredNoise;
+    //float filteredNoise = (lastOutput * filterCoefficient) + (rawNoise * (1.0f - filterCoefficient));
+    //lastOutput = filteredNoise;
+    float filteredNoise = hammerFilter.processSample(0, rawNoise);
 
-    float clickAmount = currentVelocity * currentVelocity;
-    float highFreqClick = (rawNoise - filteredNoise) * 0.5f;
-
-    float click = highFreqClick *clickAmount * 2.0f;
+    float highFreqSound = rawNoise - filteredNoise;
+    float click = highFreqSound * (currentVelocity * currentVelocity) * 2.0f;
 
     float output = (filteredNoise + click) * env * currentVelocity;
 

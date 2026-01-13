@@ -61,24 +61,25 @@ void PickupModule::setBaseDelay(float newDelay) {
 //a hangszedo fo feldolgozo fuggvenye
 float PickupModule::processSignal(float inputSample) {
 
-    float noise = (random.nextFloat() * 2.0f - 1.0f) * 0.003f;
+    float noise = (random.nextFloat() * 2.0f - 1.0f) * 0.002f;
     float signalAbs = std::abs(inputSample);
-    float breathingNoise = noise * (0.5f + (signalAbs * 10.0f));
+    float breathingNoise = noise * (0.5f + (signalAbs * 8.0f));
 
     float noisyInput = inputSample + breathingNoise;
 
-    float drive = 2.0f;
+    float drive = 3.0f;
     float x = noisyInput * drive;
 
     float magneticSignal;
-    if (x > 0) {
-        magneticSignal = x; //poz - tiszta
+    if (x < -1.5f) {
+        magneticSignal = -1.2f;
+    }
+    else if(x > 1.5f){
+        magneticSignal = 1.2f;
     }
     else {
-        magneticSignal = std::tanh(x) * 1.5f; //negativ - torz
+        magneticSignal = x + (0.45f * x * x) - (0.15f * x * x * x);
     }
-
-    magneticSignal = magneticSignal + (magneticSignal * magneticSignal * 0.2f);
 
 
    /* 3 verzio 
@@ -120,5 +121,5 @@ float PickupModule::processSignal(float inputSample) {
     //float compensationSample = saturatedSample * (1.2f / (1.0f + (drive * 0.15f)));
 
 
-    return physicalFilter.processSample(processedSample) * 0.4f;
+    return physicalFilter.processSample(processedSample) * 0.35f;
 }

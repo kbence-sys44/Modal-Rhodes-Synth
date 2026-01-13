@@ -37,6 +37,7 @@ private:
 
     juce::dsp::IIR::Filter<float> bassFilter;
     juce::dsp::IIR::Filter<float> trebleFilter;
+    juce::dsp::IIR::Filter<float> midPeakFilter;
     juce::dsp::IIR::Filter<float> dcBlocker;
 
     //float prevInput = 0.0f;

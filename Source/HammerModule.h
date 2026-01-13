@@ -31,6 +31,8 @@ private:
     float filterCoefficient = 0.5f;
     float totalDur = 0.0f;
 
+    juce::dsp::StateVariableTPTFilter<float> hammerFilter;
+
     juce::Random random;
 
     JUCE_LEAK_DETECTOR(HammerModule)

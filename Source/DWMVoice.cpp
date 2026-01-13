@@ -27,7 +27,7 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
 
     pickupModule.setBaseDelay(pickupDelay);
 
-    float detune = 1.0f + ((juce::Random::getSystemRandom().nextFloat() * 0.0006f) - 0.0003f);
+    float detune = 1.0f + ((juce::Random::getSystemRandom().nextFloat() * 0.0002f) - 0.0001f);
     float detunedFrequency = frequency * detune;
 
     currentFrequency = detunedFrequency;
@@ -41,13 +41,13 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
 
     lastHammer = 0.0f;
     if (frequency < 200.0f) {
-        tonebarMix = 0.65f;
+        tonebarMix = 0.35f;
     }
-    else if (frequency < 500.0f) {
-        tonebarMix = juce::jmap(frequency, 200.0f, 500.0f, 0.65f, 0.4f);
+    else if (frequency < 600.0f) {
+        tonebarMix = juce::jmap(frequency, 200.0f, 600.0f, 0.35f, 0.15f);
     }
     else {
-        tonebarMix = 0.25f;
+        tonebarMix = 0.10f;
     }
 
     //delay kiszamolasa (hur hossztol fugg)
@@ -91,6 +91,7 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
             hammerSample = filteredHammer * 2.5f;
         }
 
+        float hammerInput = hammerSample * 2.5f;
         float toneBarSample = toneBarModule.getNextSample();
 
         float feedback = 0.999f;
@@ -101,7 +102,7 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         float finalFeedback = isKeyHeld ? feedback : 0.8f;
 
 
-        float tineSample = dlModule.processSample(hammerSample, finalFeedback);
+        float tineSample = dlModule.processSample(hammerInput, finalFeedback);
         float tineMix = 1.0f - tonebarMix;
         float rawSample = (tineSample * tineMix) - (toneBarSample * tonebarMix);
 
@@ -118,9 +119,9 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
 
         float pickupSample = pickupModule.processSignal(inputForPickup);
 
-        float ampedSample = preamp.processSample(pickupSample);
+        //float ampedSample = preamp.processSample(pickupSample);
 
-        Stereo stereoOutput = tremolo.process(pickupSample);
+        Stereo stereoOutput = tremolo.process(tineSample);
 
         float cleanLeft = dcBlocker.processSample(stereoOutput.left);
         float cleanRight = dcBlocker.processSample(stereoOutput.right);
@@ -131,9 +132,10 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         if (outputBuffer.getNumChannels() >= 1) {
             outputBuffer.addSample(1, startSample + sample, cleanRight * voiceVolume);
         }
+        // && std::abs(pickupSample) < 0.00001f
 
         //hang leallitasi feltetelek
-        if (!hammerModule.isHammerActive() && !toneBarModule.isToneBarActive() && !isKeyHeld && std::abs(pickupSample) < 0.00001f) {
+        if (!hammerModule.isHammerActive() && !toneBarModule.isToneBarActive() && !isKeyHeld) {
             noteCurrentlyActive = false;
             clearCurrentNote();
             break;

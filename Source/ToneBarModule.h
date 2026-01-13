@@ -34,6 +34,7 @@ private:
     //envelope
     float currentAmplitude = 0.0f;
     float decayRate = 0.9999f;
+    float fmPhase = 0.0f; //frekv modulacio a felharmonikusok erositesere
     bool isReleased = false;
 
     const float releaseDecay = 0.95f; //billenytu elengedesekor, gyors

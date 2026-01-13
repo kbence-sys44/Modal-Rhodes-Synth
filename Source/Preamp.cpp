@@ -15,6 +15,7 @@ void::Preamp::prepare(const::juce::dsp::ProcessSpec& specs) {
 
     bassFilter.prepare(specs);
     trebleFilter.prepare(specs);
+    midPeakFilter.prepare(specs);
     dcBlocker.prepare(specs);
 
     dcBlocker.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 10.0f); //fix 10hz highpass
@@ -26,6 +27,7 @@ void::Preamp::prepare(const::juce::dsp::ProcessSpec& specs) {
 void Preamp::reset() {
     bassFilter.reset();
     trebleFilter.reset();
+    midPeakFilter.reset();
     dcBlocker.reset();
 }
 
@@ -52,6 +54,7 @@ void Preamp::updateFilters() {
 
     bassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 90.0f, 0.707f, bassGain);
     trebleFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 2500.0f, 0.707f, trebleGain);
+    midPeakFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 400.0f, 0.8f, 1.4f);
 }
 
 float Preamp::processSample(float inputSample) {
@@ -61,8 +64,9 @@ float Preamp::processSample(float inputSample) {
     processedSignal = dcBlocker.processSample(processedSignal); //dcblock
 
     processedSignal = bassFilter.processSample(processedSignal); //eq
+    processedSignal = midPeakFilter.processSample(processedSignal);
     processedSignal = trebleFilter.processSample(processedSignal);
-
+    
     return processedSignal * outputVolume;
 
     //2, 3 felharmonikus erositese, egyelore nem kell
