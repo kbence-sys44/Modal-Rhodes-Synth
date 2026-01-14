@@ -32,13 +32,13 @@ private:
 
     float drive = 1.0f;
     float outputVolume = 1.0f;
-    float bassGain = 1.0f;
-    float trebleGain = 1.0f;
+    float bassGain = 1.3f;
+    float trebleGain = 0.7f;
 
     juce::dsp::IIR::Filter<float> bassFilter;
     juce::dsp::IIR::Filter<float> trebleFilter;
-    juce::dsp::IIR::Filter<float> midPeakFilter;
-    juce::dsp::IIR::Filter<float> dcBlocker;
+
+    juce::dsp::StateVariableTPTFilter<float> dcBlocker;
 
     //float prevInput = 0.0f;
     //float prevOutput = 0.0f;

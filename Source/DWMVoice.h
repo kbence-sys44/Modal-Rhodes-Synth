@@ -63,7 +63,6 @@ private:
     bool triggerThump = true;
 
     juce::dsp::IIR::Filter<float> dcBlocker;
-    juce::dsp::IIR::Filter<float> thumpFilter;
     juce::Random random;
 
     JUCE_LEAK_DETECTOR(DWMVoice)

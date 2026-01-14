@@ -97,36 +97,24 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         float tineSample = dlModule.processSample(hammerInput, finalFeedback);
         float rawSample = (tineSample * currentMix.tineMix) - (toneBarSample * currentMix.tonebarMix);
 
-        float thump = 0.0f;
-        //duborges generalas
-        if (triggerThump && thumpLevel > 0.001f) {
-            float noise = (random.nextFloat() * 2.0f - 1.0f);
-            thump = thumpFilter.processSample(noise * thumpLevel);
-            //lecsenges
-            thumpLevel *= 0.95f;
-        }
+        float pickupSample = pickupModule.processSignal(rawSample);
 
-        float inputForPickup = rawSample + (thump * 0.8f);
+        float ampedSample = preamp.processSample(pickupSample);
 
-        float pickupSample = pickupModule.processSignal(inputForPickup);
-
-        //float ampedSample = preamp.processSample(pickupSample);
-
-        Stereo stereoOutput = tremolo.process(tineSample);
+        Stereo stereoOutput = tremolo.process(ampedSample);
 
         float cleanLeft = dcBlocker.processSample(stereoOutput.left);
         float cleanRight = dcBlocker.processSample(stereoOutput.right);
 
         if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(0, startSample + sample, pickupSample * voiceVolume);
+            outputBuffer.addSample(0, startSample + sample, cleanLeft * voiceVolume);
         }
         if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(1, startSample + sample, pickupSample * voiceVolume);
+            outputBuffer.addSample(1, startSample + sample, cleanRight * voiceVolume);
         }
-        // && std::abs(pickupSample) < 0.00001f
 
         //hang leallitasi feltetelek
-        if (!hammerModule.isHammerActive() && !toneBarModule.isToneBarActive() && !isKeyHeld) {
+        if (!hammerModule.isHammerActive() && !toneBarModule.isToneBarActive() && std::abs(pickupSample) < 0.00001f && !isKeyHeld) {
             noteCurrentlyActive = false;
             clearCurrentNote();
             break;
@@ -154,9 +142,6 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
 
     dcBlocker.prepare(specs);
     dcBlocker.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass(specs.sampleRate, 10.0f);
-
-    thumpFilter.prepare(specs);
-    thumpFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(specs.sampleRate, 80.0f);
 }
 
 //a tine es a tonebar aranya frekvenciafuggo, logaritmikus szamolassal pontosabb, mint a fix ertekek
