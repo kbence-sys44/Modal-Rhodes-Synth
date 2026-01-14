@@ -74,3 +74,7 @@ float HammerModule::getNextSample() {
 bool HammerModule::isHammerActive() const {
     return (remainingSamples > 0);
 }
+
+float HammerModule::getVelocity() const{
+    return currentVelocity;
+}

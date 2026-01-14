@@ -32,12 +32,12 @@ private:
     std::vector<juce::dsp::FirstOrderTPTFilter<float>> allpassChain;
     juce::dsp::StateVariableTPTFilter<float> lowpassFilter;
 
-    double getTPTPhase(double frequency, double cutoff);
+    double getTPTPhaseAllpass(double frequency, double cutoff);
+    double getTPTPhaseLow(double frequency, double cutoff, double q);
+    double getTPTDelayAllpass(double frequency, double cutoff);
+    double getTPTDelayLow(double frequency, double cutoff);
 
     juce::Random random; //tokeletes jelek "koszolasahoz"
-
-    //juce::dsp::IIR::Filter<float> IIRfilter; //csillapitasert felelos szuro
-    //juce::dsp::IIR::Filter<float> allpassFilter;
 
     JUCE_LEAK_DETECTOR(DelayLineModule) //instance leak elkerulese vegett
 };

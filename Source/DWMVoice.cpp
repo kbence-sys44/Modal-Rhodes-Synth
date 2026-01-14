@@ -15,7 +15,8 @@
 void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition) {
 
     //frekvencia kinyerese a midi hangbol
-    float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber);
+    float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber, 440.0);
+    currentMix = calculateForkMix(frequency, velocity);
 
     float pickupDelay = 14.0f;
     if (frequency < 200.0f) {
@@ -40,15 +41,6 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
     pickupModule.setBassGain(bassGain);
 
     lastHammer = 0.0f;
-    if (frequency < 200.0f) {
-        tonebarMix = 0.35f;
-    }
-    else if (frequency < 600.0f) {
-        tonebarMix = juce::jmap(frequency, 200.0f, 600.0f, 0.35f, 0.15f);
-    }
-    else {
-        tonebarMix = 0.10f;
-    }
 
     //delay kiszamolasa (hur hossztol fugg)
     float delaySamples = static_cast<float>(getSampleRate() / detunedFrequency);
@@ -59,6 +51,7 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
     triggerThump = true;
     thumpLevel = velocity * 0.5f;
 
+    
     hammerModule.triggerHammer(velocity, delaySamples);
     toneBarModule.triggerToneBar(detunedFrequency, velocity);
 
@@ -101,10 +94,8 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         feedback = juce::jmax(0.985f, feedback);
         float finalFeedback = isKeyHeld ? feedback : 0.8f;
 
-
         float tineSample = dlModule.processSample(hammerInput, finalFeedback);
-        float tineMix = 1.0f - tonebarMix;
-        float rawSample = (tineSample * tineMix) - (toneBarSample * tonebarMix);
+        float rawSample = (tineSample * currentMix.tineMix) - (toneBarSample * currentMix.tonebarMix);
 
         float thump = 0.0f;
         //duborges generalas
@@ -127,10 +118,10 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         float cleanRight = dcBlocker.processSample(stereoOutput.right);
 
         if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(0, startSample + sample, cleanLeft * voiceVolume);
+            outputBuffer.addSample(0, startSample + sample, rawSample * voiceVolume);
         }
         if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(1, startSample + sample, cleanRight * voiceVolume);
+            outputBuffer.addSample(1, startSample + sample, rawSample * voiceVolume);
         }
         // && std::abs(pickupSample) < 0.00001f
 
@@ -166,4 +157,28 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
 
     thumpFilter.prepare(specs);
     thumpFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(specs.sampleRate, 80.0f);
+}
+
+//a tine es a tonebar aranya frekvenciafuggo, logaritmikus szamolassal pontosabb, mint a fix ertekek
+DWMVoice::ForkMix DWMVoice::calculateForkMix(float frequency, float velocity) {
+    ForkMix coeffs;
+
+    float frequencyLog = std::log10(frequency);
+    float minLog = std::log10(40.0f); //E1
+    float maxLog = std::log10(3000.0f); //G7
+
+    float normalizedFrequency = juce::jlimit(0.0f, 1.0f, (frequencyLog - minLog) / (maxLog - minLog));
+
+    float defaultTineMix = juce::jmap(normalizedFrequency, 0.25f, 1.0f);
+    float defaultTonebarMix = juce::jmap(normalizedFrequency, 1.0f, 0.25f);
+
+    //velocity is befolyasolja a jo mixet
+
+    float velocityFactor = velocity * velocity;
+    coeffs.tineMix = defaultTineMix * (0.6f + (0.8f * velocityFactor));
+    coeffs.tonebarMix = defaultTonebarMix * (0.8f + (0.4f * velocity));
+    //DBG(defaultTineMix);
+    //DBG(defaultTonebarMix);
+    
+    return coeffs;
 }

@@ -17,6 +17,7 @@
 #include "Tremolo.h"
 #include "Preamp.h"
 
+
 class DWMVoice : public juce::SynthesiserVoice
 {
 public:
@@ -33,18 +34,28 @@ public:
     void pitchWheelMoved(int newPitchWheelValue) override {};
     void controllerMoved(int controllerNumber, int newControllerValue) override {};
 
+    
+
 private:
+    struct ForkMix {
+        float tineMix;
+        float tonebarMix;
+    };
+    ForkMix DWMVoice::calculateForkMix(float frequency, float velocity);
+    ForkMix currentMix;
+
     DelayLineModule dlModule;
     HammerModule hammerModule;
     ToneBarModule toneBarModule;
     PickupModule pickupModule;
     Tremolo tremolo;
     Preamp preamp;
+    
 
     float tonebarMix = 0.5f;
     float currentFrequency = 0.0f;
     float lastHammer = 0.0f;
-    float voiceVolume = 0.7f;
+    float voiceVolume = 0.5f;
     float thumpLevel = 0.5f;
 
     bool noteCurrentlyActive = false;

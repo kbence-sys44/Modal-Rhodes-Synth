@@ -22,6 +22,7 @@ public:
     float getNextSample();
 
     bool isHammerActive() const;
+    float getVelocity() const;
 
 private:
     double sampleRate = 44100.0;
