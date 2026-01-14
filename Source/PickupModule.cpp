@@ -67,30 +67,17 @@ float PickupModule::processSignal(float inputSample) {
 
     float noisyInput = inputSample + breathingNoise;
 
-    float drive = 3.0f;
     float x = noisyInput * drive;
 
-    float magneticSignal;
-    if (x < -1.5f) {
-        magneticSignal = -1.2f;
-    }
-    else if(x > 1.5f){
-        magneticSignal = 1.2f;
-    }
-    else {
-        magneticSignal = x + (0.45f * x * x) - (0.15f * x * x * x);
-    }
+    float polynom = x + (0.45f * x * x) - (0.15f * x * x * x); //asszimetria + szat
+    float magneticSignal = std::tanh(polynom);
 
-
+    return physicalFilter.processSample(magneticSignal) * 0.35f; //kabel szimulacio
    /* 3 verzio 
    float sample = noisyInput;
     float offset = 1.0f;
     float signal = sample + offset;
     float magneticSignal = sample + (0.35f * sample * sample);*/
-
-    float processedSample = bassFilter.processSample(magneticSignal);
-    processedSample = midFilter.processSample(processedSample);
-    processedSample = trebleFilter.processSample(processedSample);
 
     /* 2 verzio
     float inputAbs = std::abs(sample);
@@ -121,5 +108,5 @@ float PickupModule::processSignal(float inputSample) {
     //float compensationSample = saturatedSample * (1.2f / (1.0f + (drive * 0.15f)));
 
 
-    return physicalFilter.processSample(processedSample) * 0.35f;
+    
 }

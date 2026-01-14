@@ -118,10 +118,10 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         float cleanRight = dcBlocker.processSample(stereoOutput.right);
 
         if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(0, startSample + sample, rawSample * voiceVolume);
+            outputBuffer.addSample(0, startSample + sample, pickupSample * voiceVolume);
         }
         if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(1, startSample + sample, rawSample * voiceVolume);
+            outputBuffer.addSample(1, startSample + sample, pickupSample * voiceVolume);
         }
         // && std::abs(pickupSample) < 0.00001f
 
