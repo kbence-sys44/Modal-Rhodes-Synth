@@ -114,6 +114,17 @@ void RhodesDWMAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
             voice->prepare(specifications);
         }
     }
+
+    reverb.prepare(specifications);
+
+    reverbParams.roomSize = 0.2f;
+    reverbParams.damping = 0.2f;
+    reverbParams.wetLevel = 0.2f;
+    reverbParams.dryLevel = 0.8f;
+    reverbParams.width = 0.4f;
+    reverbParams.freezeMode = 0.0f;
+
+    reverb.setParameters(reverbParams);
 }
 
 void RhodesDWMAudioProcessor::releaseResources()
@@ -160,6 +171,11 @@ void RhodesDWMAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     buffer.clear();
 
     rhodesSynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+
+    juce::dsp::AudioBlock<float> block(buffer);
+    juce::dsp::ProcessContextReplacing<float> context(block);
+    reverb.process(context);
+
 }
 
 //==============================================================================
