@@ -23,8 +23,8 @@ public:
     void prepare(double sampleRate);
     
     void setTremRate(float rateInHz);
-
     void setDepth(float depth);
+    void setShape(float newShape);
 
     Stereo process(float inputSample);
 
@@ -36,5 +36,6 @@ private:
 
     float currentDepth = 0.0f;
     float currentRate = 0.0f;
+    float shape = 1.0f; //1.0 = sin felette szogletesebb lesz
 
 };

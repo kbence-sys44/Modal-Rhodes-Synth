@@ -46,9 +46,8 @@ void DelayLineModule::resetDelayLine() {
     }
 }
 
-void DelayLineModule::setDelayForDelayLine(float delayInSamples, float velocity) {
-    
-    float frequency = float(sampleRate) / delayInSamples;
+void DelayLineModule::setDelayForDelayLine(float delayInSamples, float velocity, float frequency) {
+   
     float targetDelay = (float)sampleRate / frequency;
 
     //lowpass

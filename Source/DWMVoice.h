@@ -34,7 +34,7 @@ public:
     void pitchWheelMoved(int newPitchWheelValue) override {};
     void controllerMoved(int controllerNumber, int newControllerValue) override {};
 
-    
+    float addDamping(float inputSample);
 
 private:
     struct ForkMix {
@@ -57,6 +57,7 @@ private:
     float lastHammer = 0.0f;
     float voiceVolume = 0.5f;
     float thumpLevel = 0.5f;
+    float currentVelocity = 0.0f;
 
     bool noteCurrentlyActive = false;
     bool isKeyHeld = false;
@@ -64,6 +65,15 @@ private:
 
     juce::dsp::IIR::Filter<float> dcBlocker;
     juce::Random random;
+
+    //Damper
+    bool damperActive = false;
+    float damperNoiseLevel = 0.0f;
+    float damperEnv = 0.0f;
+    float damperDecay = 0.95f;
+
+    juce::Random damperRand;
+    juce::dsp::FirstOrderTPTFilter<float> damperFilter;
 
     JUCE_LEAK_DETECTOR(DWMVoice)
 };

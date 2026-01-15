@@ -19,7 +19,7 @@ public:
 
     void resetDelayLine();
 
-    void setDelayForDelayLine(float delayInSamples, float velocity);
+    void setDelayForDelayLine(float delayInSamples, float velocity, float frequency);
 
     float processSample(float inputSample, float gain);
 

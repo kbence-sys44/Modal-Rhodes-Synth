@@ -16,31 +16,39 @@ void Tremolo::prepare(double sr) {
     
 
     //alap ertekek
-    setTremRate(0.5f);
+    setTremRate(1.0f);
     setDepth(0.8f);
+    
 }
 
 void Tremolo::setTremRate(float rateInHz) {
     currentRate = rateInHz;
 
-    phaseInc = (currentRate / sampleRate) * juce::MathConstants<double>::twoPi;
-
+    phaseInc = (currentRate / (float)sampleRate) * juce::MathConstants<double>::twoPi;
+    DBG(phaseInc);
 }
 
 void Tremolo::setDepth(float depth) {
     currentDepth = juce::jlimit(0.0f, 1.0f, depth);
 }
 
+void Tremolo::setShape(float newShape) {
+    shape = juce::jlimit(1.0f, 10.0f, newShape);
+}
+
 //mintankent egy lfo alapjan kiszamolja hogy mikor melyik oldalt legyen hangosabb a hang
 Stereo Tremolo::process(float inputSample) {
 
     float lfo = (float)std::sin(currentPhase);
+    float shapedLfo = std::tanh(lfo * shape);
+    float normalizer = std::tanh(shape);
+    shapedLfo /= normalizer;
 
     currentPhase += phaseInc;
 
     if (currentPhase >= juce::MathConstants<double>::twoPi) currentPhase -= juce::MathConstants<double>::twoPi;
 
-    float modLeft = (lfo + 1.0f) * 0.5f;
+    float modLeft = (shapedLfo + 1.0f) * 0.5f;
     float modRight = 1.0f - modLeft;
 
     float gainLeft = 1.0f - (currentDepth * modRight);

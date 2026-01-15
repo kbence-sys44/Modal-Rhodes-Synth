@@ -61,7 +61,7 @@ void PickupModule::setBaseDelay(float newDelay) {
 //a hangszedo fo feldolgozo fuggvenye
 float PickupModule::processSignal(float inputSample) {
 
-    float noise = (random.nextFloat() * 2.0f - 1.0f) * 0.002f;
+    float noise = (random.nextFloat() * 2.0f - 1.0f) * 0.001f;
     float signalAbs = std::abs(inputSample);
     float breathingNoise = noise * (0.5f + (signalAbs * 8.0f));
 
