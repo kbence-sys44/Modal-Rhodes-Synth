@@ -31,7 +31,7 @@ private:
     float sampleRate = 44100.0f;
 
     float drive = 2.0f;
-    float outputVolume = 1.0f;
+    float outputVolume = 2.0f;
     float bassGain = 1.3f;
     float trebleGain = 0.7f;
 

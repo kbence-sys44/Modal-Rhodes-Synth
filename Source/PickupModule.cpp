@@ -61,52 +61,21 @@ void PickupModule::setBaseDelay(float newDelay) {
 //a hangszedo fo feldolgozo fuggvenye
 float PickupModule::processSignal(float inputSample) {
 
-    float noise = (random.nextFloat() * 2.0f - 1.0f) * 0.001f;
-    float signalAbs = std::abs(inputSample);
-    float breathingNoise = noise * (0.5f + (signalAbs * 8.0f));
+    float circuitNoise = (random.nextFloat() * 2.0f - 1.0f) * 0.002f;
 
-    float noisyInput = inputSample + breathingNoise;
-
-    float x = noisyInput * drive;
-
-    float polynom = x + (0.45f * x * x) - (0.15f * x * x * x); //asszimetria + szat
-    float magneticSignal = std::tanh(polynom);
-
-    return physicalFilter.processSample(magneticSignal) * 0.35f; //kabel szimulacio
-   /* 3 verzio 
-   float sample = noisyInput;
-    float offset = 1.0f;
-    float signal = sample + offset;
-    float magneticSignal = sample + (0.35f * sample * sample);*/
-
-    /* 2 verzio
-    float inputAbs = std::abs(sample);
-    envelopeFollow = (envelopeFollow * 0.999f) + (inputAbs * 0.001f);
-
-    //delay modulacio
-    float modDepth = 5.0f;
-    float modulatedDelay = baseDelay + (envelopeFollow * modDepth);
-    modulatedDelay = juce::jlimit(2.0f, 80.0f, modulatedDelay);
-    pickupDL.setDelay(modulatedDelay);
-
-    pickupDL.pushSample(0, sample);
-    float delayedSample = pickupDL.popSample(0);
-
-    float pickupMix = 0.45f;
-    float pickupSample = sample - (delayedSample * pickupMix);*/
-
-    /*
+    float inputAbs = std::abs(inputSample);
+    envelopeFollow = (envelopeFollow * 0.99f) + (inputAbs * 0.01f);
     
-    float bias = 0.3f;
-    float biasSignal = pickupSample * bias;
-    float saturatedSample = std::tanh(biasSignal * drive);
+    float proximity = 1.0f + (envelopeFollow * 4.0f);
+    float rawSig = inputSample + circuitNoise;
+    float drivenSig = rawSig * drive * proximity;
 
-    //dc offset elkerulese
-    float dcCorrection = std::tanh(bias * drive);
-    saturatedSample -= dcCorrection;*/
+    float x = drivenSig;
+    float sat = std::tanh(x + 0.2f) - 0.2f;
 
-    //float compensationSample = saturatedSample * (1.2f / (1.0f + (drive * 0.15f)));
+    //float polynom = x + (0.45f * x * x) - (0.15f * x * x * x); //asszimetria + szat
+    //float magneticSignal = std::tanh(polynom);
 
-
-    
+    return physicalFilter.processSample(sat) * 0.35f; //kabel szimulacio
+ 
 }

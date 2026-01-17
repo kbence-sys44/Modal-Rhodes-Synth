@@ -77,24 +77,7 @@ void CabinetSimulation::process(juce::dsp::ProcessContextReplacing<float>& conte
 
     }
 }
-/*
-float CabinetSimulation::processSample(float inputSample) {
-    float scaledDown = inputSample * 0.5f;
-    float filteredSample = filterChain.get<0>().processSample(scaledDown);
-    filteredSample = filterChain.get<1>().processSample(filteredSample);
-    filteredSample = filterChain.get<2>().processSample(filteredSample);
-    filteredSample = filterChain.get<3>().processSample(filteredSample);
-    filteredSample = filterChain.get<4>().processSample(filteredSample);
 
-    cabinetReflexion.pushSample(0, inputSample);
-    float boxSignal = cabinetReflexion.popSample(0);
-
-    float output = inputSample + (inputSample * reflexionMix * -1.0f); //fazisforditas
-
-    output = std::tanh(output);
-
-    return scaledDown;
-}*/
 
 void CabinetSimulation::updateFilterCoeffs() {
     if (sampleRate <= 0.0) return;

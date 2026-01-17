@@ -116,7 +116,7 @@ void RhodesDWMAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     }
 
     cabinet.prepare(specifications);
-    cabinet.setParameters(0.8f, 0.4f);
+    //cabinet.setParameters(0.8f, 0.4f);
 
     reverb.prepare(specifications);
 

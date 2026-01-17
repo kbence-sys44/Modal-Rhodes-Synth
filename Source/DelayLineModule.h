@@ -26,6 +26,7 @@ public:
 private:
     double sampleRate = 44100.0;
     float currentDelay{ 1.0f };
+    float storedDelay = 100.0f;
 
     juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Lagrange3rd> delayLine;
 

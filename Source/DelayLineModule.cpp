@@ -29,7 +29,7 @@ void DelayLineModule::prepareDelayLine(const juce::dsp::ProcessSpec& specs) {
  
     //allpass lanc inicializalasa
 
-    allpassChain.resize(4);
+    allpassChain.resize(8);
     for (auto& ap : allpassChain) {
         ap.prepare(specs);
         ap.setType(juce::dsp::FirstOrderTPTFilterType::allpass);
@@ -85,11 +85,17 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples, float velocity,
     
     float compensationDelay = delayInSamples - filterDS - lagrangeLateny;
     compensationDelay = juce::jlimit(1.0f, (float)delayLine.getMaximumDelayInSamples() - 1.0f, compensationDelay);
+    storedDelay = compensationDelay;
     delayLine.setDelay(compensationDelay);
 
 }
 
 float DelayLineModule::processSample(float inputSample, float gain) {
+    float jitter = (random.nextFloat() * 2.0f - 1.0f) * 0.03f;
+    delayLine.setDelay(storedDelay + jitter);
+
+    float friction = (random.nextFloat() * 2.0f - 1.0f) * 0.0005f * gain;
+
     float delayedSample = delayLine.popSample(0);
     float filteredSample = lowpassFilter.processSample(0, delayedSample); //lowpass
 
@@ -97,7 +103,12 @@ float DelayLineModule::processSample(float inputSample, float gain) {
         filteredSample = ap.processSample(0, filteredSample);
     }
 
-    float feedback = filteredSample * gain;
+    float feedback = (filteredSample + friction) * gain;
+
+    if (std::abs(feedback) > 0.95f) {
+        feedback = std::tanh(feedback);
+    }
+
     float nextInput = inputSample + feedback;
 
     if (std::abs(nextInput) > 4.0f) nextInput *= 0.25f; //limit

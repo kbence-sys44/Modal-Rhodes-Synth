@@ -5,6 +5,14 @@
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="JHWxRr" name="RhodesDWM">
     <GROUP id="{AB6CD702-9356-685F-D99C-3629DBB14DC6}" name="Source">
+      <GROUP id="{83EA1C7E-56C6-EE67-6328-B6C1BBC59956}" name="Resources">
+        <FILE id="YAFWup" name="fender_twin_balanced.wav" compile="0" resource="1"
+              file="Source/Resources/fender_twin_balanced.wav"/>
+        <FILE id="gzZK74" name="fender_twin_clean.wav" compile="0" resource="1"
+              file="Source/Resources/fender_twin_clean.wav"/>
+        <FILE id="ZALttc" name="fender_twin_mid.wav" compile="0" resource="1"
+              file="Source/Resources/fender_twin_mid.wav"/>
+      </GROUP>
       <GROUP id="{7388A61B-9184-7EF7-EDFB-AD064607BF58}" name="Tests">
         <FILE id="jTqS0e" name="DelayLineTest.cpp" compile="1" resource="0"
               file="Source/DelayLineTest.cpp"/>
@@ -13,6 +21,10 @@
         <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
         <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
       </GROUP>
+      <FILE id="GmAFgv" name="ConvolutionCabinet.cpp" compile="1" resource="0"
+            file="Source/ConvolutionCabinet.cpp"/>
+      <FILE id="wRFyqB" name="ConvolutionCabinet.h" compile="0" resource="0"
+            file="Source/ConvolutionCabinet.h"/>
       <FILE id="wsIe5m" name="CabinetSimulation.cpp" compile="1" resource="0"
             file="Source/CabinetSimulation.cpp"/>
       <FILE id="mifffa" name="CabinetSimulation.h" compile="0" resource="0"
