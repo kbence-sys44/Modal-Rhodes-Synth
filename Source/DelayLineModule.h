@@ -37,7 +37,7 @@ private:
     double getTPTDelayAllpass(double frequency, double cutoff);
     double getTPTDelayLow(double frequency, double cutoff);
 
-    juce::Random random; //tokeletes jelek "koszolasahoz"
+    juce::Random random;
 
     JUCE_LEAK_DETECTOR(DelayLineModule) //instance leak elkerulese vegett
 };

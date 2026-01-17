@@ -81,75 +81,15 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples, float velocity,
         filterDS = (float)(-totalDelayPhase / omega); // Delay = -phase/omega
     }
 
-    float lagrangeLateny = 1.0f;
+    float lagrangeLateny = 2.5f;
     
     float compensationDelay = delayInSamples - filterDS - lagrangeLateny;
     compensationDelay = juce::jlimit(1.0f, (float)delayLine.getMaximumDelayInSamples() - 1.0f, compensationDelay);
     delayLine.setDelay(compensationDelay);
 
-    /*
-    //alap adatok, szurok bealliasa
-    float noteFrequency = float(sampleRate) / delayInSamples;
-    float brightness = juce::jmap(velocity, 0.0f, 1.0f, 15.0f, 45.0f);
-    float cutoffOffset = (delayInSamples > 200.0f) ? 500.0f : 200.0f;
-    float cutoffFrequency = cutoffOffset + (noteFrequency * brightness); // a melyebb hangokat hozzaadjuk hogy megmaradjanak es ne vagjuk le
-    cutoffFrequency = juce::jlimit(400.0f, 7000.0f, cutoffFrequency);
-
-    auto newLPCiacs = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, cutoffFrequency);
-    IIRfilter.coefficients = newLPCiacs;
-
-    //allpass szuro
-    float stiffness;
-    if (delayInSamples > 800.0f) {
-        stiffness = juce::jmap(delayInSamples, 800.0f, 3000.0f, 40.0f, 100.0f);
-    }
-    else {
-       stiffness = juce::jmap(delayInSamples, 50.0f, 800.0f, 2.0f, 25.0f);
-    }
-
-    float apFreq = stiffness * 100.0f;
-    apFreq = juce::jlimit(200.0f, 16000.0f, apFreq);
-    auto newAPCiacs = juce::dsp::IIR::Coefficients<float>::makeAllPass(sampleRate, apFreq);
-    allpassFilter.coefficients = newAPCiacs;
-
-    //phase delay comp
-    double omega = 2.0 * juce::MathConstants<double>::pi * noteFrequency / sampleRate;
-
-    double lpPhase = newLPCiacs->getPhaseForFrequency(noteFrequency, sampleRate);
-    double apPhase = newAPCiacs->getPhaseForFrequency(noteFrequency, sampleRate);
-
-    //fazis atfordulasnal
-    if (lpPhase > 0.0) lpPhase -= 2.0 * juce::MathConstants<double>::pi;
-    if (apPhase > 0.0) apPhase -= 2.0 * juce::MathConstants<double>::pi;
-
-    //fazistolas = -fazis/delay
-    //float lpDelayInSamples = (lpPhase == 0.0) ? 0.0f : (float)(-lpPhase / omega);
-    //float apDelayInSamples = (apPhase == 0.0) ? 0.0f : (float)(-apPhase / omega);
-    float lpDelayInSamples = (omega > 1e-9) ? (float)(-lpPhase / omega) : 0.0f;
-    float apDelayInSamples = (omega > 1e-9) ? (float)(-apPhase / omega) : 0.0f;
-
-    float totalFilterDelay = lpDelayInSamples + apDelayInSamples;
-    totalFilterDelay = juce::jlimit(0.0f, 20.0f, totalFilterDelay);
-
-    float targetDelay = delayInSamples - totalFilterDelay;
-    currentDelay = juce::jlimit(1.0f, (float)delayLine.getMaximumDelayInSamples() - 1.0f, targetDelay);
-
-    /*float tuningOffset = 0.5f;
-    float targetDelay = delayInSamples - tuningOffset;
-    currentDelay = juce::jlimit(1.0f, (float)delayLine.getMaximumDelayInSamples() - 1.0f, targetDelay);*/
-
-    //delayLine.setDelay(currentDelay);
-
 }
 
 float DelayLineModule::processSample(float inputSample, float gain) {
-
-    //random zaj
-    //float jitterAmount = 0.1f;
-    //float jitter = (random.nextFloat() * 2.0f - 1.0f) * jitterAmount;
-
-    //delayLine.setDelay(currentDelay);
-
     float delayedSample = delayLine.popSample(0);
     float filteredSample = lowpassFilter.processSample(0, delayedSample); //lowpass
 

@@ -107,12 +107,12 @@ void CabinetSimulation::updateFilterCoeffs() {
 
         *chain.get<1>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 180.0f, 0.707f, bodyGain);
 
-        *chain.get<2>().coefficients = *juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 500.0f, 0.8f, 0.8f);
+        *chain.get<2>().coefficients = *juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 600.0f, 0.6f, 1.1f);
 
         float presenceFr = juce::jmap(currentBrightness, 0.0f, 1.0f, 2500.0f, 4000.0f);
         *chain.get<3>().coefficients = *juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, presenceFr, 0.7f, 1.3f);
 
-        *chain.get<4>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 6000.0f, 2.0f);
+        *chain.get<4>().coefficients = *juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 7500.0f, 2.0f);
         };
 
     updateFilters(filterChainLeft);

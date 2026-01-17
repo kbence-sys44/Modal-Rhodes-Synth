@@ -28,7 +28,7 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
     juce::Random keyRNG(midiNoteNumber + 42); //hangonkent fix seed
 
     float hammerRand = 1.0f + (keyRNG.nextFloat() * 0.1f - 0.05f); //kalapacs kemenyseg
-    float detuneRand = 1.0f + (keyRNG.nextFloat() * 0.002f - 0.001f); //detune
+    float detuneRand = 1.0f + (keyRNG.nextFloat() * 0.001f - 0.0005f); //detune
 
     currentFrequency = stretchedFrequency * detuneRand;
 

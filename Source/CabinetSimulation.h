@@ -39,8 +39,8 @@ private:
 
     juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Linear> cabinetReflexion; //a cabinet belso reflexioi
 
-    float reflexionMix = 0.1f;
-    float currentBody = 0.5f;
+    float reflexionMix = 0.2f;
+    float currentBody = 0.7f;
     float currentBrightness = 0.5f;
 
     void updateFilterCoeffs();

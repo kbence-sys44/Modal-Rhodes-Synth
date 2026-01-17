@@ -37,7 +37,16 @@ void HammerModule::triggerHammer(float velocity, float length) {
 
     //kicsi vel -> puha kalapacs, nagy vel -> kemenyebb
     float velocityBrightness = 0.1f + (velocity*0.8f);
-    float baseFreq = 4000.0f * velocityBrightness;
+    float  noteFreq = sampleRate / length;
+    float baseFreq = 0.0f;
+    if (noteFreq > 500.0f) {
+        baseFreq = (8000.0f * velocityBrightness) + (noteFreq * 2.0f);
+    }
+    else {
+        baseFreq = 3000.0f * velocityBrightness;
+    }
+    baseFreq = juce::jlimit(200.0f, 16000.0f, baseFreq);
+
     hammerFilter.setCutoffFrequency(baseFreq);
     hammerFilter.reset();
 
