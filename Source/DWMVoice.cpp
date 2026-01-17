@@ -151,7 +151,7 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     pickupModule.preparePickup(specs);
 
     preamp.prepare(specs);
-    preamp.setDrive(4.0f);
+    preamp.setDrive(3.0f);
 
     tremolo.prepare(specs.sampleRate);
     tremolo.setTremRate(1.5f);
@@ -175,8 +175,8 @@ DWMVoice::ForkMix DWMVoice::calculateForkMix(float frequency, float velocity) {
 
     float normalizedFrequency = juce::jlimit(0.0f, 1.0f, (frequencyLog - minLog) / (maxLog - minLog));
 
-    float defaultTineMix = juce::jmap(normalizedFrequency, 0.25f, 1.0f);
-    float defaultTonebarMix = juce::jmap(normalizedFrequency, 1.0f, 0.25f);
+    float defaultTineMix = juce::jmap(normalizedFrequency, 0.4f, 1.0f);
+    float defaultTonebarMix = juce::jmap(normalizedFrequency, 1.0f, 0.4f);
 
     //velocity is befolyasolja a jo mixet
 

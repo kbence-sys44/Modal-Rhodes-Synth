@@ -51,12 +51,12 @@ void DelayLineModule::setDelayForDelayLine(float delayInSamples, float velocity,
     float targetDelay = (float)sampleRate / frequency;
 
     //lowpass
-    float brightness = juce::jmap(velocity, 0.0f, 1.0f, 15.0f, 45.0f);
+    float brightness = juce::jmap(velocity, 0.0f, 1.0f, 10.0f, 40.0f);
     float cutoffOffset = (delayInSamples > 200.0f) ? 500.0f : 200.0f;
     float cutoff = cutoffOffset + (frequency * brightness);
 
     float lowPassRes = 0.707f; //alapertelmezett
-    lowpassFilter.setCutoffFrequency(juce::jlimit(200.0f, 8000.0f, cutoff));
+    lowpassFilter.setCutoffFrequency(juce::jlimit(400.0f, 5000.0f, cutoff));
     lowpassFilter.setResonance(lowPassRes);
 
     //allpass

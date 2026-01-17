@@ -24,7 +24,7 @@ void PickupModule::preparePickup(const juce::dsp::ProcessSpec& specs) {
     trebleFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 0.7f, 0.9f);
 
     physicalFilter.prepare(specs);
-    physicalFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 3200.0f, 1.1f);
+    physicalFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 2450.0f, 1.1f);
 
     pickupDL.setMaximumDelayInSamples(100);
     pickupDL.prepare(specs);

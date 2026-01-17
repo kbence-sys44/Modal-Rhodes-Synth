@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "DWMVoice.h"
 #include "DWMSound.h"
+#include "CabinetSimulation.h"
 
 //==============================================================================
 /**
@@ -63,6 +64,8 @@ private:
 
     juce::dsp::Reverb reverb;
     juce::dsp::Reverb::Parameters reverbParams;
+
+    CabinetSimulation cabinet;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RhodesDWMAudioProcessor)
 };

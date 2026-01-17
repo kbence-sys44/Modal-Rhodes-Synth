@@ -13,6 +13,10 @@
         <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
         <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
       </GROUP>
+      <FILE id="wsIe5m" name="CabinetSimulation.cpp" compile="1" resource="0"
+            file="Source/CabinetSimulation.cpp"/>
+      <FILE id="mifffa" name="CabinetSimulation.h" compile="0" resource="0"
+            file="Source/CabinetSimulation.h"/>
       <FILE id="HNinPQ" name="Preamp.cpp" compile="1" resource="0" file="Source/Preamp.cpp"/>
       <FILE id="Up8xvS" name="Preamp.h" compile="0" resource="0" file="Source/Preamp.h"/>
       <FILE id="rp7CVY" name="Tremolo.cpp" compile="1" resource="0" file="Source/Tremolo.cpp"/>

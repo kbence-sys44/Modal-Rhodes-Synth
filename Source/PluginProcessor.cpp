@@ -115,6 +115,9 @@ void RhodesDWMAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
         }
     }
 
+    cabinet.prepare(specifications);
+    cabinet.setParameters(0.8f, 0.4f);
+
     reverb.prepare(specifications);
 
     reverbParams.roomSize = 0.2f;
@@ -174,6 +177,8 @@ void RhodesDWMAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 
     juce::dsp::AudioBlock<float> block(buffer);
     juce::dsp::ProcessContextReplacing<float> context(block);
+
+    cabinet.process(context);
     reverb.process(context);
 
 }
