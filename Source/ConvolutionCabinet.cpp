@@ -38,11 +38,12 @@ void ConvolutionCabinet::setParameters(float body, float brightness) {
 void ConvolutionCabinet::process(juce::dsp::ProcessContextReplacing<float>& context) {
     cabinetConv.process(context);
 
-    auto& block = context.getOutputBlock();
+   /* auto& block = context.getOutputBlock();
     for (int ch = 0; ch < block.getNumChannels(); ++ch) {
         auto* samples = block.getChannelPointer(ch);
         for (int i = 0; i < block.getNumSamples(); ++i) {
-            samples[i] = std::tanh(samples[i] * 1.2f);
+            samples[i] = std::tanh(samples[i] * 1.5f);
         }
-    }
+    }*/
+    context.getOutputBlock().multiplyBy(1.5f);
 }

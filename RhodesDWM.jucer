@@ -21,6 +21,8 @@
         <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
         <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
       </GROUP>
+      <FILE id="cvseDu" name="ModalTine.cpp" compile="1" resource="0" file="Source/ModalTine.cpp"/>
+      <FILE id="E60vlF" name="ModalTine.h" compile="0" resource="0" file="Source/ModalTine.h"/>
       <FILE id="GmAFgv" name="ConvolutionCabinet.cpp" compile="1" resource="0"
             file="Source/ConvolutionCabinet.cpp"/>
       <FILE id="wRFyqB" name="ConvolutionCabinet.h" compile="0" resource="0"

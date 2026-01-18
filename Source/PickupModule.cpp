@@ -24,7 +24,7 @@ void PickupModule::preparePickup(const juce::dsp::ProcessSpec& specs) {
     trebleFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 0.7f, 0.9f);
 
     physicalFilter.prepare(specs);
-    physicalFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 2450.0f, 1.1f);
+    physicalFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 5500.0f, 0.8f);
 
     pickupDL.setMaximumDelayInSamples(100);
     pickupDL.prepare(specs);
@@ -60,22 +60,38 @@ void PickupModule::setBaseDelay(float newDelay) {
 
 //a hangszedo fo feldolgozo fuggvenye
 float PickupModule::processSignal(float inputSample) {
+    float driveInput = inputSample * 0.8f * drive;
+
+    float gap = 0.5f;
+    float dist = gap + (driveInput* -0.2f);
+
+    float flux = dist > 0.001 ? (1.0f / dist) : 100.0f;
+
+    float signal = flux - (1.0f / gap);
+    if (signal < -1.0f) signal = -1.0f;
+    else if (signal > 1.0f) signal = 1.0f;
+    else signal = signal - (signal * signal * signal) / 3.0f;
+/*
+    float combStrength = 0.5f;
+    float hollowSample = signal - (lastInputSample * combStrength);
+    lastInputSample = signal;
 
     float circuitNoise = (random.nextFloat() * 2.0f - 1.0f) * 0.002f;
+    float noisyInput = hollowSample + circuitNoise;
 
-    float inputAbs = std::abs(inputSample);
+    float inputAbs = std::abs(noisyInput);
     envelopeFollow = (envelopeFollow * 0.99f) + (inputAbs * 0.01f);
     
     float proximity = 1.0f + (envelopeFollow * 4.0f);
-    float rawSig = inputSample + circuitNoise;
+    float rawSig = noisyInput + circuitNoise;
     float drivenSig = rawSig * drive * proximity;
 
     float x = drivenSig;
-    float sat = std::tanh(x + 0.2f) - 0.2f;
+    float sat = std::tanh(x + 0.2f) - 0.2f;*/
 
     //float polynom = x + (0.45f * x * x) - (0.15f * x * x * x); //asszimetria + szat
     //float magneticSignal = std::tanh(polynom);
 
-    return physicalFilter.processSample(sat) * 0.35f; //kabel szimulacio
+    return physicalFilter.processSample(signal) * 0.5f; //kabel szimulacio
  
 }

@@ -66,18 +66,20 @@ float HammerModule::getNextSample() {
     float env = std::sin(pos * juce::MathConstants<float>::pi);
     remainingSamples--;
 
-    float rawNoise = (random.nextFloat() * 2.0f - 1.0f);
-    
-    //float filteredNoise = (lastOutput * filterCoefficient) + (rawNoise * (1.0f - filterCoefficient));
-    //lastOutput = filteredNoise;
-    float filteredNoise = hammerFilter.processSample(0, rawNoise);
+    //float rawNoise = (random.nextFloat() * 2.0f - 1.0f);
+    //float filteredNoise = hammerFilter.processSample(0, rawNoise);
 
-    float highFreqSound = rawNoise - filteredNoise;
-    float click = highFreqSound * (currentVelocity * currentVelocity) * 2.0f;
+   // float highFreqSound = rawNoise - filteredNoise;
+    //float click = highFreqSound * (currentVelocity * currentVelocity) * 2.0f;
 
-    float output = (filteredNoise + click) * env * currentVelocity;
+    //float output = (filteredNoise + click) * env * currentVelocity;
 
-    return output * 3.0f;
+    float hardness = 1.0f + currentVelocity * 8.0f;
+    float noise = (random.nextFloat() * 2.0f - 1.0f) * 0.5f;
+
+    env = std::pow(env, hardness);
+
+    return (env + noise * 0.2f) * currentVelocity;
 }
 
 bool HammerModule::isHammerActive() const {

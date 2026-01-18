@@ -25,16 +25,26 @@ void ToneBarModule::resetToneBar() {
 }
 
 void ToneBarModule::triggerToneBar(float frequency, float velocity) {
-    //coeff kiszamitasa : 2*cos(2*PI*freq/sr)
-    double omega = juce::MathConstants<double>::twoPi * frequency / sampleRate;
-    oscCoeff = (float)(2.0 * std::cos(omega));
 
-    oscState1 = 0.0f;
-    oscState2 = std::sin(omega)*velocity;
-
+    phaseInc = (frequency / sampleRate) * juce::MathConstants<double>::twoPi;
+    currentPhase = 0.0;
     currentAmplitude = velocity;
-    decayRate = naturalDecay;
+
+    phaseFeedback = velocity * 1.5f;
+
+    float decaySecs = 0.0f;
+    if (frequency < 100.0f) {
+        decaySecs = 6.0f + (velocity * 2.0f);
+    }
+    else if (frequency < 400.0f) {
+        decaySecs = 3.0f + (velocity * 1.0f);
+    }
+    else {
+        decaySecs = 0.8f + (velocity * 0.5f);
+    }
+    decayRate = std::pow(0.001f, 1.0f / (sampleRate * decaySecs));
     isReleased = false;
+    currentAmplitude *= 2.0f;
 }
 
 void ToneBarModule::releaseToneBar() {
@@ -46,35 +56,19 @@ float ToneBarModule::getNextSample() {
 
     if (currentAmplitude < 0.0001f) return 0.0f;
 
-    float nextVal = (oscCoeff * oscState2) - oscState1;
+    float rawSine = std::sin(currentPhase);
+    float output = std::sin(currentPhase);
 
-    oscState1 = oscState2;
-    oscState2 = nextVal;
-
-    oscState1 *= decayRate;
-    oscState2 *= decayRate;
-
-    currentAmplitude *= decayRate;
-
-    return nextVal;
-
-    //regi verzio
-   /* double bend = 0.0;
-    if (sampleCountSinceTrigger < 1000) {
-        bend = (1.0 - (sampleCountSinceTrigger / 1000.0)) * 0.05; // 5%
-    }
-    sampleCountSinceTrigger++;
-
-    float tonebarSample = std::sin(currentPhase * (1.0 + bend)) * currentAmplitude;
-
-    currentPhase += phaseIncrement;
+    currentPhase += phaseInc;
     if (currentPhase >= juce::MathConstants<double>::twoPi) {
         currentPhase -= juce::MathConstants<double>::twoPi;
     }
 
+    output *= currentAmplitude;
     currentAmplitude *= decayRate;
+    phaseFeedback *= 0.9995f;
 
-    return tonebarSample;*/
+    return output;
 }
 
 bool ToneBarModule::isToneBarActive() const

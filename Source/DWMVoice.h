@@ -16,6 +16,7 @@
 #include "PickupModule.h"
 #include "Tremolo.h"
 #include "Preamp.h"
+#include "ModalTine.h"
 
 
 class DWMVoice : public juce::SynthesiserVoice
@@ -45,6 +46,7 @@ private:
     ForkMix currentMix;
 
     DelayLineModule dlModule;
+    ModalTine modalTine;
     HammerModule hammerModule;
     ToneBarModule toneBarModule;
     PickupModule pickupModule;
