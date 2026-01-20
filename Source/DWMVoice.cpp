@@ -14,68 +14,52 @@
 
 void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSound* sound, int currentPitchWheelPosition) {
 
-    float velocityCurve = std::pow(velocity, 3.0f);
-    currentVelocity = velocityCurve;
+    float velocityCurve = std::pow(velocity, 2.0f);
+    currentVelocity = velocity;
 
     //frekvencia kinyerese a midi hangbol
     float frequency = juce::MidiMessage::getMidiNoteInHertz(midiNoteNumber, 440.0);
-    float distanceFromCenter = (float)midiNoteNumber - 60.0;
-    float stretch = 0.0005 * distanceFromCenter * std::abs(distanceFromCenter);//szetcsusztatja a frekvenciakat
-    float stretchedFrequency = frequency * std::pow(2.0f, stretch / 12.0f); //f = f0 * 2^semitones / 12
-
-    currentMix = calculateForkMix(frequency, currentVelocity);
 
     juce::Random keyRNG(midiNoteNumber + 42); //hangonkent fix seed
-
-    float hammerRand = 1.0f + (keyRNG.nextFloat() * 0.1f - 0.05f); //kalapacs kemenyseg
-    float detuneRand = 1.0f + (keyRNG.nextFloat() * 0.001f - 0.0005f); //detune
-
-    currentFrequency = stretchedFrequency * detuneRand;
-
-    float pickupDelay = 14.0f;
-    if (frequency < 200.0f) {
-        pickupDelay = 10.0f + random.nextFloat() * 8.0f;
-    }
-    else {
-        pickupDelay = 6.0f + random.nextFloat() * 4.0f;
-    }
-
-    pickupModule.setBaseDelay(pickupDelay);
+    float detuneRand = 1.0f + (keyRNG.nextFloat() * 0.002f - 0.001f); //detune
+    currentFrequency = frequency * detuneRand;
 
 
-    float bassGain = 1.5f;
+    //travel time
+    float delaySecs = 0.002f + (0.005f * (1.0f - (static_cast<float>(midiNoteNumber) / 127.0f)));
+    float delaySamples = delaySecs / getSampleRate();
 
-    if (currentFrequency > 400.0f) {
-        bassGain = 1.0f;
-    }
-    pickupModule.setBassGain(bassGain);
+   //float bassGain = juce::jmap(currentFrequency, 50.0f, 1000.0f, 1.5f, 1.0f);
+   // pickupModule.setBassGain(bassGain);
 
-    lastHammer = 0.0f;
+    float stiffnessBase = 200000000.0f;
+    float stiffnessMultiplier = std::pow(2.0f, (midiNoteNumber / 12.0f));
+    float currentStiffness = stiffnessBase * stiffnessMultiplier;
 
-    float delaySamples = static_cast<float>(getSampleRate() / currentFrequency);
-    //dlModule.setDelayForDelayLine(delaySamples, currentVelocity, currentFrequency);
+    float massBase = 0.002f;
+    float currentMass = massBase / (1.0f + (midiNoteNumber / 60.0f));
+
+    hammer.setParameters(currentStiffness, currentMass);
+
     modalTine.triggerTine(currentFrequency, currentVelocity);
+    hammer.triggerHammer(currentVelocity, delaySamples);
 
     noteCurrentlyActive = true;
     isKeyHeld = true;
-    triggerThump = true;
-    thumpLevel = currentVelocity * 0.5f;
 
-    
-    hammerModule.triggerHammer(currentVelocity * hammerRand, delaySamples);
-    toneBarModule.triggerToneBar(currentFrequency, currentVelocity);
-
-
+    //triggerThump = true;
 }
 
 void DWMVoice::stopNote(float velocity, bool tailOffAllowed) {
     isKeyHeld = false;
-    toneBarModule.releaseToneBar();
+    //toneBarModule.releaseToneBar();
 
     if (tailOffAllowed) {
         damperActive = true;
         damperEnv = 1.0f;
-        damperNoiseLevel = currentVelocity * 0.3f;
+        damperNoiseLevel = currentVelocity * 0.1f;
+
+        modalTine.damp();
     }
     else {
         noteCurrentlyActive = false;
@@ -89,52 +73,34 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
 
     if (!noteCurrentlyActive) return;
 
+    auto* left = outputBuffer.getWritePointer(0);
+    auto* right = (outputBuffer.getNumChannels() > 1) ? outputBuffer.getWritePointer(1) : nullptr;
+
     for (int sample = 0; sample < numSample; ++sample) {
         
-        float hammerSample = hammerModule.getNextSample();
+        float hammerForce = hammer.getNextSample();
+        float hammerThump = hammer.getThump();
 
-        if (currentFrequency > 600.0f) {
-            float filteredHammer = hammerSample - (lastHammer * 0.95f);
-            lastHammer = hammerSample;
-            hammerSample = filteredHammer * 2.5f;
-        }
+        float tineSignal = modalTine.processSample(hammerForce);
 
-        float hammerInput = hammerSample * 1.1f;
-        float toneBarSample = toneBarModule.getNextSample();
+        float outputSignal = tineSignal *= voiceVolume;    
 
-        /*float feedback = 0.999f;
-        if (currentFrequency > 100.0f) {
-            feedback = 0.999f - (currentFrequency * 0.000010f);
-        }
-        feedback = juce::jmax(0.985f, feedback);
-        float finalFeedback = isKeyHeld ? feedback : 0.8f;*/
+        int index = startSample + sample;
+        left[index] += outputSignal;
+        if (right) right[index] += outputSignal;
 
-        //float tineSample = dlModule.processSample(hammerInput, finalFeedback);
-        float tineSample = modalTine.processSample(hammerInput);
 
-        float rawSample = (tineSample * currentMix.tineMix) - (toneBarSample * currentMix.tonebarMix);
-        //float rawSample = tineSample;
-        float pickupSample = pickupModule.processSignal(rawSample);
-        //float pickupSample = rawSample;
+        //float pickupSample = pickupModule.processSignal(rawInputForPickup);
 
-        float ampedSample = preamp.processSample(pickupSample);
+        //float dampSample = addDamping();
 
-        float dampSample = addDamping(ampedSample);
+        //Stereo stereoOutput = tremolo.process(dampSample);
 
-        Stereo stereoOutput = tremolo.process(dampSample);
-
-        float cleanLeft = dcBlocker.processSample(stereoOutput.left);
-        float cleanRight = dcBlocker.processSample(stereoOutput.right);
-
-        if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(0, startSample + sample, cleanLeft * voiceVolume);
-        }
-        if (outputBuffer.getNumChannels() >= 1) {
-            outputBuffer.addSample(1, startSample + sample, cleanRight * voiceVolume);
-        }
-
-        //hang leallitasi feltetelek
-        if (!hammerModule.isHammerActive() && !toneBarModule.isToneBarActive() && std::abs(pickupSample) < 0.00001f && !isKeyHeld) {
+        //float cleanLeft = dcBlocker.processSample(stereoOutput.left);
+        //float cleanRight = dcBlocker.processSample(stereoOutput.right);
+        
+        //hang leallitasi feltetelek && std::abs(pickupSample) < 0.00001f
+        if (!hammer.isHammerActive() && !isKeyHeld && std::abs(outputSignal < 0.0001f)) {
             noteCurrentlyActive = false;
             clearCurrentNote();
             break;
@@ -144,31 +110,27 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
 }
 
 void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
-
-    //dlModule.setDelayForDelayLine(specs);
     modalTine.prepare(specs);
+    hammer.prepareHammer(specs);
 
-    hammerModule.prepareHammer(specs.sampleRate);
+    //pickupModule.preparePickup(specs);
 
-    toneBarModule.prepareToneBar(specs.sampleRate);
+    //preamp.prepare(specs);
+    //preamp.setDrive(1.2f);
 
-    pickupModule.preparePickup(specs);
+    //tremolo.prepare(specs.sampleRate);
+    //tremolo.setTremRate(1.5f);
+    //tremolo.setDepth(0.7f);
 
-    preamp.prepare(specs);
-    preamp.setDrive(1.2f);
+    //dcBlocker.prepare(specs);
+    //dcBlocker.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass(specs.sampleRate, 10.0f);
 
-    tremolo.prepare(specs.sampleRate);
-    tremolo.setTremRate(1.5f);
-    tremolo.setDepth(0.7f);
-
-    dcBlocker.prepare(specs);
-    dcBlocker.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass(specs.sampleRate, 10.0f);
-
-    damperFilter.prepare(specs);
-    damperFilter.setType(juce::dsp::FirstOrderTPTFilterType::lowpass);
-    damperFilter.setCutoffFrequency(150.0f);
+    //damperFilter.prepare(specs);
+    //damperFilter.setType(juce::dsp::FirstOrderTPTFilterType::lowpass);
+    //damperFilter.setCutoffFrequency(150.0f);
 }
 
+/*
 DWMVoice::ForkMix DWMVoice::calculateForkMix(float frequency, float velocity) {
     ForkMix coeffs;
     coeffs.tineMix = 1.0f;
@@ -186,26 +148,9 @@ DWMVoice::ForkMix DWMVoice::calculateForkMix(float frequency, float velocity) {
         coeffs.tonebarMix = 0.6f;
         coeffs.tineMix = 1.0f;
     }
-
-    /*float frequencyLog = std::log10(frequency);
-    float minLog = std::log10(40.0f); //E1
-    float maxLog = std::log10(3000.0f); //G7
-
-    float normalizedFrequency = juce::jlimit(0.0f, 1.0f, (frequencyLog - minLog) / (maxLog - minLog));
-
-    float defaultTineMix = juce::jmap(normalizedFrequency, 0.4f, 1.0f);
-    float defaultTonebarMix = juce::jmap(normalizedFrequency, 1.0f, 0.4f);
-
-    //velocity is befolyasolja a jo mixet
-
-    float velocityFactor = velocity * velocity;
-    coeffs.tineMix = defaultTineMix * (0.4f + (0.6f * velocityFactor));
-    coeffs.tonebarMix = defaultTonebarMix * (0.8f + (0.4f * velocity));
-    //DBG(defaultTineMix);
-    //DBG(defaultTonebarMix);*/
     
     return coeffs;
-}
+}*/
 
 float DWMVoice::addDamping(float inputSample) {
     float output = inputSample;

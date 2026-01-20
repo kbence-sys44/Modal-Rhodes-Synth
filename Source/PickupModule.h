@@ -29,7 +29,7 @@ private:
 
     float envelopeFollow = 0.0f;
     float lastInputSample = 0.0f;
-    float drive = 2.0f;
+    float drive = 1.5f;
     float baseDelay = 14.0f;
 
     juce::dsp::IIR::Filter<float> bassFilter;

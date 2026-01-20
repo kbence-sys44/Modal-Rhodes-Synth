@@ -15,7 +15,7 @@ void PickupModule::preparePickup(const juce::dsp::ProcessSpec& specs) {
     sampleRate = specs.sampleRate;
     
     bassFilter.prepare(specs);
-    bassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 80.0f, 0.7f, 1.3f);
+    bassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 200.0f, 0.7f, 2.0f);
 
     midFilter.prepare(specs);
     midFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 380.0f, 0.5f, 1.5f);
@@ -24,7 +24,7 @@ void PickupModule::preparePickup(const juce::dsp::ProcessSpec& specs) {
     trebleFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 0.7f, 0.9f);
 
     physicalFilter.prepare(specs);
-    physicalFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 5500.0f, 0.8f);
+    physicalFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 2500.0f, 1.5f);
 
     pickupDL.setMaximumDelayInSamples(100);
     pickupDL.prepare(specs);
@@ -60,38 +60,61 @@ void PickupModule::setBaseDelay(float newDelay) {
 
 //a hangszedo fo feldolgozo fuggvenye
 float PickupModule::processSignal(float inputSample) {
-    float driveInput = inputSample * 0.8f * drive;
+    /*float offset = 0.45f;
+    float position = inputSample + offset;
 
-    float gap = 0.5f;
-    float dist = gap + (driveInput* -0.2f);
+    float cleanSig = position;
+    float drivenSig = cleanSig * (drive * 3.0f);
 
-    float flux = dist > 0.001 ? (1.0f / dist) : 100.0f;
+    float processedSig = std::tanh(drivenSig) + (0.25f * drivenSig * drivenSig);
 
-    float signal = flux - (1.0f / gap);
-    if (signal < -1.0f) signal = -1.0f;
-    else if (signal > 1.0f) signal = 1.0f;
-    else signal = signal - (signal * signal * signal) / 3.0f;
-/*
-    float combStrength = 0.5f;
-    float hollowSample = signal - (lastInputSample * combStrength);
-    lastInputSample = signal;
+    float input = inputSample * drive;
+    float gap = 0.6f;
+    float processedSig = input / (gap + std::abs(input));
 
-    float circuitNoise = (random.nextFloat() * 2.0f - 1.0f) * 0.002f;
-    float noisyInput = hollowSample + circuitNoise;
+    if (processedSig > 0.0f) {
+        processedSig = std::tanh(processedSig * 1.2f);
+    }
+    else {
+        processedSig = std::tanh(processedSig);
+    }
 
-    float inputAbs = std::abs(noisyInput);
-    envelopeFollow = (envelopeFollow * 0.99f) + (inputAbs * 0.01f);
-    
-    float proximity = 1.0f + (envelopeFollow * 4.0f);
-    float rawSig = noisyInput + circuitNoise;
-    float drivenSig = rawSig * drive * proximity;
+    float drivenSig = inputSample * drive;
+    float satSig = 0.0f;
+    if (drivenSig > 1.0f) {
+        satSig = 1.0f;
+    }else if (drivenSig > 0.0f) {
+        //satSig = std::tanh(drivenSig) / (1.0f + 0.2f * drivenSig * drivenSig);
+        satSig = input - (input * input * input) / 3.0f;
+    }
+    else {
+        satSig = std::tanh(drivenSig);
+    }*/
 
-    float x = drivenSig;
-    float sat = std::tanh(x + 0.2f) - 0.2f;*/
+    float clean = inputSample * drive;
 
-    //float polynom = x + (0.45f * x * x) - (0.15f * x * x * x); //asszimetria + szat
-    //float magneticSignal = std::tanh(polynom);
+    //asszimetria
+    float bias = 0.3f;
+    float biasedSig = clean + bias;
 
-    return physicalFilter.processSample(signal) * 0.5f; //kabel szimulacio
+    //magneses sat
+    float satSig;
+    if (biasedSig > 0) {
+        satSig = biasedSig / (1.0f + biasedSig); //lapos
+    }
+    else {
+        satSig = biasedSig / (1.0f + std::abs(biasedSig) * 0.5f); //negativ -hegyes
+    }
+
+    satSig -= (bias / 1.0f + bias); //dc offset eltavolitasa, high pass
+
+    float eqdSignal = bassFilter.processSample(satSig);
+    eqdSignal = midFilter.processSample(eqdSignal);
+
+    float smoothSig = physicalFilter.processSample(eqdSignal);//kabel szimulacio
+
+    float finalSig = trebleFilter.processSample(smoothSig);
+
+    return finalSig; 
  
 }

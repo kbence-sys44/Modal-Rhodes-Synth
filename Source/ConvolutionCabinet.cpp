@@ -16,8 +16,8 @@ void ConvolutionCabinet::prepare(const juce::dsp::ProcessSpec& specs) {
     cabinetConv.prepare(specs);
 
     cabinetConv.loadImpulseResponse(
-        BinaryData::fender_twin_mid_wav,
-        BinaryData::fender_twin_mid_wavSize,
+        BinaryData::fender_deluxe_big_wav,
+        BinaryData::fender_deluxe_big_wavSize,
         juce::dsp::Convolution::Stereo::yes,
         juce::dsp::Convolution::Trim::yes,
         0,
@@ -45,5 +45,5 @@ void ConvolutionCabinet::process(juce::dsp::ProcessContextReplacing<float>& cont
             samples[i] = std::tanh(samples[i] * 1.5f);
         }
     }*/
-    context.getOutputBlock().multiplyBy(1.5f);
+    context.getOutputBlock().multiplyBy(2.0f);
 }

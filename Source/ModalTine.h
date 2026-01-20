@@ -22,9 +22,11 @@ public:
     void triggerTine(float frequency, float velocity);
     float processSample(float inputSample);
 
+    void damp();
+
 private:
     double sampleRate = 44100.0;
-
+    
     struct ModalFilter {
         juce::dsp::StateVariableTPTFilter<float> filter;
         float gain = 0.0f;
@@ -41,7 +43,9 @@ private:
         }
     };
 
-    std::array<ModalFilter, 4> modes;
+    std::array<ModalFilter, 5> modes;
 
     float calculateQ(float frequency, float decayTime); //Q = pi * freq * decay
+
+    JUCE_LEAK_DETECTOR(ModalTine)
 };

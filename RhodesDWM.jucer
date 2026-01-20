@@ -12,6 +12,10 @@
               file="Source/Resources/fender_twin_clean.wav"/>
         <FILE id="ZALttc" name="fender_twin_mid.wav" compile="0" resource="1"
               file="Source/Resources/fender_twin_mid.wav"/>
+        <FILE id="AOKsEm" name="fender_deluxe_big.wav" compile="0" resource="1"
+              file="Source/Resources/fender_deluxe_big.wav"/>
+        <FILE id="EHfhrI" name="fender_deluxe_lean.wav" compile="0" resource="1"
+              file="Source/Resources/fender_deluxe_lean.wav"/>
       </GROUP>
       <GROUP id="{7388A61B-9184-7EF7-EDFB-AD064607BF58}" name="Tests">
         <FILE id="jTqS0e" name="DelayLineTest.cpp" compile="1" resource="0"
@@ -21,6 +25,10 @@
         <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
         <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
       </GROUP>
+      <FILE id="tH918p" name="CrossleyHammer.cpp" compile="1" resource="0"
+            file="Source/CrossleyHammer.cpp"/>
+      <FILE id="sfA8vo" name="CrossleyHammer.h" compile="0" resource="0"
+            file="Source/CrossleyHammer.h"/>
       <FILE id="cvseDu" name="ModalTine.cpp" compile="1" resource="0" file="Source/ModalTine.cpp"/>
       <FILE id="E60vlF" name="ModalTine.h" compile="0" resource="0" file="Source/ModalTine.h"/>
       <FILE id="GmAFgv" name="ConvolutionCabinet.cpp" compile="1" resource="0"

@@ -17,6 +17,7 @@
 #include "Tremolo.h"
 #include "Preamp.h"
 #include "ModalTine.h"
+#include "CrossleyHammer.h"
 
 
 class DWMVoice : public juce::SynthesiserVoice
@@ -45,19 +46,15 @@ private:
     ForkMix DWMVoice::calculateForkMix(float frequency, float velocity);
     ForkMix currentMix;
 
-    DelayLineModule dlModule;
     ModalTine modalTine;
-    HammerModule hammerModule;
-    ToneBarModule toneBarModule;
-    PickupModule pickupModule;
-    Tremolo tremolo;
-    Preamp preamp;
+    //HammerModule hammerModule;
+    CrossleyHammer hammer;
+    //PickupModule pickupModule;
+    //Tremolo tremolo;
+    //Preamp preamp;
     
-
-    float tonebarMix = 0.5f;
     float currentFrequency = 0.0f;
-    float lastHammer = 0.0f;
-    float voiceVolume = 0.5f;
+    float voiceVolume = 0.8f;
     float thumpLevel = 0.5f;
     float currentVelocity = 0.0f;
 

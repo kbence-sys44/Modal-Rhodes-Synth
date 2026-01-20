@@ -23,6 +23,7 @@ public:
 
     bool isHammerActive() const;
     float getVelocity() const;
+    float getThump();
 
 private:
     double sampleRate = 44100.0;
@@ -33,6 +34,10 @@ private:
     float totalDur = 0.0f;
 
     juce::dsp::StateVariableTPTFilter<float> hammerFilter;
+
+    juce::dsp::StateVariableTPTFilter<float> thumpFilter;//puffanas filter
+    float thumpEnv = 0.0f;
+    float thumpDecay = 0.0f;
 
     juce::Random random;
 

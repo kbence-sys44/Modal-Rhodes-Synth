@@ -17,6 +17,11 @@ void HammerModule::prepareHammer(double sRate) {
     hammerFilter.prepare({ sRate, 512, 1 });
     hammerFilter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
     hammerFilter.setResonance(0.5f);
+
+    thumpFilter.prepare({ sRate, 512, 1 });
+    thumpFilter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
+    thumpFilter.setCutoffFrequency(220.0f);
+    thumpFilter.setResonance(0.3f); //tompa
 }
 
 //utes elinditasa
@@ -50,10 +55,12 @@ void HammerModule::triggerHammer(float velocity, float length) {
     hammerFilter.setCutoffFrequency(baseFreq);
     hammerFilter.reset();
 
-    //pitch alapu tompitas
-    //float pitchDamping = juce::jmap(length, 100.0f, 1000.0f, 0.0f, 0.05f);
 
-    //filterCoefficient = juce::jlimit(0.1f, 0.98f, velocityBrightness - pitchDamping);
+    thumpEnv = velocity * 4.0f;
+    float thumpDur = 0.02f + (0.05f * (1.0f - velocity));
+    thumpDecay = std::pow(0.01f, 1.0f / (sampleRate * thumpDur));
+    thumpFilter.reset();
+
 }
 
 
@@ -65,21 +72,15 @@ float HammerModule::getNextSample() {
     float pos = 1.0f - (static_cast<float>(remainingSamples) / static_cast<float>(totalDur));
     float env = std::sin(pos * juce::MathConstants<float>::pi);
     remainingSamples--;
-
-    //float rawNoise = (random.nextFloat() * 2.0f - 1.0f);
-    //float filteredNoise = hammerFilter.processSample(0, rawNoise);
-
-   // float highFreqSound = rawNoise - filteredNoise;
-    //float click = highFreqSound * (currentVelocity * currentVelocity) * 2.0f;
-
-    //float output = (filteredNoise + click) * env * currentVelocity;
+;
 
     float hardness = 1.0f + currentVelocity * 8.0f;
     float noise = (random.nextFloat() * 2.0f - 1.0f) * 0.5f;
 
     env = std::pow(env, hardness);
+    float noiseMix = noise * 0.05f;
 
-    return (env + noise * 0.2f) * currentVelocity;
+    return (env + noiseMix) * currentVelocity;
 }
 
 bool HammerModule::isHammerActive() const {
@@ -88,4 +89,16 @@ bool HammerModule::isHammerActive() const {
 
 float HammerModule::getVelocity() const{
     return currentVelocity;
+}
+
+float HammerModule::getThump() {
+    if (thumpEnv < 0.001f) return 0.0f;
+
+    float rawNoise = (random.nextFloat() * 2.0f) - 1.0f;
+    float thump = thumpFilter.processSample(0, rawNoise);
+    float out = thump * thumpEnv;
+
+    thumpEnv *= thumpDecay;
+
+    return out;
 }

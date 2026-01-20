@@ -122,7 +122,7 @@ void RhodesDWMAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
 
     reverbParams.roomSize = 0.4f;
     reverbParams.damping = 0.8f;
-    reverbParams.wetLevel = 0.35f;
+    reverbParams.wetLevel = 0.2f;
     reverbParams.dryLevel = 0.8f;
     reverbParams.width = 0.3f;
     reverbParams.freezeMode = 0.0f;
