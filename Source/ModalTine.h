@@ -43,7 +43,7 @@ private:
         }
     };
 
-    std::array<ModalFilter, 5> modes;
+    std::array<ModalFilter, 6> modes;
 
     float calculateQ(float frequency, float decayTime); //Q = pi * freq * decay
 

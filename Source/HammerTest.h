@@ -11,7 +11,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "HammerModule.h"
 
 class HammerTest : public juce::UnitTest{
 public:

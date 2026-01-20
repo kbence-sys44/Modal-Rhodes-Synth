@@ -11,85 +11,79 @@
 #include "PickupModule.h"
 
 
-void PickupModule::preparePickup(const juce::dsp::ProcessSpec& specs) {
+void PickupModule::prepare(const juce::dsp::ProcessSpec& specs) {
+
     sampleRate = specs.sampleRate;
-    
-    bassFilter.prepare(specs);
-    bassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 200.0f, 0.7f, 2.0f);
 
-    midFilter.prepare(specs);
-    midFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 380.0f, 0.5f, 1.5f);
+    lowpass.prepare(specs);
+    lowpass.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
+    lowpass.setResonance(0.707f);
 
-    trebleFilter.prepare(specs);
-    trebleFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, 3000.0f, 0.7f, 0.9f);
+    highpass.prepare(specs);
+    highpass.setType(juce::dsp::StateVariableTPTFilterType::highpass);
+    highpass.setResonance(0.707f);
 
-    physicalFilter.prepare(specs);
-    physicalFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 2500.0f, 1.5f);
+    gain.reset(sampleRate, 0.02);
+    symmetryGain.reset(sampleRate, 0.02);
 
-    pickupDL.setMaximumDelayInSamples(100);
-    pickupDL.prepare(specs);
-
-    reset();
+    setParameters(0.0f, 0.0f, 6000.0f);
 }
 
 void PickupModule::reset() {
-    lastInputSample = 0.0f;
-    envelopeFollow = 0.0f;
 
-    bassFilter.reset();
-    midFilter.reset();
-    trebleFilter.reset();
-    physicalFilter.reset();
+    lowpass.reset();
+    highpass.reset();
 
-    pickupDL.setDelay(baseDelay);
-}
-
-void PickupModule::setDrive(float newDrive) {
-
-    drive = juce::jlimit(1.0f, 10.0f, newDrive);
+    gain.reset(sampleRate, 0.02);
+    symmetryGain.reset(sampleRate, 0.02);
 
 }
 
-void PickupModule::setBassGain(float newGain) {
-    bassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 90.0f, 0.6f, newGain);
+void PickupModule::setParameters(float gainDB, float symmetryDB, float lowPassCutoff) {
+
+    gain.setTargetValue(juce::Decibels::decibelsToGain(gainDB));
+    symmetryGain.setTargetValue(juce::Decibels::decibelsToGain(symmetryDB));
+    lowpass.setCutoffFrequency(lowPassCutoff);
+
 }
 
-void PickupModule::setBaseDelay(float newDelay) {
-    baseDelay = juce::jlimit(1.0f, 90.0f, newDelay);
+void PickupModule::setFrequency(float frequency) {
+    if (frequency > 20.0f) {
+        highpass.setCutoffFrequency(frequency);
+    }
+
 }
 
 //a hangszedo fo feldolgozo fuggvenye
-float PickupModule::processSignal(float inputSample) {
-    /*float offset = 0.45f;
-    float position = inputSample + offset;
+float PickupModule::processSample(float inputSample) {
 
-    float cleanSig = position;
-    float drivenSig = cleanSig * (drive * 3.0f);
+    float processedSample = lowpass.processSample(0, inputSample);
 
-    float processedSig = std::tanh(drivenSig) + (0.25f * drivenSig * drivenSig);
+    float currentGain = gain.getNextValue();
+    processedSample *= currentGain;//gain
 
-    float input = inputSample * drive;
-    float gap = 0.6f;
-    float processedSig = input / (gap + std::abs(input));
+    processedSample = std::tanh(processedSample);//soft clipping
 
-    if (processedSig > 0.0f) {
-        processedSig = std::tanh(processedSig * 1.2f);
+    float symmetry = symmetryGain.getNextValue();
+
+    if (symmetry > 1.01f) { //asszimetria
+
+        float path1 = processedSample * symmetry;
+        
+        path1 = std::pow(2.0f, path1);
+        path1 -= 1.0f;
+
+        float path2 = 1.0f / std::pow(2.0f, symmetry);
+        processedSample = path1 * path2;
     }
-    else {
-        processedSig = std::tanh(processedSig);
-    }
 
-    float drivenSig = inputSample * drive;
-    float satSig = 0.0f;
-    if (drivenSig > 1.0f) {
-        satSig = 1.0f;
-    }else if (drivenSig > 0.0f) {
-        //satSig = std::tanh(drivenSig) / (1.0f + 0.2f * drivenSig * drivenSig);
-        satSig = input - (input * input * input) / 3.0f;
-    }
-    else {
-        satSig = std::tanh(drivenSig);
-    }*/
+    
+    processedSample = processedSample - (std::pow(processedSample, 3.0f) / 3.0f);//buzz
+
+    processedSample = highpass.processSample(0, processedSample);
+    return processedSample;
+
+    /*
 
     float clean = inputSample * drive;
 
@@ -116,5 +110,5 @@ float PickupModule::processSignal(float inputSample) {
     float finalSig = trebleFilter.processSample(smoothSig);
 
     return finalSig; 
- 
+ */
 }

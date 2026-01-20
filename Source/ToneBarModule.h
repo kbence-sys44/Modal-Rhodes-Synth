@@ -10,24 +10,29 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include <array>
 
 class ToneBarModule {
 public:
     ToneBarModule() = default;
+    ~ToneBarModule() = default;
 
-    void prepareToneBar(double sampleRate);
-    void resetToneBar();
-    void triggerToneBar(float frequency, float velocity);
-    void releaseToneBar();
-    float getNextSample();
+    void prepare(const juce::dsp::ProcessSpec& specs);
 
-    bool isToneBarActive() const;
+    void reset();
+
+    float processSample(float inputSample);
 
 private:
 
-    double sampleRate = 44100.0;
+    float sampleRate = 44100.0f;
 
-    float oscState1 = 0.0f;
+    std::array<juce::dsp::StateVariableTPTFilter<float>, 2> filters;
+
+    float gainLow = 1.0f;
+    float gainHigh = 1.0f;
+
+   /* float oscState1 = 0.0f;
     float oscState2 = 0.0f;
     float oscCoeff = 0.0f;
 
@@ -42,4 +47,6 @@ private:
 
     const float releaseDecay = 0.95f; //billenytu elengedesekor, gyors
     const float naturalDecay = 0.9998f; //billenytu nyomas alatt, lassu
+
+    */
 };

@@ -14,18 +14,28 @@
 class PickupModule {
 public:
     PickupModule() = default;
+    ~PickupModule() = default;
 
-    void preparePickup(const juce::dsp::ProcessSpec& specs);
+    void prepare(const juce::dsp::ProcessSpec& specs);
     void reset();
 
-    void setDrive(float newDrive);
-    void setBassGain(float newGain);
-    void setBaseDelay(float newDelay);
-
-    float processSignal(float inputSample);
+    float processSample(float inputSample);
+    
+    void setParameters(float gainDB, float symmetryDB, float lowPassCutoff);
+    
+    void setFrequency(float frequency);
+    
 
 private:
     double sampleRate = 44100.0;
+
+    juce::dsp::StateVariableTPTFilter<float> lowpass;
+    juce::dsp::StateVariableTPTFilter<float> highpass;
+
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> gain;
+    juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> symmetryGain;
+
+    float symmetryVariable = 1.0f;
 
     float envelopeFollow = 0.0f;
     float lastInputSample = 0.0f;

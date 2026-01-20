@@ -10,7 +10,6 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "HammerModule.h"
 #include "DelayLineModule.h"
 #include "ToneBarModule.h"
 #include "PickupModule.h"
@@ -47,9 +46,11 @@ private:
     ForkMix currentMix;
 
     ModalTine modalTine;
-    //HammerModule hammerModule;
     CrossleyHammer hammer;
-    //PickupModule pickupModule;
+    PickupModule pickup;
+    ToneBarModule tonebar;
+    //HammerModule hammerModule;
+    
     //Tremolo tremolo;
     //Preamp preamp;
     

@@ -42,11 +42,13 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
     hammer.setParameters(currentStiffness, currentMass);
 
     modalTine.triggerTine(currentFrequency, currentVelocity);
-    hammer.triggerHammer(currentVelocity, delaySamples);
+    hammer.triggerHammer(currentVelocity, delaySamples, midiNoteNumber);
+    pickup.setFrequency(currentFrequency);
 
     noteCurrentlyActive = true;
     isKeyHeld = true;
 
+    tonebar.reset();
     //triggerThump = true;
 }
 
@@ -83,7 +85,14 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
 
         float tineSignal = modalTine.processSample(hammerForce);
 
-        float outputSignal = tineSignal *= voiceVolume;    
+        float tbInput = (hammerForce * 0.4f) + (hammerThump * -0.6f);
+        float bodySignal = tonebar.processSample(tbInput);
+
+        float rawSignal = tineSignal + (bodySignal * 0.8);
+
+        float pickupSignal = pickup.processSample(rawSignal);
+
+        float outputSignal = pickupSignal *= voiceVolume;
 
         int index = startSample + sample;
         left[index] += outputSignal;
@@ -110,8 +119,12 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
 }
 
 void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
+
     modalTine.prepare(specs);
     hammer.prepareHammer(specs);
+    pickup.prepare(specs);
+
+    pickup.setParameters(12.0f, 6.0f, 2500.0f);
 
     //pickupModule.preparePickup(specs);
 

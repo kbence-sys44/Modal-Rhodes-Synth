@@ -21,7 +21,7 @@ public:
 	
     void prepareHammer(const juce::dsp::ProcessSpec& specs);
 
-    void triggerHammer(float velocity, float delayInSamples);
+    void triggerHammer(float velocity, float delayInSamples, int noteNum);
 
     float getNextSample();
 
@@ -45,6 +45,9 @@ private:
     float exponent = 2.5f; // a filc linearitasa, 1 lin, 3 kemenyedo
     float damping = 0.8f; //energia elnyeles
     float thumpSig = 0.0f;
+
+    juce::Random random;
+    juce::dsp::IIR::Filter<float> thumpFilter;
 
     JUCE_LEAK_DETECTOR(CrossleyHammer)
 };

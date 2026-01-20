@@ -25,7 +25,7 @@ void HammerModule::prepareHammer(double sRate) {
 }
 
 //utes elinditasa
-void HammerModule::triggerHammer(float velocity, float length) {
+void HammerModule::triggerHammer(float velocity, float length, int noteNum) {
 
     //a kalapacs hossza kb 60%-a hurnak
     float baseLength = length * 0.6f;
@@ -59,6 +59,10 @@ void HammerModule::triggerHammer(float velocity, float length) {
     thumpEnv = velocity * 4.0f;
     float thumpDur = 0.02f + (0.05f * (1.0f - velocity));
     thumpDecay = std::pow(0.01f, 1.0f / (sampleRate * thumpDur));
+
+    
+
+    
     thumpFilter.reset();
 
 }

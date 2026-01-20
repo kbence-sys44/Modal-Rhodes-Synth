@@ -10,6 +10,40 @@
 
 #include "ToneBarModule.h"
 
+void ToneBarModule::prepare(const juce::dsp::ProcessSpec& specs) {
+    for (auto& f : filters) {
+        f.prepare(specs);
+        f.setType(juce::dsp::StateVariableTPTFilterType::bandpass);
+    }
+
+    filters[0].setCutoffFrequency(150.0f);
+    filters[0].setResonance(1.0f);
+
+    filters[1].setCutoffFrequency(450.0f);
+    filters[1].setResonance(2.0f);
+
+    gainLow = 2.0f;
+    gainHigh = 4.0f;
+
+}
+
+void ToneBarModule::reset() {
+    for (auto& f : filters) f.reset();
+}
+
+float ToneBarModule::processSample(float inputSample) {
+    float output = 0.0f;
+
+    float out1 = filters[0].processSample(0, inputSample);
+    float out2 = filters[1].processSample(0, inputSample);
+
+    output = (out1 * gainLow) + (out2 * gainHigh);
+
+    return output;
+}
+
+
+/*
 void ToneBarModule::prepareToneBar(double sampleRate) {
     this->sampleRate = sampleRate;
     resetToneBar();
@@ -74,4 +108,4 @@ float ToneBarModule::getNextSample() {
 bool ToneBarModule::isToneBarActive() const
 {
     return currentAmplitude > 0.0001f;
-}
+}*/
