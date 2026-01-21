@@ -36,7 +36,7 @@ void ModalTine::prepare(const juce::dsp::ProcessSpec& specs) {
     modes[15].frequencyRatio = 16.0f;
 
     //fix frekvencia
-    modes[16].frequencyRatio = 0.0f;
+    modes[16].frequencyRatio = 1.0f;
 
     for (auto& mode : modes) {
         mode.prepare(specs);
@@ -54,26 +54,28 @@ void ModalTine::triggerTine(float frequency, float velocity) {
     }
     float baseDecay = juce::jmap(frequency, 40.0f, 2000.0f, 8.0f, 1.5f);
 
+    float velMultiplier = 0.5f + (velocity * 1.5f);
+
     configSpikes(0, frequency, 1.0f, 0.8f, 1.0f); //c2
-    configSpikes(1, frequency, baseDecay, 1.0f, 1.0f); //c3
-    configSpikes(2, frequency, baseDecay, 0.7f, 0.8f); //c4
-    configSpikes(3, frequency, baseDecay, 0.5f, 0.6f); //g4
-    configSpikes(4, frequency, baseDecay, 0.4f, 0.5f); //c5
-    configSpikes(5, frequency, baseDecay, 0.3f, 0.4f); //e5
+    configSpikes(1, frequency, baseDecay, 2.3f, 1.0f); //c3
+    configSpikes(2, frequency, baseDecay, 1.3f * velMultiplier, 0.8f); //c4
+    configSpikes(3, frequency, baseDecay, 0.1f * velMultiplier, 0.6f); //g4
+    configSpikes(4, frequency, baseDecay, 0.1f * velMultiplier, 0.5f); //c5
+    configSpikes(5, frequency, baseDecay, 0.2f * velMultiplier, 0.4f); //e5
 
-    configSpikes(6, frequency, baseDecay, 0.25f, 0.35f); // 627
-    configSpikes(7, frequency, 0.15f, 0.15f, 1.0f); // 1755
-    configSpikes(8, frequency, 0.08f, 0.08f, 1.0f); // 3439
+    configSpikes(6, frequency, baseDecay, 0.15f, 0.35f); // 627
+    configSpikes(7, frequency, 0.15f, 0.10f, 1.0f); // 1755
+    configSpikes(8, frequency, 0.08f, 0.06f, 1.0f); // 3439
 
-    configSpikes(9, frequency, baseDecay, 0.2f, 0.3f); //a#5
-    configSpikes(10, frequency, 0.25f, 0.15f, 1.0f); //c6
-    configSpikes(11, frequency, 0.20f, 0.12f, 1.0f); //d6
-    configSpikes(12, frequency, 0.18f, 0.10f, 1.0f); //e6
-    configSpikes(13, frequency, 0.15f, 0.08f, 1.0f); //g6
-    configSpikes(14, frequency, 0.12f, 0.06f, 1.0f); //a#6
-    configSpikes(15, frequency, 0.10f, 0.04f, 1.0f); //c7
+    configSpikes(9, frequency, baseDecay, 0.20f, 0.3f); //a#5
+    configSpikes(10, frequency, 0.25f, 0.10f, 1.0f); //c6
+    configSpikes(11, frequency, 0.20f, 0.10f, 1.0f); //d6
+    configSpikes(12, frequency, 0.18f, 0.08f, 1.0f); //e6
+    configSpikes(13, frequency, 0.15f, 0.06f, 1.0f); //g6
+    configSpikes(14, frequency, 0.12f, 0.03f, 1.0f); //a#6
+    configSpikes(15, frequency, 0.10f, 0.01f, 1.0f); //c7
 
-    configSpikes(16, 400.0f, 1.0f, 0.0f, 1.0f);
+    configSpikes(16, 80.0f, baseDecay, 1.3f, 1.0f);
 
 
 
@@ -97,7 +99,7 @@ void ModalTine::configSpikes(int index, float frequency, float decay, float gain
 
     float f = frequency * modes[index].frequencyRatio;
 
-    if (f > sampleRate * 0.45f && modes[index].frequencyRatio >= 8.0f ) {
+    if (f > sampleRate * 0.48f) {
         modes[index].gain = 0.0f;
         return;
     }
@@ -120,7 +122,9 @@ float ModalTine::calculateQ(float frequency, float decayTime) {
     if (frequency < 20.0f) frequency = 20.0f;
 
     float rad = 2.0f * juce::MathConstants<float>::pi * frequency;
-    float q = decayTime * rad / 6.91f;
+
+    float qMultiplier = juce::jmap(frequency, 40.0f, 1500.0f, 0.1f, 1.0f);
+    float q = decayTime * rad / 6.91f * qMultiplier;
 
     return juce::jlimit(0.5f, 800.0f, q);
 }

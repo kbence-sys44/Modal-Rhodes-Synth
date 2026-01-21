@@ -10,7 +10,6 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "DelayLineModule.h"
 #include "ToneBarModule.h"
 #include "PickupModule.h"
 #include "Tremolo.h"
@@ -49,9 +48,7 @@ private:
     CrossleyHammer hammer;
     PickupModule pickup;
     ToneBarModule tonebar;
-    //HammerModule hammerModule;
-    
-    //Tremolo tremolo;
+    Tremolo tremolo;
     //Preamp preamp;
     
     float currentFrequency = 0.0f;

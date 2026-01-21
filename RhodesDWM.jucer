@@ -35,10 +35,6 @@
             file="Source/ConvolutionCabinet.cpp"/>
       <FILE id="wRFyqB" name="ConvolutionCabinet.h" compile="0" resource="0"
             file="Source/ConvolutionCabinet.h"/>
-      <FILE id="wsIe5m" name="CabinetSimulation.cpp" compile="1" resource="0"
-            file="Source/CabinetSimulation.cpp"/>
-      <FILE id="mifffa" name="CabinetSimulation.h" compile="0" resource="0"
-            file="Source/CabinetSimulation.h"/>
       <FILE id="HNinPQ" name="Preamp.cpp" compile="1" resource="0" file="Source/Preamp.cpp"/>
       <FILE id="Up8xvS" name="Preamp.h" compile="0" resource="0" file="Source/Preamp.h"/>
       <FILE id="rp7CVY" name="Tremolo.cpp" compile="1" resource="0" file="Source/Tremolo.cpp"/>
@@ -52,13 +48,6 @@
       <FILE id="hDiaBj" name="DWMSound.h" compile="0" resource="0" file="Source/DWMSound.h"/>
       <FILE id="ymCcc0" name="DWMVoice.cpp" compile="1" resource="0" file="Source/DWMVoice.cpp"/>
       <FILE id="qnQheu" name="DWMVoice.h" compile="0" resource="0" file="Source/DWMVoice.h"/>
-      <FILE id="SAYRO9" name="HammerModule.cpp" compile="1" resource="0"
-            file="Source/HammerModule.cpp"/>
-      <FILE id="fzlNPK" name="HammerModule.h" compile="0" resource="0" file="Source/HammerModule.h"/>
-      <FILE id="u7AO1m" name="DelayLineModule.cpp" compile="1" resource="0"
-            file="Source/DelayLineModule.cpp"/>
-      <FILE id="FWW9u5" name="DelayLineModule.h" compile="0" resource="0"
-            file="Source/DelayLineModule.h"/>
       <FILE id="oCKNxS" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="IR7Ys0" name="PluginProcessor.h" compile="0" resource="0"

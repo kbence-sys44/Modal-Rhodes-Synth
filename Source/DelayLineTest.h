@@ -11,7 +11,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "DelayLineModule.h"
 
 class DelayLineTest : public juce::UnitTest
 {

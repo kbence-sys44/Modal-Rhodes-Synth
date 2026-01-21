@@ -85,23 +85,19 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
 
         float tineSignal = modalTine.processSample(hammerForce);
 
-        float tbInput = (hammerForce * 0.2f) + (hammerThump * 0.1f);
+        float tbInput = (hammerForce * 0.4f) + (hammerThump * 0.6);
         float bodySignal = tonebar.processSample(tbInput);
 
         float rawSignal = tineSignal + bodySignal;
 
         float pickupSignal = pickup.processSample(rawSignal);
 
-        float outputSignal = pickupSignal *= voiceVolume;
+        Stereo tremoloOutput = tremolo.process(pickupSignal);
 
         int index = startSample + sample;
-        left[index] += outputSignal;
-        if (right) right[index] += outputSignal;
+        left[index] += tremoloOutput.left * voiceVolume;
+        if (right) right[index] += tremoloOutput.right * voiceVolume;
 
-
-        //float pickupSample = pickupModule.processSignal(rawInputForPickup);
-
-        //float dampSample = addDamping();
 
         //Stereo stereoOutput = tremolo.process(dampSample);
 
@@ -109,7 +105,7 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         //float cleanRight = dcBlocker.processSample(stereoOutput.right);
         
         //hang leallitasi feltetelek && std::abs(pickupSample) < 0.00001f
-        if (!hammer.isHammerActive() && !isKeyHeld && std::abs(outputSignal < 0.0001f)) {
+        if (!hammer.isHammerActive() && !isKeyHeld && std::abs(pickupSignal < 0.00001f)) {
             noteCurrentlyActive = false;
             clearCurrentNote();
             break;
@@ -122,18 +118,19 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
 
     modalTine.prepare(specs);
     hammer.prepareHammer(specs);
-    pickup.prepare(specs);
 
+    pickup.prepare(specs);
     pickup.setParameters(10.0f, 4.0f, 5000.0f);
 
-    //pickupModule.preparePickup(specs);
+    tremolo.prepare(specs.sampleRate);
+    tremolo.setTremRate(1.4f);
+    tremolo.setDepth(0.8f);
+
 
     //preamp.prepare(specs);
     //preamp.setDrive(1.2f);
 
-    //tremolo.prepare(specs.sampleRate);
-    //tremolo.setTremRate(1.5f);
-    //tremolo.setDepth(0.7f);
+    
 
     //dcBlocker.prepare(specs);
     //dcBlocker.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass(specs.sampleRate, 10.0f);

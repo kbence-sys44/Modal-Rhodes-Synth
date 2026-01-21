@@ -22,8 +22,8 @@ RhodesDWMAudioProcessor::RhodesDWMAudioProcessor()
                        )
 #endif
 {
-    auto forcelink = &delayLineTestInstance;
-    auto forcelink2 = &hammerTestInstance;
+   // auto forcelink = &delayLineTestInstance;
+   // auto forcelink2 = &hammerTestInstance;
 
     //16 hang hozzaadasa (polifonia)
     for (int i = 0; i < 16; ++i) {
@@ -116,7 +116,6 @@ void RhodesDWMAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     }
 
     cabinet.prepare(specifications);
-    //cabinet.setParameters(0.8f, 0.4f);
 
     reverb.prepare(specifications);
 
@@ -124,7 +123,7 @@ void RhodesDWMAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     reverbParams.damping = 0.8f;
     reverbParams.wetLevel = 0.2f;
     reverbParams.dryLevel = 0.8f;
-    reverbParams.width = 0.3f;
+    reverbParams.width = 0.4f;
     reverbParams.freezeMode = 0.0f;
 
     reverb.setParameters(reverbParams);
