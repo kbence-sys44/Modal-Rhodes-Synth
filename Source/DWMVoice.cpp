@@ -37,7 +37,7 @@ void DWMVoice::startNote(int midiNoteNumber, float velocity, juce::SynthesiserSo
     float currentStiffness = stiffnessBase * stiffnessMultiplier;
 
     float massBase = 0.002f;
-    float currentMass = massBase / (1.0f + (midiNoteNumber / 60.0f));
+    float currentMass = massBase / (1.0f + (midiNoteNumber / 48.0f));
 
     hammer.setParameters(currentStiffness, currentMass);
 
@@ -85,10 +85,10 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
 
         float tineSignal = modalTine.processSample(hammerForce);
 
-        float tbInput = (hammerForce * 0.4f) + (hammerThump * -0.6f);
+        float tbInput = (hammerForce * 0.2f) + (hammerThump * 0.1f);
         float bodySignal = tonebar.processSample(tbInput);
 
-        float rawSignal = tineSignal + (bodySignal * 0.8);
+        float rawSignal = tineSignal + bodySignal;
 
         float pickupSignal = pickup.processSample(rawSignal);
 
@@ -124,7 +124,7 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     hammer.prepareHammer(specs);
     pickup.prepare(specs);
 
-    pickup.setParameters(12.0f, 6.0f, 2500.0f);
+    pickup.setParameters(10.0f, 4.0f, 5000.0f);
 
     //pickupModule.preparePickup(specs);
 

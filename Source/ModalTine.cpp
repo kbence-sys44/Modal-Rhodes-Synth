@@ -13,13 +13,30 @@
 void ModalTine::prepare(const juce::dsp::ProcessSpec& specs) {
     sampleRate = specs.sampleRate;
 
-    modes[0].frequencyRatio = 1.0f;
-    modes[1].frequencyRatio = 2.0f;
-    modes[2].frequencyRatio = 6.27f;
-    modes[3].frequencyRatio = 17.55f;
-    modes[4].frequencyRatio = 34.39f;
+    //harmonikusok
+    modes[0].frequencyRatio = 0.5f; 
+    modes[1].frequencyRatio = 1.0f;//alaphang
+    modes[2].frequencyRatio = 2.0f;
+    modes[3].frequencyRatio = 3.0f;
+    modes[4].frequencyRatio = 4.0f;
+    modes[5].frequencyRatio = 5.0f;
 
-    modes[5].frequencyRatio = 0.0f;
+    //inharmonikusok
+    modes[6].frequencyRatio = 6.27f; //todo - ez frekvencia alapjan mas 
+    modes[7].frequencyRatio = 17.55f;
+    modes[8].frequencyRatio = 34.39f;
+
+    //karakter, csillogas
+    modes[9].frequencyRatio = 7.0f;
+    modes[10].frequencyRatio = 8.0f;
+    modes[11].frequencyRatio = 9.0f;
+    modes[12].frequencyRatio = 10.0f;
+    modes[13].frequencyRatio = 12.0f;
+    modes[14].frequencyRatio = 14.0f;
+    modes[15].frequencyRatio = 16.0f;
+
+    //fix frekvencia
+    modes[16].frequencyRatio = 0.0f;
 
     for (auto& mode : modes) {
         mode.prepare(specs);
@@ -35,68 +52,31 @@ void ModalTine::triggerTine(float frequency, float velocity) {
     for (auto& mode : modes) {
         mode.filter.reset();
     }
+    float baseDecay = juce::jmap(frequency, 40.0f, 2000.0f, 8.0f, 1.5f);
 
-    //alaphang
-    float f0 = frequency * modes[0].frequencyRatio;
-    float decay0 = juce::jmap(frequency, 20.0f, 2000.0f, 15.0f, 3.0f);
+    configSpikes(0, frequency, 1.0f, 0.8f, 1.0f); //c2
+    configSpikes(1, frequency, baseDecay, 1.0f, 1.0f); //c3
+    configSpikes(2, frequency, baseDecay, 0.7f, 0.8f); //c4
+    configSpikes(3, frequency, baseDecay, 0.5f, 0.6f); //g4
+    configSpikes(4, frequency, baseDecay, 0.4f, 0.5f); //c5
+    configSpikes(5, frequency, baseDecay, 0.3f, 0.4f); //e5
 
-    modes[0].filter.setCutoffFrequency(f0);
-    modes[0].filter.setResonance(calculateQ(f0, decay0) * 0.4f);
-    modes[0].gain = 1.8f;
+    configSpikes(6, frequency, baseDecay, 0.25f, 0.35f); // 627
+    configSpikes(7, frequency, 0.15f, 0.15f, 1.0f); // 1755
+    configSpikes(8, frequency, 0.08f, 0.08f, 1.0f); // 3439
 
-    //
-    float f1 = frequency * modes[1].frequencyRatio;
-    float decay1 = decay0 * 0.7f;
+    configSpikes(9, frequency, baseDecay, 0.2f, 0.3f); //a#5
+    configSpikes(10, frequency, 0.25f, 0.15f, 1.0f); //c6
+    configSpikes(11, frequency, 0.20f, 0.12f, 1.0f); //d6
+    configSpikes(12, frequency, 0.18f, 0.10f, 1.0f); //e6
+    configSpikes(13, frequency, 0.15f, 0.08f, 1.0f); //g6
+    configSpikes(14, frequency, 0.12f, 0.06f, 1.0f); //a#6
+    configSpikes(15, frequency, 0.10f, 0.04f, 1.0f); //c7
 
-    if (f1 > sampleRate * 0.45f) modes[1].gain = 0.0f; //nyquist limit
-    else {
-        modes[1].filter.setCutoffFrequency(f1);
-        modes[1].filter.setResonance(calculateQ(f1, decay1));
-        modes[1].gain = 1.2f;
-    }
-
-    //bell
-    float f2 = frequency * modes[2].frequencyRatio;
-    float decay2 = juce::jmap(frequency, 40.0f, 3000.0f, 5.0f, 0.5f);
-
-    if (f2 > sampleRate * 0.45f) modes[2].gain = 0.0f; //nyquist limit
-    else {
-        modes[2].filter.setCutoffFrequency(f2);
-        modes[2].filter.setResonance(calculateQ(f2, decay2));
-        modes[2].gain = 0.2f;
-    }
-
-    //mode 2 - metallic click
-    float f3 = frequency * modes[3].frequencyRatio;
-    float decay3 = 0.15f;
+    configSpikes(16, 400.0f, 1.0f, 0.0f, 1.0f);
 
 
-    if (f3 > sampleRate * 0.45f) modes[3].gain = 0.0f;
-    else {
-        modes[3].filter.setCutoffFrequency(f3);
-        modes[3].filter.setResonance(calculateQ(f3, decay3));
-        modes[3].gain = 0.15f;
-    }
 
-    //air
-    float f4 = frequency * modes[4].frequencyRatio;
-    float decay4 = 0.08f;
-
-    if (f4 > sampleRate * 0.45f) modes[4].gain = 0.0f;
-    else {
-        modes[4].filter.setCutoffFrequency(f4);
-        modes[4].filter.setResonance(calculateQ(f4, decay4));
-        modes[4].gain = 0.1f;
-    }
-
-    //body
-    float bodyFreq = 400.0f;
-    float bodyQ = 0.4f;
-
-    
-    modes[5].filter.setCutoffFrequency(bodyFreq);
-    modes[5].filter.setResonance(bodyQ);
-    modes[5].gain = 0.0f;
 
     //reset();
 }
@@ -111,6 +91,28 @@ float ModalTine::processSample(float inputSample) {
     }
 
     return output * 1.0f;
+}
+
+void ModalTine::configSpikes(int index, float frequency, float decay, float gain, float QMulti) {
+
+    float f = frequency * modes[index].frequencyRatio;
+
+    if (f > sampleRate * 0.45f && modes[index].frequencyRatio >= 8.0f ) {
+        modes[index].gain = 0.0f;
+        return;
+    }
+
+    modes[index].filter.setCutoffFrequency(f);
+    modes[index].filter.setResonance(calculateQ(f,decay) * QMulti);
+
+    float lowEndBoost = 1.0f;
+    if (f < 300.0f) {
+        lowEndBoost = 300.0f / f;
+    }
+    lowEndBoost = juce::jmin(lowEndBoost, 12.0f);
+
+    modes[index].gain = gain * lowEndBoost;
+
 }
 
 float ModalTine::calculateQ(float frequency, float decayTime) {

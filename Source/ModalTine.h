@@ -43,9 +43,10 @@ private:
         }
     };
 
-    std::array<ModalFilter, 6> modes;
+    std::array<ModalFilter, 17> modes;
 
     float calculateQ(float frequency, float decayTime); //Q = pi * freq * decay
+    void configSpikes(int index, float frequency, float decay, float gain, float QMulti);
 
     JUCE_LEAK_DETECTOR(ModalTine)
 };

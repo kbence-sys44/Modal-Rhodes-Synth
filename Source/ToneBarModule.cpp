@@ -16,14 +16,18 @@ void ToneBarModule::prepare(const juce::dsp::ProcessSpec& specs) {
         f.setType(juce::dsp::StateVariableTPTFilterType::bandpass);
     }
 
-    filters[0].setCutoffFrequency(150.0f);
-    filters[0].setResonance(1.0f);
+    filters[0].setCutoffFrequency(60.0f);
+    filters[0].setResonance(1.5f);
 
-    filters[1].setCutoffFrequency(450.0f);
-    filters[1].setResonance(2.0f);
+    filters[1].setCutoffFrequency(180.0f);
+    filters[1].setResonance(0.8f);
 
-    gainLow = 2.0f;
-    gainHigh = 4.0f;
+    filters[2].setCutoffFrequency(400.0f);
+    filters[2].setResonance(1.2f);
+
+    gainSub = 6.0f;
+    gainLow = 3.0f;
+    gainHigh = 2.0f;
 
 }
 
@@ -34,10 +38,11 @@ void ToneBarModule::reset() {
 float ToneBarModule::processSample(float inputSample) {
     float output = 0.0f;
 
-    float out1 = filters[0].processSample(0, inputSample);
-    float out2 = filters[1].processSample(0, inputSample);
+    float outSub = filters[0].processSample(0, inputSample) * gainSub;
+    float outBody = filters[1].processSample(0, inputSample) * gainLow;
+    float outKnock = filters[2].processSample(0, inputSample) * gainHigh;
 
-    output = (out1 * gainLow) + (out2 * gainHigh);
+    output = outSub + outBody + outKnock;
 
     return output;
 }

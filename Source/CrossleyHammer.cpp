@@ -90,7 +90,7 @@ bool CrossleyHammer::isHammerActive() const {
 float CrossleyHammer::getThump() {
     float noise = (random.nextFloat() * 2.0f) - 1.0f;
 
-    float noiseBurst = noise * force * 0.5f;
+    float noiseBurst = noise * force * 0.3f;
 
     return thumpFilter.processSample(noiseBurst);
 }

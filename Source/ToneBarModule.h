@@ -27,8 +27,9 @@ private:
 
     float sampleRate = 44100.0f;
 
-    std::array<juce::dsp::StateVariableTPTFilter<float>, 2> filters;
+    std::array<juce::dsp::StateVariableTPTFilter<float>, 3> filters;
 
+    float gainSub = 1.0f;
     float gainLow = 1.0f;
     float gainHigh = 1.0f;
 
