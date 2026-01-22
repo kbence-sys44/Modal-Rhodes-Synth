@@ -63,17 +63,17 @@ void ModalTine::triggerTine(float frequency, float velocity) {
     configSpikes(4, frequency, baseDecay, 0.1f * velMultiplier, 0.5f); //c5
     configSpikes(5, frequency, baseDecay, 0.2f * velMultiplier, 0.4f); //e5
 
-    configSpikes(6, frequency, baseDecay, 0.15f, 0.35f); // 627
-    configSpikes(7, frequency, 0.15f, 0.10f, 1.0f); // 1755
-    configSpikes(8, frequency, 0.08f, 0.06f, 1.0f); // 3439
+    configSpikes(6, frequency, baseDecay, 0.10f, 0.35f); // 627
+    configSpikes(7, frequency, 0.15f, 0.05f, 1.0f); // 1755
+    configSpikes(8, frequency, 0.08f, 0.03f, 1.0f); // 3439
 
-    configSpikes(9, frequency, baseDecay, 0.20f, 0.3f); //a#5
-    configSpikes(10, frequency, 0.25f, 0.10f, 1.0f); //c6
-    configSpikes(11, frequency, 0.20f, 0.10f, 1.0f); //d6
-    configSpikes(12, frequency, 0.18f, 0.08f, 1.0f); //e6
-    configSpikes(13, frequency, 0.15f, 0.06f, 1.0f); //g6
-    configSpikes(14, frequency, 0.12f, 0.03f, 1.0f); //a#6
-    configSpikes(15, frequency, 0.10f, 0.01f, 1.0f); //c7
+    configSpikes(9, frequency, baseDecay, 0.10f, 0.3f); //a#5
+    configSpikes(10, frequency, 0.25f, 0.05f, 1.0f); //c6
+    configSpikes(11, frequency, 0.20f, 0.05f, 1.0f); //d6
+    configSpikes(12, frequency, 0.18f, 0.04f, 1.0f); //e6
+    configSpikes(13, frequency, 0.15f, 0.03f, 1.0f); //g6
+    configSpikes(14, frequency, 0.12f, 0.015f, 1.0f); //a#6
+    configSpikes(15, frequency, 0.10f, 0.005f, 1.0f); //c7
 
     configSpikes(16, 80.0f, baseDecay, 1.3f, 1.0f);
 

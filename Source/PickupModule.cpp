@@ -49,7 +49,7 @@ void PickupModule::setParameters(float gainDB, float symmetryDB, float lowPassCu
 
 void PickupModule::setFrequency(float frequency) {
     if (frequency > 20.0f) {
-        highpass.setCutoffFrequency(frequency);
+        highpass.setCutoffFrequency(frequency *0.2f);
     }
 
 }

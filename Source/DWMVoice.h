@@ -13,7 +13,6 @@
 #include "ToneBarModule.h"
 #include "PickupModule.h"
 #include "Tremolo.h"
-#include "Preamp.h"
 #include "ModalTine.h"
 #include "CrossleyHammer.h"
 
@@ -49,7 +48,6 @@ private:
     PickupModule pickup;
     ToneBarModule tonebar;
     Tremolo tremolo;
-    //Preamp preamp;
     
     float currentFrequency = 0.0f;
     float voiceVolume = 0.8f;

@@ -14,32 +14,34 @@
 class Preamp {
 public:
     Preamp() = default;
+    ~Preamp() = default;
     
     void prepare(const juce::dsp::ProcessSpec& specs);
     void reset();
 
+    void process(juce::dsp::ProcessContextReplacing<float>& context);
+
     void setDrive(float newDrive);
     void setBassGain(float newBassGain);
     void setTrebleGain(float newTrebleGain);
-    void setVolume(float newVolume);
+    void setOutputLevel(float newDB);
 
-    float processSample(float inputSample);
-
+    
 private:
-    void updateFilters();
-
+    float applySat(float inputSample);
     float sampleRate = 44100.0f;
+    const float saturationBias = 0.25f;
 
-    float drive = 2.0f;
-    float outputVolume = 1.0f;
-    float bassGain = 1.3f;
-    float trebleGain = 0.7f;
+    juce::dsp::Gain<float> inputGain;
+    juce::dsp::Gain<float> outputGain;
 
-    juce::dsp::IIR::Filter<float> bassFilter;
-    juce::dsp::IIR::Filter<float> trebleFilter;
+    
 
-    juce::dsp::StateVariableTPTFilter<float> dcBlocker;
+    using FilterType = juce::dsp::IIR::Filter<float>;
+    using CoeffsType = juce::dsp::IIR::Coefficients<float>;
 
-    //float prevInput = 0.0f;
-    //float prevOutput = 0.0f;
+    juce::dsp::ProcessorDuplicator<FilterType, CoeffsType> bassFilter;
+    juce::dsp::ProcessorDuplicator<FilterType, CoeffsType> trebleFilter;
+
+    juce::dsp::ProcessorDuplicator<FilterType, CoeffsType> dcBlocker;
 };

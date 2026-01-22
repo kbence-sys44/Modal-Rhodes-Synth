@@ -115,6 +115,13 @@ void RhodesDWMAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
         }
     }
 
+    preamp.prepare(specifications);
+
+    preamp.setDrive(5.0f);
+    preamp.setBassGain(3.0f);
+    preamp.setTrebleGain(0.5f);
+    preamp.setOutputLevel(-3.0f);
+
     cabinet.prepare(specifications);
 
     reverb.prepare(specifications);
@@ -177,7 +184,8 @@ void RhodesDWMAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     juce::dsp::AudioBlock<float> block(buffer);
     juce::dsp::ProcessContextReplacing<float> context(block);
 
-    cabinet.process(context);
+    preamp.process(context);
+    //cabinet.process(context);
     reverb.process(context);
 
 }

@@ -12,6 +12,7 @@
 #include "DWMVoice.h"
 #include "DWMSound.h"
 #include "ConvolutionCabinet.h"
+#include "Preamp.h"
 
 //==============================================================================
 /**
@@ -61,6 +62,8 @@ public:
 private:
     //==============================================================================
     juce::Synthesiser rhodesSynth;
+
+    Preamp preamp;
 
     juce::dsp::Reverb reverb;
     juce::dsp::Reverb::Parameters reverbParams;

@@ -16,8 +16,8 @@ void ToneBarModule::prepare(const juce::dsp::ProcessSpec& specs) {
         f.setType(juce::dsp::StateVariableTPTFilterType::bandpass);
     }
 
-    filters[0].setCutoffFrequency(60.0f);
-    filters[0].setResonance(1.5f);
+    filters[0].setCutoffFrequency(40.0f);
+    filters[0].setResonance(0.5f);
 
     filters[1].setCutoffFrequency(180.0f);
     filters[1].setResonance(0.8f);

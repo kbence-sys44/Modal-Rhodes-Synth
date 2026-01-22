@@ -97,12 +97,6 @@ void DWMVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int start
         int index = startSample + sample;
         left[index] += tremoloOutput.left * voiceVolume;
         if (right) right[index] += tremoloOutput.right * voiceVolume;
-
-
-        //Stereo stereoOutput = tremolo.process(dampSample);
-
-        //float cleanLeft = dcBlocker.processSample(stereoOutput.left);
-        //float cleanRight = dcBlocker.processSample(stereoOutput.right);
         
         //hang leallitasi feltetelek && std::abs(pickupSample) < 0.00001f
         if (!hammer.isHammerActive() && !isKeyHeld && std::abs(pickupSignal < 0.00001f)) {
@@ -125,42 +119,7 @@ void DWMVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     tremolo.prepare(specs.sampleRate);
     tremolo.setTremRate(1.4f);
     tremolo.setDepth(0.8f);
-
-
-    //preamp.prepare(specs);
-    //preamp.setDrive(1.2f);
-
-    
-
-    //dcBlocker.prepare(specs);
-    //dcBlocker.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass(specs.sampleRate, 10.0f);
-
-    //damperFilter.prepare(specs);
-    //damperFilter.setType(juce::dsp::FirstOrderTPTFilterType::lowpass);
-    //damperFilter.setCutoffFrequency(150.0f);
 }
-
-/*
-DWMVoice::ForkMix DWMVoice::calculateForkMix(float frequency, float velocity) {
-    ForkMix coeffs;
-    coeffs.tineMix = 1.0f;
-    coeffs.tonebarMix = 1.0f;
-
-    if (frequency < 200.0f) {
-        coeffs.tonebarMix = 0.8f;
-        coeffs.tineMix = 1.0f + (velocity * 0.4f);
-    }
-    else if (frequency < 1000.0f) {
-        coeffs.tonebarMix = 0.4f;
-        coeffs.tineMix = 1.2f;
-    }
-    else {
-        coeffs.tonebarMix = 0.6f;
-        coeffs.tineMix = 1.0f;
-    }
-    
-    return coeffs;
-}*/
 
 float DWMVoice::addDamping(float inputSample) {
     float output = inputSample;
