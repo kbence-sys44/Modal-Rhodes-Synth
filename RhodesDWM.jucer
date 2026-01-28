@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="vqjvoD" name="RhodesDWM" projectType="audioplug" useAppConfig="0"
+<JUCERPROJECT id="vqjvoD" name="Modal-Rhodes" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildStandalone,buildVST3"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
-  <MAINGROUP id="JHWxRr" name="RhodesDWM">
+  <MAINGROUP id="JHWxRr" name="Modal-Rhodes">
     <GROUP id="{AB6CD702-9356-685F-D99C-3629DBB14DC6}" name="Source">
       <GROUP id="{83EA1C7E-56C6-EE67-6328-B6C1BBC59956}" name="Resources">
         <FILE id="YAFWup" name="fender_twin_balanced.wav" compile="0" resource="1"
@@ -45,9 +45,9 @@
       <FILE id="eLsgZi" name="ToneBarModule.cpp" compile="1" resource="0"
             file="Source/ToneBarModule.cpp"/>
       <FILE id="mZVc9z" name="ToneBarModule.h" compile="0" resource="0" file="Source/ToneBarModule.h"/>
-      <FILE id="hDiaBj" name="DWMSound.h" compile="0" resource="0" file="Source/DWMSound.h"/>
-      <FILE id="ymCcc0" name="DWMVoice.cpp" compile="1" resource="0" file="Source/DWMVoice.cpp"/>
-      <FILE id="qnQheu" name="DWMVoice.h" compile="0" resource="0" file="Source/DWMVoice.h"/>
+      <FILE id="hDiaBj" name="RhodesSound.h" compile="0" resource="0" file="Source/RhodesSound.h"/>
+      <FILE id="ymCcc0" name="RhodesVoice.cpp" compile="1" resource="0" file="Source/RhodesVoice.cpp"/>
+      <FILE id="qnQheu" name="RhodesVoice.h" compile="0" resource="0" file="Source/RhodesVoice.h"/>
       <FILE id="oCKNxS" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="IR7Ys0" name="PluginProcessor.h" compile="0" resource="0"

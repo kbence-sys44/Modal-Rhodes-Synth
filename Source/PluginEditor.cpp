@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-RhodesDWMAudioProcessorEditor::RhodesDWMAudioProcessorEditor (RhodesDWMAudioProcessor& p)
+ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p),
     keyboardComponent(p.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
@@ -36,18 +36,18 @@ RhodesDWMAudioProcessorEditor::RhodesDWMAudioProcessorEditor (RhodesDWMAudioProc
     
 }
 
-RhodesDWMAudioProcessorEditor::~RhodesDWMAudioProcessorEditor()
+ModalRhodesAudioProcessorEditor::~ModalRhodesAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void RhodesDWMAudioProcessorEditor::paint (juce::Graphics& g)
+void ModalRhodesAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 }
 
-void RhodesDWMAudioProcessorEditor::resized()
+void ModalRhodesAudioProcessorEditor::resized()
 {
     auto area = getLocalBounds().reduced(10);
     runTestsButton.setBounds(area.removeFromTop(40));

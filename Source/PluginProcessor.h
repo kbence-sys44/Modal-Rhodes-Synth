@@ -9,20 +9,20 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "DWMVoice.h"
-#include "DWMSound.h"
+#include "RhodesVoice.h"
+#include "RhodesSound.h"
 #include "ConvolutionCabinet.h"
 #include "Preamp.h"
 
 //==============================================================================
 /**
 */
-class RhodesDWMAudioProcessor  : public juce::AudioProcessor
+class ModalRhodesAudioProcessor  : public juce::AudioProcessor
 {
 public:
     //==============================================================================
-    RhodesDWMAudioProcessor();
-    ~RhodesDWMAudioProcessor() override;
+    ModalRhodesAudioProcessor();
+    ~ModalRhodesAudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -70,5 +70,5 @@ private:
 
     ConvolutionCabinet cabinet;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RhodesDWMAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModalRhodesAudioProcessor)
 };

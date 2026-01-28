@@ -22,7 +22,7 @@ void CrossleyHammer::prepareHammer(const juce::dsp::ProcessSpec& specs) {
 
 void CrossleyHammer::triggerHammer(float velocity, float delayInSamples, int noteNum) {
 
-    float initialSpeed = velocity * 5.0f;
+    float initialSpeed = velocity * 1.0f;
 
     hammerPos = -0.005f;
     hammerVel = initialSpeed;
@@ -40,7 +40,7 @@ void CrossleyHammer::triggerHammer(float velocity, float delayInSamples, int not
 
 }
 
-float CrossleyHammer::getNextSample() {
+float CrossleyHammer::getNextSample(float objectPos) {
 
     if (!active) return 0.0f;
 
@@ -52,9 +52,9 @@ float CrossleyHammer::getNextSample() {
     float dt = 1.0f / (float)sampleRate; //euler integracio
     hammerPos += hammerVel * dt;
 
-    if (hammerPos > 0.0f) { //kalapacs elerte a femet
-        float compression = hammerPos;
-        float compressionVel = hammerVel;
+    if (hammerPos > objectPos) { //kalapacs elerte a femet
+        float compression = hammerPos - objectPos;
+        float compressionVel = hammerVel; //-objectVel
 
         //hunt-crossley F=K*x^p*(1+lambda*v)
         //minel gyorsabb az utes, annal kemenyebbnek tunik az anyag
@@ -80,7 +80,7 @@ float CrossleyHammer::getNextSample() {
 
     }
 
-    return force * 0.004f;
+    return force;
 }
 
 bool CrossleyHammer::isHammerActive() const {

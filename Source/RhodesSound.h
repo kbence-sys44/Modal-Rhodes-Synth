@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    DWMSound.h
+    RhodesSound.h
     Created: 25 Dec 2025 2:57:53pm
     Author:  kadar
 
@@ -12,10 +12,10 @@
 #include <JuceHeader.h>
 
 //ennek a fajlnak nincs jelentossege csak muszaj felulirni az synthsound-ot hogy lefusson
-class DWMSound : public juce::SynthesiserSound
+class RhodesSound : public juce::SynthesiserSound
 {
 public:
-    DWMSound() {}
+    RhodesSound() {}
     
     bool appliesToNote(int /*midiNoteNumber*/) override { return true; }
     bool appliesToChannel(int /*midiChannel*/) override { return true; }

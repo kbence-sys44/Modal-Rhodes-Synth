@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    DWMVoice.h
+    RhodesVoice.h
     Created: 24 Dec 2025 3:43:06pm
     Author:  kadar
 
@@ -17,10 +17,10 @@
 #include "CrossleyHammer.h"
 
 
-class DWMVoice : public juce::SynthesiserVoice
+class RhodesVoice : public juce::SynthesiserVoice
 {
 public:
-    DWMVoice() {}
+    RhodesVoice() {}
 
     void prepare(const juce::dsp::ProcessSpec& specs);
 
@@ -40,7 +40,7 @@ private:
         float tineMix;
         float tonebarMix;
     };
-    ForkMix DWMVoice::calculateForkMix(float frequency, float velocity);
+    ForkMix RhodesVoice::calculateForkMix(float frequency, float velocity);
     ForkMix currentMix;
 
     ModalTine modalTine;
@@ -50,9 +50,10 @@ private:
     Tremolo tremolo;
     
     float currentFrequency = 0.0f;
-    float voiceVolume = 0.8f;
+    float voiceVolume = 1.0f;
     float thumpLevel = 0.5f;
     float currentVelocity = 0.0f;
+    float outputGain = 1.0f;
 
     bool noteCurrentlyActive = false;
     bool isKeyHeld = false;
@@ -61,14 +62,5 @@ private:
     juce::dsp::IIR::Filter<float> dcBlocker;
     juce::Random random;
 
-    //Damper
-    bool damperActive = false;
-    float damperNoiseLevel = 0.0f;
-    float damperEnv = 0.0f;
-    float damperDecay = 0.95f;
-
-    juce::Random damperRand;
-    juce::dsp::FirstOrderTPTFilter<float> damperFilter;
-
-    JUCE_LEAK_DETECTOR(DWMVoice)
+    JUCE_LEAK_DETECTOR(RhodesVoice)
 };

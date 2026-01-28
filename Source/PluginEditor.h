@@ -15,11 +15,11 @@
 //==============================================================================
 /**
 */
-class RhodesDWMAudioProcessorEditor  : public juce::AudioProcessorEditor
+class ModalRhodesAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
-    RhodesDWMAudioProcessorEditor (RhodesDWMAudioProcessor&);
-    ~RhodesDWMAudioProcessorEditor() override;
+    ModalRhodesAudioProcessorEditor(ModalRhodesAudioProcessor&);
+    ~ModalRhodesAudioProcessorEditor() override;
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -27,7 +27,7 @@ public:
 
 private:
 
-    RhodesDWMAudioProcessor& audioProcessor;
+    ModalRhodesAudioProcessor& audioProcessor;
 
     //vizualis billenytu
     juce::MidiKeyboardComponent keyboardComponent;
@@ -36,5 +36,5 @@ private:
     juce::TextEditor textResults;
     CustomTestRunner runner;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RhodesDWMAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModalRhodesAudioProcessorEditor)
 };

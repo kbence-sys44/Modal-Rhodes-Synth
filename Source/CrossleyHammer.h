@@ -23,7 +23,7 @@ public:
 
     void triggerHammer(float velocity, float delayInSamples, int noteNum);
 
-    float getNextSample();
+    float getNextSample(float objectPos);
 
     bool isHammerActive() const;
 

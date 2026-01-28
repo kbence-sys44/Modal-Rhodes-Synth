@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-RhodesDWMAudioProcessor::RhodesDWMAudioProcessor()
+ModalRhodesAudioProcessor::ModalRhodesAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -27,23 +27,23 @@ RhodesDWMAudioProcessor::RhodesDWMAudioProcessor()
 
     //16 hang hozzaadasa (polifonia)
     for (int i = 0; i < 16; ++i) {
-        rhodesSynth.addVoice(new DWMVoice());
+        rhodesSynth.addVoice(new RhodesVoice());
     }
 
-    rhodesSynth.addSound(new DWMSound());
+    rhodesSynth.addSound(new RhodesSound());
 }
 
-RhodesDWMAudioProcessor::~RhodesDWMAudioProcessor()
+ModalRhodesAudioProcessor::~ModalRhodesAudioProcessor()
 {
 }
 
 //==============================================================================
-const juce::String RhodesDWMAudioProcessor::getName() const
+const juce::String ModalRhodesAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool RhodesDWMAudioProcessor::acceptsMidi() const
+bool ModalRhodesAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -52,7 +52,7 @@ bool RhodesDWMAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool RhodesDWMAudioProcessor::producesMidi() const
+bool ModalRhodesAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -61,7 +61,7 @@ bool RhodesDWMAudioProcessor::producesMidi() const
    #endif
 }
 
-bool RhodesDWMAudioProcessor::isMidiEffect() const
+bool ModalRhodesAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -70,37 +70,37 @@ bool RhodesDWMAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double RhodesDWMAudioProcessor::getTailLengthSeconds() const
+double ModalRhodesAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int RhodesDWMAudioProcessor::getNumPrograms()
+int ModalRhodesAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int RhodesDWMAudioProcessor::getCurrentProgram()
+int ModalRhodesAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void RhodesDWMAudioProcessor::setCurrentProgram (int index)
+void ModalRhodesAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const juce::String RhodesDWMAudioProcessor::getProgramName (int index)
+const juce::String ModalRhodesAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void RhodesDWMAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void ModalRhodesAudioProcessor::changeProgramName (int index, const juce::String& newName)
 {
 }
 
 //==============================================================================
-void RhodesDWMAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void ModalRhodesAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     rhodesSynth.setCurrentPlaybackSampleRate(sampleRate);
 
@@ -110,17 +110,17 @@ void RhodesDWMAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     specifications.numChannels = getTotalNumOutputChannels();
 
     for (int i = 0; i < rhodesSynth.getNumVoices(); ++i) {
-        if (auto* voice = dynamic_cast<DWMVoice*>(rhodesSynth.getVoice(i))) {
+        if (auto* voice = dynamic_cast<RhodesVoice*>(rhodesSynth.getVoice(i))) {
             voice->prepare(specifications);
         }
     }
 
     preamp.prepare(specifications);
 
-    preamp.setDrive(5.0f);
-    preamp.setBassGain(3.0f);
-    preamp.setTrebleGain(0.5f);
-    preamp.setOutputLevel(-3.0f);
+    preamp.setDrive(2.0f);
+    preamp.setBassGain(0.7f);
+    preamp.setTrebleGain(2.5f);
+    preamp.setOutputLevel(3.0f);
 
     cabinet.prepare(specifications);
 
@@ -136,14 +136,14 @@ void RhodesDWMAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     reverb.setParameters(reverbParams);
 }
 
-void RhodesDWMAudioProcessor::releaseResources()
+void ModalRhodesAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool RhodesDWMAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool ModalRhodesAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     juce::ignoreUnused (layouts);
@@ -168,7 +168,7 @@ bool RhodesDWMAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 }
 #endif
 
-void RhodesDWMAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     //vizualis billenytu funkcionalitasahoz
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
@@ -185,31 +185,31 @@ void RhodesDWMAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     juce::dsp::ProcessContextReplacing<float> context(block);
 
     preamp.process(context);
-    //cabinet.process(context);
+    cabinet.process(context);
     reverb.process(context);
 
 }
 
 //==============================================================================
-bool RhodesDWMAudioProcessor::hasEditor() const
+bool ModalRhodesAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-juce::AudioProcessorEditor* RhodesDWMAudioProcessor::createEditor()
+juce::AudioProcessorEditor* ModalRhodesAudioProcessor::createEditor()
 {
-    return new RhodesDWMAudioProcessorEditor (*this);
+    return new ModalRhodesAudioProcessorEditor(*this);
 }
 
 //==============================================================================
-void RhodesDWMAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void ModalRhodesAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 }
 
-void RhodesDWMAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void ModalRhodesAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -219,5 +219,5 @@ void RhodesDWMAudioProcessor::setStateInformation (const void* data, int sizeInB
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new RhodesDWMAudioProcessor();
+    return new ModalRhodesAudioProcessor();
 }
