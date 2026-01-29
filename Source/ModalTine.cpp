@@ -11,7 +11,7 @@
 #include "ModalTine.h"
 
 ModalTine::ModalTine() {
-    modes.resize(4);
+    modes.resize(10);
 }
 
 ModalTine::~ModalTine(){}
@@ -172,9 +172,11 @@ float ModalTine::process(float inputForce) {
 
 void ModalTine::setupMode(float frequency, float decayMult, float tone) {
 
-    const float ratios[] = { 1.0f, 6.27f, 17.55f, 34.39f };
-    const float decayRatios[] = { 1.0f, 0.5f, 0.1f, 0.05f };
-    float gains[] = { 1.0f, 0.4f * tone, 0.15f * tone, 0.05f * tone };
+    const float ratios[] = {0.25f, 0.5f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.27f, 17.55f, 34.39f };
+    const float decayRatios[] = {1.0f, 1.0f, 1.0f, 0.7f, 0.6f, 0.5f, 0.4f, 0.5f, 0.1f, 0.05f};
+    float gains[] = {0.02f * tone, 0.016f *tone, 0.75f* tone, 0.09f * tone , 0.4f * tone, 0.45f * tone , 0.10f * tone ,1.7f * tone, 6.0f * tone, 12.0f * tone };
+
+    size_t limit = std::min(modes.size(), sizeof(ratios) / sizeof(ratios[0]));
 
     for (size_t i = 0; i < modes.size(); ++i)
     {

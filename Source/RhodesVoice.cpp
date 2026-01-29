@@ -39,7 +39,7 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
    //float bassGain = juce::jmap(currentFrequency, 50.0f, 1000.0f, 1.5f, 1.0f);
    // pickupModule.setBassGain(bassGain);
 
-    float stiffnessBase = 20000000.0f;
+    float stiffnessBase = 200000000.0f;
     float stiffnessMultiplier = std::pow(1.12f, (midiNoteNumber) - 60.0f);
     float currentStiffness = stiffnessBase * stiffnessMultiplier;
 
@@ -54,10 +54,13 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
     pickup.setFrequency(currentFrequency);
     tonebar.reset();
 
-    float baseGain = 600.0f;
+    float baseGain = 5000.0f;
     float trebleBoost = std::pow(1.03f, midiNoteNumber);
     outputGain = baseGain * trebleBoost;
-    
+
+    previousTinePos = 0.0f;
+    prevIn = 0.0f;
+    prevOut = 0.0f;
 
     noteCurrentlyActive = true;
     isKeyHeld = true;
@@ -91,13 +94,23 @@ void RhodesVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         float hammerThump = hammer.getThump();
 
         float tineDisplacement = modalTine.process(hammerForce);
-        float monoSample = tineDisplacement * outputGain;
-        monoSample = std::tanh(monoSample);
 
-        float tbInput = (hammerForce * 0.2f) + (hammerThump * 0.8);
-        float bodySignal = tonebar.processSample(tbInput);
+        float velocitySignal = tineDisplacement - previousTinePos;
+        previousTinePos = tineDisplacement;
 
-        float rawSignal = monoSample; //+ (bodySignal* 0.1f);
+        float filtered = velocitySignal - prevIn + (0.995f * prevOut);
+
+        if (std::abs(filtered) < 1.0e-8f) filtered = 0.0f;
+
+        prevIn = velocitySignal;
+        prevOut = filtered;
+
+        float monoSample = filtered * outputGain;
+
+        //float tbInput = (hammerForce * 0.2f) + (hammerThump * 0.8);
+        //float bodySignal = tonebar.processSample(tbInput);
+
+        float rawSignal = monoSample + hammerThump; //+ (bodySignal* 0.1f);
 
         float pickupSignal = pickup.processSample(rawSignal);
 
@@ -108,7 +121,7 @@ void RhodesVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         if (right) right[index] += tremoloOutput.right * voiceVolume;
         
         //hang leallitasi feltetelek && std::abs(pickupSample) < 0.00001f
-        if (!hammer.isHammerActive() && !isKeyHeld && std::abs(pickupSignal < 0.000001f) && std::abs(monoSample) < 0.001f) {
+        if (!hammer.isHammerActive() && !isKeyHeld && std::abs(pickupSignal < 0.000001f) && std::abs(monoSample) < 0.00001f) {
             noteCurrentlyActive = false;
             clearCurrentNote();
             break;
@@ -123,7 +136,7 @@ void RhodesVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     hammer.prepareHammer(specs);
 
     pickup.prepare(specs);
-    pickup.setParameters(10.0f, 5.0f, 6000.0f);
+    pickup.setParameters(9.0f, 6.0f, 6000.0f);
 
     tremolo.prepare(specs.sampleRate);
     tremolo.setTremRate(1.4f);

@@ -118,9 +118,9 @@ void ModalRhodesAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     preamp.prepare(specifications);
 
     preamp.setDrive(2.0f);
-    preamp.setBassGain(0.7f);
-    preamp.setTrebleGain(2.5f);
-    preamp.setOutputLevel(3.0f);
+    preamp.setBassGain(3.0f);
+    preamp.setTrebleGain(1.5f);
+    preamp.setOutputLevel(1.6f);
 
     cabinet.prepare(specifications);
 
@@ -186,7 +186,7 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 
     preamp.process(context);
     cabinet.process(context);
-    reverb.process(context);
+    //reverb.process(context);
 
 }
 

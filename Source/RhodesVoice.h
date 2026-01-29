@@ -20,7 +20,7 @@
 class RhodesVoice : public juce::SynthesiserVoice
 {
 public:
-    RhodesVoice() {}
+    RhodesVoice() = default;
 
     void prepare(const juce::dsp::ProcessSpec& specs);
 
@@ -54,10 +54,14 @@ private:
     float thumpLevel = 0.5f;
     float currentVelocity = 0.0f;
     float outputGain = 1.0f;
+    float previousTinePos = 0.0f; //sebesseghez
 
     bool noteCurrentlyActive = false;
     bool isKeyHeld = false;
     bool triggerThump = true;
+
+    float prevIn = 0.0f;
+    float prevOut = 0.0f;
 
     juce::dsp::IIR::Filter<float> dcBlocker;
     juce::Random random;
