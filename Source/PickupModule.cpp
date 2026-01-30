@@ -8,8 +8,10 @@
   ==============================================================================
 */
 
-#include "PickupModule.h"
+//ez a modul a kapott tine elmozdulast elektromos jelle alakitja
 
+
+#include "PickupModule.h"
 
 void PickupModule::prepare(const juce::dsp::ProcessSpec& specs) {
 
@@ -55,15 +57,16 @@ void PickupModule::setFrequency(float frequency) {
 }
 
 //a hangszedo fo feldolgozo fuggvenye
+//a bemeneti jelet koszolja es alakitja at
 float PickupModule::processSample(float inputSample) {
 
     float processedSample = lowpass.processSample(0, inputSample);
 
     float currentGain = gain.getNextValue();
     processedSample *= currentGain;//gain
-    processedSample = std::tanh(processedSample);//soft clipping
+    processedSample = std::tanh(processedSample);//analog torzitas
 
-    float symmetry = symmetryGain.getNextValue();
+    float symmetry = symmetryGain.getNextValue(); //paros felharmonikusok generalasa, mivel a magnes nincs tokeletesen kozepen
 
     if (symmetry > 1.01f) { //asszimetria
 
@@ -79,35 +82,6 @@ float PickupModule::processSample(float inputSample) {
     
     processedSample = processedSample - (std::pow(processedSample, 3.0f) / 3.0f);//buzz
 
-    processedSample = highpass.processSample(0, processedSample);
+    processedSample = highpass.processSample(0, processedSample); //melyek tisztitasa
     return processedSample;
-
-    /*
-
-    float clean = inputSample * drive;
-
-    //asszimetria
-    float bias = 0.3f;
-    float biasedSig = clean + bias;
-
-    //magneses sat
-    float satSig;
-    if (biasedSig > 0) {
-        satSig = biasedSig / (1.0f + biasedSig); //lapos
-    }
-    else {
-        satSig = biasedSig / (1.0f + std::abs(biasedSig) * 0.5f); //negativ -hegyes
-    }
-
-    satSig -= (bias / 1.0f + bias); //dc offset eltavolitasa, high pass
-
-    float eqdSignal = bassFilter.processSample(satSig);
-    eqdSignal = midFilter.processSample(eqdSignal);
-
-    float smoothSig = physicalFilter.processSample(eqdSignal);//kabel szimulacio
-
-    float finalSig = trebleFilter.processSample(smoothSig);
-
-    return finalSig; 
- */
 }

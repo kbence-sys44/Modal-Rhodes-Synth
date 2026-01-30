@@ -44,10 +44,9 @@ private:
     float stiffness = 5000000.0f; //  N/m^p
     float exponent = 2.5f; // a filc linearitasa, 1 lin, 3 kemenyedo
     float damping = 0.8f; //energia elnyeles
-    float thumpSig = 0.0f;
 
     juce::Random random;
-    juce::dsp::IIR::Filter<float> thumpFilter;
+    juce::dsp::IIR::Filter<float> thumpFilter; //koppanas
 
     JUCE_LEAK_DETECTOR(CrossleyHammer)
 };

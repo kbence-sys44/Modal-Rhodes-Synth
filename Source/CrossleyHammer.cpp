@@ -8,6 +8,10 @@
   ==============================================================================
 */
 
+//ez a modul szimulalja a kalapacs mozgasat es uteset, lenyegeben a gerjeszto modul
+//a bemenet egy velocity ertek ami alapjan egy erot ad vissza (Nm)
+//a hunt-crossley modell miatt minel gyorsabb az utes, annal kemenyebbnek erzodik a filc
+
 #include "CrossleyHammer.h"
 #include <cmath>
 
@@ -24,7 +28,7 @@ void CrossleyHammer::triggerHammer(float velocity, float delayInSamples, int not
 
     float initialSpeed = velocity * 1.0f;
 
-    hammerPos = -0.005f;
+    hammerPos = -0.005f; //kezdeti pozicio
     hammerVel = initialSpeed;
 
     travelDelayCounter = static_cast<int>(delayInSamples);
@@ -87,6 +91,7 @@ bool CrossleyHammer::isHammerActive() const {
     return active;
 }
 
+//egyszeru zajbol szurt koppanas 
 float CrossleyHammer::getThump() {
     float noise = (random.nextFloat() * 2.0f) - 1.0f;
 

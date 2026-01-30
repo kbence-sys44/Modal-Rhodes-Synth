@@ -47,6 +47,7 @@ void ModalRhodesAudioProcessorEditor::paint (juce::Graphics& g)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 }
 
+//elrendezes
 void ModalRhodesAudioProcessorEditor::resized()
 {
     auto area = getLocalBounds().reduced(10);

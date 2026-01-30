@@ -8,14 +8,17 @@
   ==============================================================================
 */
 
-#include "ConvolutionCabinet.h"
+//ez a modul azt szimulalja mintha a hang egy gitarerositorol szolna
+//nem szukseges, de segiti a valosagos hangzast
+//betoltott IR minta fajlbol vetiti a szintetizalt hangra az erosito jelleget
 
+#include "ConvolutionCabinet.h"
 
 void ConvolutionCabinet::prepare(const juce::dsp::ProcessSpec& specs) {
     sampleRate = specs.sampleRate;
     cabinetConv.prepare(specs);
 
-    cabinetConv.loadImpulseResponse(
+    cabinetConv.loadImpulseResponse( //IR minta alapjan mukodik
         BinaryData::fender_deluxe_big_wav,
         BinaryData::fender_deluxe_big_wavSize,
         juce::dsp::Convolution::Stereo::yes,

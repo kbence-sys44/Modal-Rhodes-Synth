@@ -42,9 +42,6 @@
       <FILE id="Jryn0m" name="PickupModule.cpp" compile="1" resource="0"
             file="Source/PickupModule.cpp"/>
       <FILE id="R9Jvfo" name="PickupModule.h" compile="0" resource="0" file="Source/PickupModule.h"/>
-      <FILE id="eLsgZi" name="ToneBarModule.cpp" compile="1" resource="0"
-            file="Source/ToneBarModule.cpp"/>
-      <FILE id="mZVc9z" name="ToneBarModule.h" compile="0" resource="0" file="Source/ToneBarModule.h"/>
       <FILE id="hDiaBj" name="RhodesSound.h" compile="0" resource="0" file="Source/RhodesSound.h"/>
       <FILE id="ymCcc0" name="RhodesVoice.cpp" compile="1" resource="0" file="Source/RhodesVoice.cpp"/>
       <FILE id="qnQheu" name="RhodesVoice.h" compile="0" resource="0" file="Source/RhodesVoice.h"/>

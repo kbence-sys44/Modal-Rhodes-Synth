@@ -35,8 +35,6 @@ private:
     juce::dsp::Gain<float> inputGain;
     juce::dsp::Gain<float> outputGain;
 
-    
-
     using FilterType = juce::dsp::IIR::Filter<float>;
     using CoeffsType = juce::dsp::IIR::Coefficients<float>;
 

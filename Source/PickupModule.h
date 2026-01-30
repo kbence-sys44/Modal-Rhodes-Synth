@@ -28,6 +28,7 @@ public:
 
 private:
     double sampleRate = 44100.0;
+    float symmetryVariable = 1.0f;
 
     juce::dsp::StateVariableTPTFilter<float> lowpass;
     juce::dsp::StateVariableTPTFilter<float> highpass;
@@ -35,19 +36,4 @@ private:
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> gain;
     juce::SmoothedValue<float, juce::ValueSmoothingTypes::Linear> symmetryGain;
 
-    float symmetryVariable = 1.0f;
-
-    float envelopeFollow = 0.0f;
-    float lastInputSample = 0.0f;
-    float drive = 2.0f;
-    float baseDelay = 14.0f;
-
-    juce::dsp::IIR::Filter<float> bassFilter;
-    juce::dsp::IIR::Filter<float> midFilter;
-    juce::dsp::IIR::Filter<float> trebleFilter;
-    juce::dsp::IIR::Filter<float> physicalFilter;
-
-    juce::Random random;
-
-    juce::dsp::DelayLine<float, juce::dsp::DelayLineInterpolationTypes::Lagrange3rd> pickupDL{ 100 };
 };

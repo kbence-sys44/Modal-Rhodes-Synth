@@ -11,7 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 
-//ennek a fajlnak nincs jelentossege csak muszaj felulirni az synthsound-ot hogy lefusson
+//ennek a fajlnak nincs jelentossege csak muszaj felulirni az synthsound-ot hogy lefusson a sajat voice osztaly
 class RhodesSound : public juce::SynthesiserSound
 {
 public:

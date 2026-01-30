@@ -10,7 +10,6 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "ToneBarModule.h"
 #include "PickupModule.h"
 #include "Tremolo.h"
 #include "ModalTine.h"
@@ -36,25 +35,18 @@ public:
     float addDamping(float inputSample);
 
 private:
-    struct ForkMix {
-        float tineMix;
-        float tonebarMix;
-    };
-    ForkMix RhodesVoice::calculateForkMix(float frequency, float velocity);
-    ForkMix currentMix;
-
     ModalTine modalTine;
     CrossleyHammer hammer;
     PickupModule pickup;
-    ToneBarModule tonebar;
     Tremolo tremolo;
     
+    float baseGain = 5000.0f;
     float currentFrequency = 0.0f;
     float voiceVolume = 1.0f;
-    float thumpLevel = 0.5f;
     float currentVelocity = 0.0f;
     float outputGain = 1.0f;
-    float previousTinePos = 0.0f; //sebesseghez
+
+    float previousTinePos = 0.0f;
 
     bool noteCurrentlyActive = false;
     bool isKeyHeld = false;

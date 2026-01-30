@@ -8,6 +8,9 @@
   ==============================================================================
 */
 
+//a hangszin szabalyozasert felelos modul
+//lenyegeben egy filter lanc
+
 #include "Preamp.h"
 
 void::Preamp::prepare(const::juce::dsp::ProcessSpec& specs) {
@@ -61,20 +64,22 @@ void Preamp::process(juce::dsp::ProcessContextReplacing<float>& context) {
 
     auto& block = context.getOutputBlock();
 
-    inputGain.process(context);
+    inputGain.process(context); //bemeneti jel erositese
 
     for (size_t channel = 0; channel < block.getNumChannels(); ++channel) {
         auto* blockData = block.getChannelPointer(channel);
 
         for (size_t i = 0; i < block.getNumSamples(); ++i) {
-            blockData[i] = applySat(blockData[i]);
+            blockData[i] = applySat(blockData[i]); //szaturacios reteg
         }
     }
 
-    dcBlocker.process(context);
+    //filter lanc
+    dcBlocker.process(context); 
     bassFilter.process(context);
     trebleFilter.process(context);
 
+    //kimeneti erosites
     outputGain.process(context);
 
 }

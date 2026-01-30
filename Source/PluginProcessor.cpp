@@ -22,6 +22,7 @@ ModalRhodesAudioProcessor::ModalRhodesAudioProcessor()
                        )
 #endif
 {
+    //tesztek futtatasahoz
    // auto forcelink = &delayLineTestInstance;
    // auto forcelink2 = &hammerTestInstance;
 
@@ -102,6 +103,7 @@ void ModalRhodesAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void ModalRhodesAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    //specifikaciok
     rhodesSynth.setCurrentPlaybackSampleRate(sampleRate);
 
     juce::dsp::ProcessSpec specifications;
@@ -115,6 +117,7 @@ void ModalRhodesAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
         }
     }
 
+    //meg tobb parameter
     preamp.prepare(specifications);
 
     preamp.setDrive(2.0f);
@@ -179,11 +182,13 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 
     buffer.clear();
 
+    //rhodesvoice itt fut le
     rhodesSynth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
 
     juce::dsp::AudioBlock<float> block(buffer);
     juce::dsp::ProcessContextReplacing<float> context(block);
 
+    //a maradek modul itt dolgozza fel a jelet nem hangonkent, hanem mar a teljes mixen egyszerre
     preamp.process(context);
     cabinet.process(context);
     //reverb.process(context);

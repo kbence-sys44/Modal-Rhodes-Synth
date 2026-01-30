@@ -8,6 +8,9 @@
   ==============================================================================
 */
 
+//sztereo pan effekt, a bal es jobb csatorna gaint modulalja oda vissza
+//a rhodes zongorak jellegzetessege
+
 #include "Tremolo.h"
 
 void Tremolo::prepare(double sr) {
@@ -25,7 +28,6 @@ void Tremolo::setTremRate(float rateInHz) {
     currentRate = rateInHz;
 
     phaseInc = (currentRate / (float)sampleRate) * juce::MathConstants<double>::twoPi;
-    DBG(phaseInc);
 }
 
 void Tremolo::setDepth(float depth) {
