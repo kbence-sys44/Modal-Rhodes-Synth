@@ -59,6 +59,8 @@ public:
 
     juce::MidiKeyboardState keyboardState;
 
+    juce::AudioProcessorValueTreeState apvts;
+
 private:
     //==============================================================================
     juce::Synthesiser rhodesSynth;
@@ -69,6 +71,9 @@ private:
     juce::dsp::Reverb::Parameters reverbParams;
 
     ConvolutionCabinet cabinet;
+
+    
+    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModalRhodesAudioProcessor)
 };

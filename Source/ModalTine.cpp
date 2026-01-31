@@ -104,3 +104,11 @@ void ModalTine::setupMode(float frequency, float decayMult, float tone) {
     }
 
 }
+
+void ModalTine::applyDamping(float release) {
+
+    for (auto& m : modes) {
+        m.decay = m.decay * (1.0f + release);
+    }
+
+}

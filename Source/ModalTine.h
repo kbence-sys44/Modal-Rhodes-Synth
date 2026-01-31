@@ -33,7 +33,9 @@ public:
     void setParams(float baseFrequency, float decayTimeSecs, float toneKnob);
     float process(float inputForce);
 
-    float getCurrentPos() const { return displacement; }
+    float getCurrentPos() const { return displacement; };
+
+    void applyDamping(float release);
 
 private:
     double sampleRate = 44100.0;

@@ -33,11 +33,11 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
     //tine params
     float decayTime = juce::jmap((float)midiNoteNumber, 21.0f, 108.0f, 3.5f, 0.4f);
     float toneBrightness = velocity;
-    modalTine.setParams(currentFrequency, decayTime, toneBrightness);
+    modalTine.setParams(currentFrequency, decayTime * decayMultiplier, toneBrightness);
 
     //kemenyseg
-    float stiffnessBase = 200000000.0f;
-    float stiffnessMultiplier = std::pow(1.12f, (midiNoteNumber) - 60.0f);
+    float stiffnessBase = 500000000.0f;
+    float stiffnessMultiplier = std::pow(1.12f, (midiNoteNumber) - 60.0f) * hammerHardness;
     float currentStiffness = stiffnessBase * stiffnessMultiplier;
 
     float massBase = 0.006f;
@@ -59,13 +59,16 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
 
     noteCurrentlyActive = true;
     isKeyHeld = true;
-
+    damping = false;
 }
 
 void RhodesVoice::stopNote(float velocity, bool tailOffAllowed) {
     isKeyHeld = false;
 
-    if (!tailOffAllowed) {
+    if (tailOffAllowed) {
+        damping = true;
+    }
+    else {
         noteCurrentlyActive = false;
         clearCurrentNote();
     }
@@ -98,6 +101,8 @@ void RhodesVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 
         prevIn = velocitySignal;
         prevOut = filtered;
+
+        addDamping();
 
         //erosites
         float monoSample = filtered * outputGain;
@@ -139,21 +144,11 @@ void RhodesVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     tremolo.setDepth(0.8f);
 }
 
-/*float RhodesVoice::addDamping(float inputSample) {
-    float output = inputSample;
-    if (damperActive) {
-        float noise = (damperRand.nextFloat() * 2.0f) - 1.0f;
-        float thud = damperFilter.processSample(0, noise);
-        float damperSignal = thud * damperEnv * damperNoiseLevel;
+void RhodesVoice::addDamping() {
 
-        output += damperSignal;
-        damperEnv *= damperDecay;
+    if (damping) {
 
-        if (damperEnv < 0.001f) {
-            damperActive = false;
-        }
+        modalTine.applyDamping(releaseTime);
     }
 
-    return output;
-
-}*/
+}

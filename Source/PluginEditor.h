@@ -29,12 +29,17 @@ private:
 
     ModalRhodesAudioProcessor& audioProcessor;
 
+    //cim
+    juce::Label titleLabel;
+
     //vizualis billenytu
     juce::MidiKeyboardComponent keyboardComponent;
 
     juce::TextButton runTestsButton{ "Run all tests" };
     juce::TextEditor textResults;
     CustomTestRunner runner;
+
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModalRhodesAudioProcessorEditor)
 };

@@ -19,7 +19,8 @@ ModalRhodesAudioProcessor::ModalRhodesAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+    apvts(*this, nullptr, "Parameters", createParameterLayout())
 #endif
 {
     //tesztek futtatasahoz
@@ -100,6 +101,32 @@ void ModalRhodesAudioProcessor::changeProgramName (int index, const juce::String
 {
 }
 
+juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::createParameterLayout() {
+
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+
+    //ADSR
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("HAMMER_HARDNESS", "Hammer Hardness", 0.5f, 3.0f, 2.0f)); //Attack;
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN_DECAY", "Sustain, Decay", 0.1f, 3.0f, 1.0f)); //lecsenges
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("DAMPER_RELEASE", "Release Time", 0.001f, 0.01f, 0.005f));
+
+    //pickup
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("PICKUP_SYMMETRY", "Symmetry", 0.0f, 8.0f, 6.0f));
+
+    //preamp
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_DRIVE", "Drive", 0.5f, 3.0f, 2.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_BASS", "Bass", 0.5f, 6.0f, 3.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_TREBLE", "Treble", 0.5f, 3.0f, 1.5f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("OUTPUT_GAIN", "Output Gain", 0.5f, 2.0f, 1.0f));
+
+    //tremolo
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_DEPTH", "Tremolo Depth", 0.0f, 2.0f, 0.8f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_RATE", "Tremolo Rate", 0.5f, 3.0f, 1.4f));
+
+    return { params.begin(), params.end() };
+
+}
+
 //==============================================================================
 void ModalRhodesAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
@@ -173,6 +200,38 @@ bool ModalRhodesAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 
 void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    float hardness = *apvts.getRawParameterValue("HAMMER_HARDNESS");
+    float decayMult = *apvts.getRawParameterValue("SUSTAIN_DECAY");
+    float release = *apvts.getRawParameterValue("DAMPER_RELEASE");
+    float symmetry = *apvts.getRawParameterValue("PICKUP_SYMMETRY");
+
+    float drive = *apvts.getRawParameterValue("PREAMP_DRIVE");
+    float bass = *apvts.getRawParameterValue("PREAMP_BASS");
+    float treble = *apvts.getRawParameterValue("PREAMP_TREBLE");
+    float outputGain = *apvts.getRawParameterValue("OUTPUT_GAIN");
+
+    float depth = *apvts.getRawParameterValue("TREM_DEPTH");
+    float rate = *apvts.getRawParameterValue("TREM_RATE");
+    
+    for (int i = 0; i < rhodesSynth.getNumVoices(); ++i) {
+        if (auto* voice = dynamic_cast<RhodesVoice*>(rhodesSynth.getVoice(i))) {
+            voice->setHardness(hardness);
+            voice->setDecay(decayMult);
+            voice->setRelease(release);
+            voice->getPickup().setParameters(9.0f, symmetry, 6000.0f);
+
+            preamp.setDrive(drive);
+            preamp.setBassGain(bass);
+            preamp.setTrebleGain(treble);
+            preamp.setOutputLevel(outputGain);
+
+            voice->getTremolo().setDepth(depth);
+            voice->getTremolo().setTremRate(rate);
+        }
+    }
+
+
+
     //vizualis billenytu funkcionalitasahoz
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
 

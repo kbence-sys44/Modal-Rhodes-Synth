@@ -32,13 +32,22 @@ public:
     void pitchWheelMoved(int newPitchWheelValue) override {};
     void controllerMoved(int controllerNumber, int newControllerValue) override {};
 
-    float addDamping(float inputSample);
+    void addDamping();
+
+    void setHardness(float newHardness) { hammerHardness = newHardness; };
+    void setDecay(float newDecay) { decayMultiplier = newDecay; };
+    void setRelease(float newRelease) { releaseTime = newRelease; };
+
+    PickupModule getPickup() { return pickup; };
+    Tremolo getTremolo() { return tremolo; };
 
 private:
     ModalTine modalTine;
     CrossleyHammer hammer;
     PickupModule pickup;
     Tremolo tremolo;
+
+    float sampleRate = 44100.0f;
     
     float baseGain = 5000.0f;
     float currentFrequency = 0.0f;
@@ -57,6 +66,11 @@ private:
 
     juce::dsp::IIR::Filter<float> dcBlocker;
     juce::Random random;
+
+    float hammerHardness = 1.0f;
+    float decayMultiplier = 1.0f;
+    float releaseTime = 0.1f;
+    bool damping = false;
 
     JUCE_LEAK_DETECTOR(RhodesVoice)
 };

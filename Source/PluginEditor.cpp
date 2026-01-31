@@ -15,7 +15,7 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     keyboardComponent(p.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
     //ablak merete
-    setSize (900, 500);
+    setSize (900, 600);
 
     //teszt elemek
     addAndMakeVisible(runTestsButton);
@@ -30,8 +30,8 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     textResults.setReturnKeyStartsNewLine(true);
 
     //keyboard
-    keyboardComponent.setAvailableRange(48, 108);
-    keyboardComponent.setKeyWidth(24.45);
+    keyboardComponent.setAvailableRange(48, 96);
+    keyboardComponent.setKeyWidth(30.45);
     addAndMakeVisible(keyboardComponent);
     
 }
@@ -51,8 +51,8 @@ void ModalRhodesAudioProcessorEditor::paint (juce::Graphics& g)
 void ModalRhodesAudioProcessorEditor::resized()
 {
     auto area = getLocalBounds().reduced(10);
-    runTestsButton.setBounds(area.removeFromTop(40));
-    textResults.setBounds(area.removeFromTop(getHeight() / 3).withTrimmedTop(10));
+    //runTestsButton.setBounds(area.removeFromTop(40));
+    //textResults.setBounds(area.removeFromTop(getHeight() / 3).withTrimmedTop(10));
 
     keyboardComponent.setBounds(area.removeFromBottom(getHeight() / 4).withTrimmedBottom(10));
 
