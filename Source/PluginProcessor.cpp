@@ -123,6 +123,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
     params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_DEPTH", "Tremolo Depth", 0.0f, 2.0f, 0.8f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_RATE", "Tremolo Rate", 0.5f, 3.0f, 1.4f));
 
+    //reverb
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("WET_LEVEL", "Wet Level", 0.0f, 2.0f, 0.2f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("DRY_LEVEL", "Dry Level", 0.0f, 2.0f, 0.8f));
+
+    //on off
+    params.push_back(std::make_unique<juce::AudioParameterBool>("TREM_SWITH", "Tremolo Switch", true));
+    params.push_back(std::make_unique<juce::AudioParameterBool>("REVERB_SWITCH", "Reverb Switch", true));
+    params.push_back(std::make_unique<juce::AudioParameterBool>("CABINET_SWITCH", "Cabinet Switch", true));
+    params.push_back(std::make_unique<juce::AudioParameterBool>("DELAY_SWITCH", "Delay Switch", true));
+
     return { params.begin(), params.end() };
 
 }
@@ -212,6 +222,14 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 
     float depth = *apvts.getRawParameterValue("TREM_DEPTH");
     float rate = *apvts.getRawParameterValue("TREM_RATE");
+
+    float wet = *apvts.getRawParameterValue("WET_LEVEL");
+    float dry = *apvts.getRawParameterValue("DRY_LEVEL");
+
+    bool isTremoloOn = *apvts.getRawParameterValue("TREM_SWITH") > 0.5f;
+    bool isReverbOn = *apvts.getRawParameterValue("REVERB_SWITCH") > 0.5f;
+    bool isCabinetOn = *apvts.getRawParameterValue("CABINET_SWITCH") > 0.5f;
+    bool isDelayOn = *apvts.getRawParameterValue("DELAY_SWITCH") > 0.5f;
     
     for (int i = 0; i < rhodesSynth.getNumVoices(); ++i) {
         if (auto* voice = dynamic_cast<RhodesVoice*>(rhodesSynth.getVoice(i))) {
@@ -227,10 +245,13 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 
             voice->getTremolo().setDepth(depth);
             voice->getTremolo().setTremRate(rate);
+            voice->getTremolo().setTremoloState(isTremoloOn);
+
+            reverbParams.wetLevel = wet;
+            reverbParams.dryLevel = dry;
+            reverb.setParameters(reverbParams);
         }
     }
-
-
 
     //vizualis billenytu funkcionalitasahoz
     keyboardState.processNextMidiBuffer(midiMessages, 0, buffer.getNumSamples(), true);
@@ -249,8 +270,8 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 
     //a maradek modul itt dolgozza fel a jelet nem hangonkent, hanem mar a teljes mixen egyszerre
     preamp.process(context);
-    cabinet.process(context);
-    //reverb.process(context);
+    if(isReverbOn) cabinet.process(context);
+    if(isCabinetOn) reverb.process(context);
 
 }
 

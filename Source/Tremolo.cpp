@@ -38,6 +38,10 @@ void Tremolo::setShape(float newShape) {
     shape = juce::jlimit(1.0f, 10.0f, newShape);
 }
 
+void Tremolo::setTremoloState(bool newState) {
+    tremoloEnabled = newState;
+}
+
 //mintankent egy lfo alapjan kiszamolja hogy mikor melyik oldalt legyen hangosabb a hang
 Stereo Tremolo::process(float inputSample) {
 

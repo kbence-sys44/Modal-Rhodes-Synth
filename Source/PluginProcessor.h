@@ -69,8 +69,10 @@ private:
 
     juce::dsp::Reverb reverb;
     juce::dsp::Reverb::Parameters reverbParams;
-
     ConvolutionCabinet cabinet;
+
+    bool isReverbActive = true;
+    bool isCabinetActive = true;
 
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();

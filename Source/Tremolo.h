@@ -28,6 +28,9 @@ public:
 
     Stereo process(float inputSample);
 
+    bool isTremoloEnabled() { return tremoloEnabled; };
+    void setTremoloState(bool newState);
+
 private:
     double sampleRate = 44100.0;
 
@@ -38,4 +41,5 @@ private:
     float currentRate = 0.0f;
     float shape = 1.0f; //1.0 = sin felette szogletesebb lesz
 
+    bool tremoloEnabled = true;
 };

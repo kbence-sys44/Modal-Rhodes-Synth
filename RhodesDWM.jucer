@@ -25,6 +25,10 @@
         <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
         <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
       </GROUP>
+      <FILE id="eNa5MA" name="CustomToggleButton.cpp" compile="1" resource="0"
+            file="Source/CustomToggleButton.cpp"/>
+      <FILE id="Ii2Z5I" name="CustomToggleButton.h" compile="0" resource="0"
+            file="Source/CustomToggleButton.h"/>
       <FILE id="tH918p" name="CrossleyHammer.cpp" compile="1" resource="0"
             file="Source/CrossleyHammer.cpp"/>
       <FILE id="sfA8vo" name="CrossleyHammer.h" compile="0" resource="0"

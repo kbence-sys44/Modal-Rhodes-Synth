@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "TestRunner.h"
+#include "CustomToggleButton.h"
 
 //==============================================================================
 /**
@@ -82,6 +83,42 @@ private:
     juce::Slider tremRateSlider;
     juce::Label tremRateLabel;
     std::unique_ptr<SliderAttachment> tremRateAttachment;
+
+    juce::Slider reverbWetSlider;
+    juce::Label reverbWetLabel;
+    std::unique_ptr<SliderAttachment> reverbWetAttachment;
+
+    juce::Slider reverbDrySlider;
+    juce::Label reverbDryLabel;
+    std::unique_ptr<SliderAttachment> reverbDryAttachment;
+
+    //gombok
+    juce::Label tremoloLabel;
+    CustomToggleButton tremoloToggleButton;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> tremoloToggleAttachment;
+
+    juce::Label reverbLabel;
+    CustomToggleButton reverbToggleButton;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> reverbToggleAttachment;
+
+    juce::Label cabinetLabel;
+    CustomToggleButton cabinetToggleButton;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> cabinetToggleAttachment;
+
+    juce::Label delayLabel;
+    CustomToggleButton delayToggleButton;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> delayToggleAttachment;
+
+    juce::Label inLabel;
+    juce::Label outLabel;
+
+    //keretekhez
+
+    juce::Rectangle<int> mainSectionBounds;
+    juce::Rectangle<int> tremoloBounds;
+    juce::Rectangle<int> reverbBounds;
+    juce::Rectangle<int> delayBounds;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModalRhodesAudioProcessorEditor)
 };

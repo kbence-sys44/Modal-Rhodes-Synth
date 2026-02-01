@@ -113,13 +113,20 @@ void RhodesVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         //hangszedo
         float pickupSignal = pickup.processSample(rawSignal);
 
+        Stereo stereoOutput;
         //tremolo
-        Stereo tremoloOutput = tremolo.process(pickupSignal);
-
+        if (tremolo.isTremoloEnabled()) {
+            stereoOutput = tremolo.process(pickupSignal);
+        }
+        else {
+            stereoOutput.left = pickupSignal;
+            stereoOutput.right = pickupSignal;
+        }
+        
         //csatornankent output es hangero beallitasa
         int index = startSample + sample;
-        left[index] += tremoloOutput.left * voiceVolume;
-        if (right) right[index] += tremoloOutput.right * voiceVolume;
+        left[index] += stereoOutput.left * voiceVolume;
+        if (right) right[index] += stereoOutput.right * voiceVolume;
         
         //hang leallitasi feltetelek
         if (!hammer.isHammerActive() && !isKeyHeld && std::abs(pickupSignal < 0.000001f) && std::abs(monoSample) < 0.00001f) {
