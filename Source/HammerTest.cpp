@@ -12,62 +12,36 @@
 
 
 void HammerTest::runTest() {
-    const double sampleRate = 44100.0;
-    /*
-    hammer.prepareHammer(sampleRate);
+    const float sampleRate = 44100.0f;
+    CrossleyHammer hammer;
 
-    beginTest("Trigger, Duration Test");
-    {
-        float velocity = 1.0f;
-        hammer.triggerHammer(velocity, 1000.0f);
+    beginTest("Triggering Hammer");
+    juce::dsp::ProcessSpec specs{ sampleRate, 512, 1 };
+    hammer.prepareHammer(specs);
 
-        expect(hammer.isHammerActive(), "A kalapacsnak aktivnak kell lennie a triggereles utan");
+    expect(!hammer.isHammerActive(), "Hammer should be inactive initially");
 
+    hammer.triggerHammer(1.0f, 0.0f, 60);
+    expect(hammer.isHammerActive(), "Hammer should be active after triggering");
 
-        int sampleCount = 0;
-        bool nonZeroSample = false;
+    beginTest("Collision Test");
 
-        //addig fut ameddig tart az utes, 8ms - kb 353 minta
-        while (hammer.isHammerActive())
-        {
-            float s = hammer.getNextSample();
-            //nem lehetnek 0 erteku sample
-            if (std::abs(s) > 0.0f) nonZeroSample = true;
-            sampleCount++;
+    bool impact = false;
+    float force = 0.0f;
+    float tinePos = 0.0f;
 
-            //vegtelen ciklus ellen
-            if (sampleCount > 1000) break;
+    for (int i = 0; i < 500; ++i) { //500 minta
+        force = hammer.getNextSample(tinePos);
+        if (force > 0.0f) {
+            impact = true;
+            break;
         }
-
-        expect(nonZeroSample, "A kalapacsnak nem nulla mintakat kell generalnia.");
-        expectWithinAbsoluteError(sampleCount, 353, 5, "Az utes hossza nem felel meg a vart 8ms-nak.");
-        expect(!hammer.isHammerActive(), "A kalapacsnak inaktivnak kell lennie az utes utan.");
     }
 
-    beginTest("Velocity Scale Test");
-    {
-        //alacsony velocity
-        hammer.triggerHammer(0.5f, 1000.0f);
-        float maxAmpLowVelocity = 0.0f;
-        while (hammer.isHammerActive())
-        {
-            maxAmpLowVelocity = std::max(maxAmpLowVelocity, std::abs(hammer.getNextSample()));
-        }
-
-        //magas velocity
-        hammer.triggerHammer(1.0f, 1000.0f);
-        float maxAmpHighVelocity = 0.0f;
-        while (hammer.isHammerActive())
-        {
-            maxAmpHighVelocity = std::max(maxAmpHighVelocity, std::abs(hammer.getNextSample()));
-        }
-
-        expectGreaterThan(maxAmpHighVelocity, maxAmpLowVelocity, "A magas velocity tesztnek magasabb amplitudot kell eredmenyeznie.");
-        expectLessThan(maxAmpHighVelocity, 1.1f, "Az amplitudo nem haladhatja meg jelentosen az 1.0-at.");
-
-    }*/
+    expect(impact, "Hammer should eventually hit the tine");
+    expect(force > 0.0f, "Impact should generate a positive force");
+    expect(!std::isnan(force), "Force can't be NaN");
 
 }
-
 
 HammerTest hammerTestInstance;

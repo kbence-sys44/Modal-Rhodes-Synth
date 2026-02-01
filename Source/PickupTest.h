@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    HammerTest.h
-    Created: 23 Dec 2025 4:57:43pm
+    PickupTest.h
+    Created: 1 Feb 2026 12:45:18pm
     Author:  kadar
 
   ==============================================================================
@@ -10,14 +10,14 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "CrossleyHammer.h"
+#include "PickupModule.h"
 
-class HammerTest : public juce::UnitTest{
+class PickupTest : public juce::UnitTest {
 public:
-    HammerTest() : juce::UnitTest("Hammer Test") {}
+    PickupTest() : juce::UnitTest("Pickup Test") {}
     void runTest() override;
 private:
-    JUCE_LEAK_DETECTOR(HammerTest)
+    JUCE_LEAK_DETECTOR(PickupTest)
 };
 
-extern HammerTest hammerTestInstance;
+extern PickupTest pickupTestInstance;

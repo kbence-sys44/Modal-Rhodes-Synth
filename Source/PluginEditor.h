@@ -36,6 +36,10 @@ private:
     //vizualis billenytu
     juce::MidiKeyboardComponent keyboardComponent;
 
+    juce::TextButton debugButton{ "DEBUG" };
+    bool isDebugOn = false;
+    void updateVisibility();
+
     juce::TextButton runTestsButton{ "Run all tests" };
     juce::TextEditor textResults;
     CustomTestRunner runner;

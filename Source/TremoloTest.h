@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    HammerTest.h
-    Created: 23 Dec 2025 4:57:43pm
+    TremoloTest.h
+    Created: 1 Feb 2026 2:22:20pm
     Author:  kadar
 
   ==============================================================================
@@ -10,14 +10,14 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "CrossleyHammer.h"
+#include "Tremolo.h"
 
-class HammerTest : public juce::UnitTest{
+class TremoloTest : public juce::UnitTest {
 public:
-    HammerTest() : juce::UnitTest("Hammer Test") {}
+    TremoloTest() : juce::UnitTest("Tremolo Test") {}
     void runTest() override;
 private:
-    JUCE_LEAK_DETECTOR(HammerTest)
+    JUCE_LEAK_DETECTOR(TremoloTest)
 };
 
-extern HammerTest hammerTestInstance;
+extern TremoloTest tremoloTestInstance;

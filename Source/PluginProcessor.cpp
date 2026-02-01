@@ -24,8 +24,11 @@ ModalRhodesAudioProcessor::ModalRhodesAudioProcessor()
 #endif
 {
     //tesztek futtatasahoz
-   // auto forcelink = &delayLineTestInstance;
-   // auto forcelink2 = &hammerTestInstance;
+    auto forcelink = &tineTestInstance;
+    auto forcelink2 = &hammerTestInstance;
+    auto forcelink3 = &pickupTestInstance;
+    auto forcelink4 = &tremoloTestInstance;
+    auto forcelink5 = &preampTestInstance;
 
     //16 hang hozzaadasa (polifonia)
     for (int i = 0; i < 16; ++i) {

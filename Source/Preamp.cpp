@@ -21,13 +21,16 @@ void::Preamp::prepare(const::juce::dsp::ProcessSpec& specs) {
     outputGain.prepare(specs);
     outputGain.setRampDurationSeconds(0.05);
 
+    outputGain.setGainDecibels(0.0f);
+    inputGain.setGainDecibels(0.0f);
+
+    bassFilter.state = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 80.0f, 0.707f, 1.0f);
+    trebleFilter.state = juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 4000.0f, 0.707f, 1.0f);
+    dcBlocker.state = juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 20.0f);
+
     bassFilter.prepare(specs);
     trebleFilter.prepare(specs);
     dcBlocker.prepare(specs);
-
-    *bassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 80.0f, 0.707f, 1.0f);
-    *trebleFilter.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 4000.0f, 0.707f, 1.0f);
-    *dcBlocker.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 20.0f);
 
     reset();
 }
@@ -50,7 +53,7 @@ void Preamp::setOutputLevel(float newDB) {
 
 void Preamp::setBassGain(float newBassGain) {
     float bassGainLin = juce::Decibels::decibelsToGain(newBassGain);
-    *bassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate,80.0f, 0.707f, bassGainLin);
+    *bassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate,80.0f, 0.707f, bassGainLin);
 }
 
 void Preamp::setTrebleGain(float newTrebleGain) {

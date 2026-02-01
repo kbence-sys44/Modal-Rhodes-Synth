@@ -10,9 +10,11 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "DelayLineTest.h"
 #include "HammerTest.h"
-
+#include "TineTest.h"
+#include "PickupTest.h"
+#include "TremoloTest.h"
+#include "PreampTest.h"
 
 class CustomTestRunner : public juce::UnitTestRunner
 {

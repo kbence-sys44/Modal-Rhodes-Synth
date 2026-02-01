@@ -1,27 +1,23 @@
 /*
   ==============================================================================
 
-    DelayLineTest.h
-    Created: 21 Dec 2025 5:23:23pm
+    TineTest.h
+    Created: 1 Feb 2026 12:34:44pm
     Author:  kadar
 
   ==============================================================================
 */
 
 #pragma once
-
 #include <JuceHeader.h>
+#include "ModalTine.h"
 
-class DelayLineTest : public juce::UnitTest
-{
-    
+class TineTest : public juce::UnitTest {
 public:
-    DelayLineTest() : juce::UnitTest("Delay Line Test") {}
+    TineTest() : juce::UnitTest("Tine Test") {}
     void runTest() override;
-
 private:
-    JUCE_LEAK_DETECTOR(DelayLineTest)
+    JUCE_LEAK_DETECTOR(TineTest)
 };
 
-
-extern DelayLineTest delayLineTestInstance;
+extern TineTest tineTestInstance;

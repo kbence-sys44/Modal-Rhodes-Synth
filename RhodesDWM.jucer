@@ -18,12 +18,17 @@
               file="Source/Resources/fender_deluxe_lean.wav"/>
       </GROUP>
       <GROUP id="{7388A61B-9184-7EF7-EDFB-AD064607BF58}" name="Tests">
-        <FILE id="jTqS0e" name="DelayLineTest.cpp" compile="1" resource="0"
-              file="Source/DelayLineTest.cpp"/>
-        <FILE id="UE33cC" name="DelayLineTest.h" compile="0" resource="0" file="Source/DelayLineTest.h"/>
         <FILE id="qpSUwO" name="HammerTest.cpp" compile="1" resource="0" file="Source/HammerTest.cpp"/>
         <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
+        <FILE id="fAkkgN" name="PickupTest.cpp" compile="1" resource="0" file="Source/PickupTest.cpp"/>
+        <FILE id="AFLPuz" name="PickupTest.h" compile="0" resource="0" file="Source/PickupTest.h"/>
+        <FILE id="kcVtUh" name="PreampTest.cpp" compile="1" resource="0" file="Source/PreampTest.cpp"/>
+        <FILE id="NEipSs" name="PreampTest.h" compile="0" resource="0" file="Source/PreampTest.h"/>
         <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
+        <FILE id="rgdKde" name="TineTest.cpp" compile="1" resource="0" file="Source/TineTest.cpp"/>
+        <FILE id="GFMBfi" name="TineTest.h" compile="0" resource="0" file="Source/TineTest.h"/>
+        <FILE id="d82SSc" name="TremoloTest.cpp" compile="1" resource="0" file="Source/TremoloTest.cpp"/>
+        <FILE id="aVxfYC" name="TremoloTest.h" compile="0" resource="0" file="Source/TremoloTest.h"/>
       </GROUP>
       <FILE id="eNa5MA" name="CustomToggleButton.cpp" compile="1" resource="0"
             file="Source/CustomToggleButton.cpp"/>
