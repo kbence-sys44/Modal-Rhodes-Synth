@@ -15,6 +15,7 @@
 #include "PickupTest.h"
 #include "TremoloTest.h"
 #include "PreampTest.h"
+#include "DelayTest.h"
 
 class CustomTestRunner : public juce::UnitTestRunner
 {

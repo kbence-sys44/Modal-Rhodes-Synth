@@ -18,6 +18,8 @@
               file="Source/Resources/fender_deluxe_lean.wav"/>
       </GROUP>
       <GROUP id="{7388A61B-9184-7EF7-EDFB-AD064607BF58}" name="Tests">
+        <FILE id="dMApox" name="DelayTest.cpp" compile="1" resource="0" file="Source/DelayTest.cpp"/>
+        <FILE id="AfSVf1" name="DelayTest.h" compile="0" resource="0" file="Source/DelayTest.h"/>
         <FILE id="qpSUwO" name="HammerTest.cpp" compile="1" resource="0" file="Source/HammerTest.cpp"/>
         <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
         <FILE id="fAkkgN" name="PickupTest.cpp" compile="1" resource="0" file="Source/PickupTest.cpp"/>

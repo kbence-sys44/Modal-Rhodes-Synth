@@ -29,6 +29,7 @@ ModalRhodesAudioProcessor::ModalRhodesAudioProcessor()
     auto forcelink3 = &pickupTestInstance;
     auto forcelink4 = &tremoloTestInstance;
     auto forcelink5 = &preampTestInstance;
+    auto forcelink6 = &delayTestInstance;
 
     //16 hang hozzaadasa (polifonia)
     for (int i = 0; i < 16; ++i) {
