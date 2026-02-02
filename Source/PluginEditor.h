@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "TestRunner.h"
 #include "CustomToggleButton.h"
+#include "CustomKnob.h"
 
 //==============================================================================
 /**
@@ -29,6 +30,8 @@ public:
 private:
 
     ModalRhodesAudioProcessor& audioProcessor;
+
+    CustomKnob CustomKnobLnF;
 
     //cim
     juce::Label titleLabel;
@@ -115,6 +118,7 @@ private:
 
     juce::Label inLabel;
     juce::Label outLabel;
+
 
     //keretekhez
 

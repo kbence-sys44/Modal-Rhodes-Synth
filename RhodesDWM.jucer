@@ -5,6 +5,40 @@
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="JHWxRr" name="Modal-Rhodes">
     <GROUP id="{AB6CD702-9356-685F-D99C-3629DBB14DC6}" name="Source">
+      <GROUP id="{0F2655E1-7308-4DD1-5632-C3256DF240CD}" name="Sound">
+        <FILE id="cvseDu" name="ModalTine.cpp" compile="1" resource="0" file="Source/ModalTine.cpp"/>
+        <FILE id="E60vlF" name="ModalTine.h" compile="0" resource="0" file="Source/ModalTine.h"/>
+        <FILE id="HNinPQ" name="Preamp.cpp" compile="1" resource="0" file="Source/Preamp.cpp"/>
+        <FILE id="Up8xvS" name="Preamp.h" compile="0" resource="0" file="Source/Preamp.h"/>
+        <FILE id="Jryn0m" name="PickupModule.cpp" compile="1" resource="0"
+              file="Source/PickupModule.cpp"/>
+        <FILE id="R9Jvfo" name="PickupModule.h" compile="0" resource="0" file="Source/PickupModule.h"/>
+        <FILE id="tH918p" name="CrossleyHammer.cpp" compile="1" resource="0"
+              file="Source/CrossleyHammer.cpp"/>
+        <FILE id="sfA8vo" name="CrossleyHammer.h" compile="0" resource="0"
+              file="Source/CrossleyHammer.h"/>
+      </GROUP>
+      <GROUP id="{05F0820F-638A-B182-8EC2-7B79FB777DD2}" name="GUI">
+        <FILE id="RsPCu2" name="CustomKnob.cpp" compile="1" resource="0" file="Source/CustomKnob.cpp"/>
+        <FILE id="cZupAX" name="CustomKnob.h" compile="0" resource="0" file="Source/CustomKnob.h"/>
+        <FILE id="bYIE2i" name="PluginEditor.cpp" compile="1" resource="0"
+              file="Source/PluginEditor.cpp"/>
+        <FILE id="Ktz2E4" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+        <FILE id="eNa5MA" name="CustomToggleButton.cpp" compile="1" resource="0"
+              file="Source/CustomToggleButton.cpp"/>
+        <FILE id="Ii2Z5I" name="CustomToggleButton.h" compile="0" resource="0"
+              file="Source/CustomToggleButton.h"/>
+      </GROUP>
+      <GROUP id="{9A580926-B9EA-498E-6249-7716EEB3EDED}" name="Effects">
+        <FILE id="GmAFgv" name="ConvolutionCabinet.cpp" compile="1" resource="0"
+              file="Source/ConvolutionCabinet.cpp"/>
+        <FILE id="wRFyqB" name="ConvolutionCabinet.h" compile="0" resource="0"
+              file="Source/ConvolutionCabinet.h"/>
+        <FILE id="rp7CVY" name="Tremolo.cpp" compile="1" resource="0" file="Source/Tremolo.cpp"/>
+        <FILE id="sl9GN2" name="Tremolo.h" compile="0" resource="0" file="Source/Tremolo.h"/>
+        <FILE id="cEAXMB" name="DelayModule.cpp" compile="1" resource="0" file="Source/DelayModule.cpp"/>
+        <FILE id="iK1QM6" name="DelayModule.h" compile="0" resource="0" file="Source/DelayModule.h"/>
+      </GROUP>
       <GROUP id="{83EA1C7E-56C6-EE67-6328-B6C1BBC59956}" name="Resources">
         <FILE id="YAFWup" name="fender_twin_balanced.wav" compile="0" resource="1"
               file="Source/Resources/fender_twin_balanced.wav"/>
@@ -32,29 +66,6 @@
         <FILE id="d82SSc" name="TremoloTest.cpp" compile="1" resource="0" file="Source/TremoloTest.cpp"/>
         <FILE id="aVxfYC" name="TremoloTest.h" compile="0" resource="0" file="Source/TremoloTest.h"/>
       </GROUP>
-      <FILE id="rp7CVY" name="Tremolo.cpp" compile="1" resource="0" file="Source/Tremolo.cpp"/>
-      <FILE id="sl9GN2" name="Tremolo.h" compile="0" resource="0" file="Source/Tremolo.h"/>
-      <FILE id="cEAXMB" name="DelayModule.cpp" compile="1" resource="0" file="Source/DelayModule.cpp"/>
-      <FILE id="iK1QM6" name="DelayModule.h" compile="0" resource="0" file="Source/DelayModule.h"/>
-      <FILE id="eNa5MA" name="CustomToggleButton.cpp" compile="1" resource="0"
-            file="Source/CustomToggleButton.cpp"/>
-      <FILE id="Ii2Z5I" name="CustomToggleButton.h" compile="0" resource="0"
-            file="Source/CustomToggleButton.h"/>
-      <FILE id="tH918p" name="CrossleyHammer.cpp" compile="1" resource="0"
-            file="Source/CrossleyHammer.cpp"/>
-      <FILE id="sfA8vo" name="CrossleyHammer.h" compile="0" resource="0"
-            file="Source/CrossleyHammer.h"/>
-      <FILE id="cvseDu" name="ModalTine.cpp" compile="1" resource="0" file="Source/ModalTine.cpp"/>
-      <FILE id="E60vlF" name="ModalTine.h" compile="0" resource="0" file="Source/ModalTine.h"/>
-      <FILE id="GmAFgv" name="ConvolutionCabinet.cpp" compile="1" resource="0"
-            file="Source/ConvolutionCabinet.cpp"/>
-      <FILE id="wRFyqB" name="ConvolutionCabinet.h" compile="0" resource="0"
-            file="Source/ConvolutionCabinet.h"/>
-      <FILE id="HNinPQ" name="Preamp.cpp" compile="1" resource="0" file="Source/Preamp.cpp"/>
-      <FILE id="Up8xvS" name="Preamp.h" compile="0" resource="0" file="Source/Preamp.h"/>
-      <FILE id="Jryn0m" name="PickupModule.cpp" compile="1" resource="0"
-            file="Source/PickupModule.cpp"/>
-      <FILE id="R9Jvfo" name="PickupModule.h" compile="0" resource="0" file="Source/PickupModule.h"/>
       <FILE id="hDiaBj" name="RhodesSound.h" compile="0" resource="0" file="Source/RhodesSound.h"/>
       <FILE id="ymCcc0" name="RhodesVoice.cpp" compile="1" resource="0" file="Source/RhodesVoice.cpp"/>
       <FILE id="qnQheu" name="RhodesVoice.h" compile="0" resource="0" file="Source/RhodesVoice.h"/>
@@ -62,9 +73,6 @@
             file="Source/PluginProcessor.cpp"/>
       <FILE id="IR7Ys0" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="bYIE2i" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="Ktz2E4" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>

@@ -77,8 +77,10 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     //segedfuggveny a sok slider miatt
     auto sliderSetup = [this](juce::Slider& slider, juce::Label& label, std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>& attachment, juce::String paramID, juce::String name) 
         {
+            slider.setLookAndFeel(&CustomKnobLnF);
+
             slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-            slider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 40, 15);
+            slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 40, 15);
             addAndMakeVisible(slider);
 
             label.setText(name, juce::dontSendNotification);
@@ -126,6 +128,17 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
 
 ModalRhodesAudioProcessorEditor::~ModalRhodesAudioProcessorEditor()
 {
+    hardnessSlider.setLookAndFeel(nullptr);
+    decaySlider.setLookAndFeel(nullptr);
+    releaseSlider.setLookAndFeel(nullptr);
+    symmetrySlider.setLookAndFeel(nullptr);
+    bassSlider.setLookAndFeel(nullptr);
+    trebleSlider.setLookAndFeel(nullptr);
+    tremDepthSlider.setLookAndFeel(nullptr);
+    reverbWetSlider.setLookAndFeel(nullptr);
+    reverbDrySlider.setLookAndFeel(nullptr);
+    driveSlider.setLookAndFeel(nullptr);
+    outputSlider.setLookAndFeel(nullptr);
 }
 
 void ModalRhodesAudioProcessorEditor::updateVisibility() {
@@ -231,12 +244,10 @@ void ModalRhodesAudioProcessorEditor::resized()
         area.removeFromBottom(10);
 
         auto controlHeight = (area.getHeight() - 20) / 2;
-        auto controlWidth = area.getWidth() / 7;
+        auto controlWidth = area.getWidth() / 8;
 
         //bal oldal
         auto leftSide = area.removeFromLeft(controlWidth * 3);
-
-        mainSectionBounds = leftSide;
 
         auto cabinetArea = leftSide.removeFromTop(20);
         cabinetLabel.setBounds(cabinetArea); // ez egy gomb lesz 
