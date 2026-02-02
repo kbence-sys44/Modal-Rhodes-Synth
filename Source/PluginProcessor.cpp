@@ -177,6 +177,9 @@ void ModalRhodesAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     reverbParams.freezeMode = 0.0f;
 
     reverb.setParameters(reverbParams);
+
+    delay.prepare(specifications);
+    delay.setParameters(350.0f, 0.4f, 0.3f, 2500.0f);
 }
 
 void ModalRhodesAudioProcessor::releaseResources()
@@ -274,6 +277,9 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     //a maradek modul itt dolgozza fel a jelet nem hangonkent, hanem mar a teljes mixen egyszerre
     preamp.process(context);
     if(isReverbOn) cabinet.process(context);
+
+    delay.process(context);
+
     if(isCabinetOn) reverb.process(context);
 
 }

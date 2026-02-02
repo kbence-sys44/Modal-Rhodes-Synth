@@ -13,6 +13,7 @@
 #include "RhodesSound.h"
 #include "ConvolutionCabinet.h"
 #include "Preamp.h"
+#include "DelayModule.h"
 
 //==============================================================================
 /**
@@ -70,6 +71,7 @@ private:
     juce::dsp::Reverb reverb;
     juce::dsp::Reverb::Parameters reverbParams;
     ConvolutionCabinet cabinet;
+    DelayModule delay;
 
     bool isReverbActive = true;
     bool isCabinetActive = true;
