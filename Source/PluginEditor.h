@@ -42,6 +42,7 @@ private:
     juce::TextButton debugButton{ "DEBUG" };
     bool isDebugOn = false;
     void updateVisibility();
+    void updateCabinetState();
 
     juce::TextButton runTestsButton{ "Run all tests" };
     juce::TextEditor textResults;
@@ -99,6 +100,22 @@ private:
     juce::Label reverbDryLabel;
     std::unique_ptr<SliderAttachment> reverbDryAttachment;
 
+    juce::Slider delayTimeSlider;
+    juce::Label delayTimeLabel;
+    std::unique_ptr<SliderAttachment> delayTimeAttachment;
+
+    juce::Slider delayFeedbackSlider;
+    juce::Label delayFeedbackLabel;
+    std::unique_ptr<SliderAttachment> delayFeedbackAttachment;
+
+    juce::Slider delayMixSlider;
+    juce::Label delayMixLabel;
+    std::unique_ptr<SliderAttachment> delayMixAttachment;
+
+    juce::Slider delayToneSlider;
+    juce::Label delayToneLabel;
+    std::unique_ptr<SliderAttachment> delayToneAttachment;
+
     //gombok
     juce::Label tremoloLabel;
     CustomToggleButton tremoloToggleButton;
@@ -109,8 +126,8 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> reverbToggleAttachment;
 
     juce::Label cabinetLabel;
-    CustomToggleButton cabinetToggleButton;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> cabinetToggleAttachment;
+    juce::TextButton cabinetOnButton;
+    juce::TextButton cabinetOffButton;
 
     juce::Label delayLabel;
     CustomToggleButton delayToggleButton;
@@ -126,6 +143,9 @@ private:
     juce::Rectangle<int> tremoloBounds;
     juce::Rectangle<int> reverbBounds;
     juce::Rectangle<int> delayBounds;
+    juce::Rectangle<int> linearBounds;
+    juce::Rectangle<int> boostBounds;
+    juce::Rectangle<int> cabinetBounds;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModalRhodesAudioProcessorEditor)

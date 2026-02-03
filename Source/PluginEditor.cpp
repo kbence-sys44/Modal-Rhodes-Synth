@@ -69,10 +69,32 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     labelSetup(inLabel, "IN");
     labelSetup(outLabel, "OUT");
 
+    inLabel.setJustificationType(juce::Justification::left);
+    outLabel.setJustificationType(juce::Justification::right);
+
     //keyboard
     keyboardComponent.setAvailableRange(48, 96);
     keyboardComponent.setKeyWidth(30.45);
     addAndMakeVisible(keyboardComponent);
+
+    addAndMakeVisible(cabinetOnButton);
+    addAndMakeVisible(cabinetOffButton);
+
+    cabinetOnButton.setClickingTogglesState(true);
+    cabinetOffButton.setClickingTogglesState(true);
+    cabinetOnButton.setRadioGroupId(101);
+    cabinetOffButton.setRadioGroupId(101);
+
+    cabinetOnButton.onClick = [this] {
+        if (auto* param = audioProcessor.apvts.getParameter("CABINET_SWITCH"))
+            param->setValueNotifyingHost(1.0f);
+        };
+    cabinetOffButton.onClick = [this] {
+        if (auto* param = audioProcessor.apvts.getParameter("CABINET_SWITCH"))
+            param->setValueNotifyingHost(0.0f);
+        };
+
+    updateCabinetState();
 
     //segedfuggveny a sok slider miatt
     auto sliderSetup = [this](juce::Slider& slider, juce::Label& label, std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>& attachment, juce::String paramID, juce::String name) 
@@ -107,6 +129,11 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     sliderSetup(driveSlider, driveLabel, driveAttachment, "PREAMP_DRIVE", "Drive");
     sliderSetup(outputSlider, outputLabel, outputAttachment, "OUTPUT_GAIN", "Output");
 
+    sliderSetup(delayTimeSlider, delayTimeLabel, delayTimeAttachment, "TIME", "Time");
+    sliderSetup(delayFeedbackSlider, delayFeedbackLabel, delayFeedbackAttachment, "FEEDBACK", "Feedback");
+    sliderSetup(delayMixSlider, delayMixLabel, delayMixAttachment, "MIX", "Mix");
+    sliderSetup(delayToneSlider, delayToneLabel, delayToneAttachment, "TONE", "Tone");
+
     driveSlider.setSliderStyle(juce::Slider::LinearVertical);
     outputSlider.setSliderStyle(juce::Slider::LinearVertical);
 
@@ -116,11 +143,8 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     addAndMakeVisible(reverbToggleButton);
     reverbToggleAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.apvts, "REVERB_SWITCH", reverbToggleButton);
 
-    addAndMakeVisible(cabinetToggleButton);
-    cabinetToggleAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.apvts, "CABINET_SWITCH", cabinetToggleButton);
-
     addAndMakeVisible(delayToggleButton);
-    cabinetToggleAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.apvts, "DELAY_SWITCH", delayToggleButton);
+    delayToggleAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.apvts, "DELAY_SWITCH", delayToggleButton);
 
     updateVisibility();
 
@@ -139,6 +163,10 @@ ModalRhodesAudioProcessorEditor::~ModalRhodesAudioProcessorEditor()
     reverbDrySlider.setLookAndFeel(nullptr);
     driveSlider.setLookAndFeel(nullptr);
     outputSlider.setLookAndFeel(nullptr);
+    delayFeedbackSlider.setLookAndFeel(nullptr);
+    delayTimeSlider.setLookAndFeel(nullptr);
+    delayMixSlider.setLookAndFeel(nullptr);
+    delayToneSlider.setLookAndFeel(nullptr);
 }
 
 void ModalRhodesAudioProcessorEditor::updateVisibility() {
@@ -166,14 +194,22 @@ void ModalRhodesAudioProcessorEditor::updateVisibility() {
         &tremDepthSlider, &tremDepthLabel, &tremRateSlider, &tremRateLabel,
         &reverbDrySlider, &reverbDryLabel, &reverbWetSlider, &reverbWetLabel,
         &driveSlider, &driveLabel, &outputSlider, &outputLabel,
-        &tremoloToggleButton, &reverbToggleButton, &cabinetToggleButton, &delayToggleButton
-        
+        &tremoloToggleButton, &reverbToggleButton, &cabinetOffButton, &cabinetOnButton, &delayToggleButton,
+        &delayTimeSlider, &delayFeedbackSlider, &delayMixSlider, &delayToneSlider        
     };
 
     for (auto* all : standardControls) {
         all->setVisible(normalUI);
     }
 
+}
+
+void ModalRhodesAudioProcessorEditor::updateCabinetState() {
+    float value = *audioProcessor.apvts.getRawParameterValue("CABINET_SWITCH");
+    bool cabinetOn = value > 0.5f;
+
+    cabinetOnButton.setToggleState(cabinetOn, juce::dontSendNotification);
+    cabinetOffButton.setToggleState(cabinetOn, juce::dontSendNotification);
 }
 
 //==============================================================================
@@ -183,8 +219,8 @@ void ModalRhodesAudioProcessorEditor::paint(juce::Graphics& g)
     g.fillAll(juce::Colour(0xff2b2b2b));
 
     //elvalaszto vonal
-    g.setColour(juce::Colours::white.withAlpha(0.2f));
-    g.drawLine(20, 50, getWidth() - 20, 50, 1.0f);
+    //g.setColour(juce::Colours::white.withAlpha(0.2f));
+    //g.drawLine(20, 50, getWidth() - 20, 50, 1.0f);
 
     if (debugButton.getToggleState()) {
         return;
@@ -205,21 +241,19 @@ void ModalRhodesAudioProcessorEditor::paint(juce::Graphics& g)
     drawSection(reverbBounds);
     drawSection(tremoloBounds);
     drawSection(delayBounds);
+    drawSection(linearBounds);
+    drawSection(boostBounds);
+    drawSection(cabinetBounds);
 
 }
 
 //elrendezes
 void ModalRhodesAudioProcessorEditor::resized()
 {
-    auto area = getLocalBounds();
-
-    auto headerArea = area.removeFromTop(50);
-    titleLabel.setBounds(headerArea);
-
-    debugButton.setBounds(headerArea.removeFromRight(110).reduced(20, 10));
 
     if (debugButton.getToggleState()) {
-        auto debugArea = area.reduced(20);
+
+        auto debugArea = getLocalBounds().reduced(20);
 
         runTestsButton.setBounds(debugArea.removeFromTop(40));
         debugArea.removeFromTop(10);
@@ -228,106 +262,103 @@ void ModalRhodesAudioProcessorEditor::resized()
     }
     else {
         //normal mod
+
+        //custom knob elhelyezes label miatt
         auto placeKnob = [](juce::Slider& slider, juce::Label& label, juce::Rectangle<int> bounds) {
             auto labelBounds = bounds.removeFromBottom(15);
-            bounds.removeFromBottom(5);
             slider.setBounds(bounds);
             label.setBounds(labelBounds);
            };
 
-        area = area.reduced(10);
-        area.removeFromBottom(10);
-        area.removeFromLeft(10);
-        area.removeFromRight(10);
+        //fo reszek meghatarozasa
+        auto totalArea = getLocalBounds().reduced(10);
+        auto keyboardAreaHeight = (totalArea.getHeight() / 6) * 2;
+        auto controllArea = totalArea.removeFromTop(((totalArea.getHeight() / 6) * 4) - 10);
 
-        keyboardComponent.setBounds(area.removeFromBottom(150));
-        area.removeFromBottom(10);
+        //billentyu elhelyezes
+        keyboardComponent.setBounds(totalArea.removeFromBottom(keyboardAreaHeight));
 
-        auto controlHeight = (area.getHeight() - 20) / 2;
-        auto controlWidth = area.getWidth() / 8;
+        //fo arany ertekek
+        auto horizontalSectionHeight = controllArea.getHeight() / 3.25;
+        auto verticalSectionWidth = controllArea.getWidth() / 7;
 
-        //bal oldal
-        auto leftSide = area.removeFromLeft(controlWidth * 3);
+        //cim es jobb szekcio
+        auto linearSliderArea = controllArea.removeFromRight(verticalSectionWidth);
+        auto titleSection = controllArea.removeFromBottom(horizontalSectionHeight);
+        mainSectionBounds = titleSection;
+        auto titleTextArea = titleSection.removeFromLeft(titleSection.getWidth() / 2);
+        titleLabel.setBounds(titleTextArea);
+        //debugButton.setBounds(titleTextArea.removeFromLeft(100));
 
-        auto cabinetArea = leftSide.removeFromTop(20);
-        cabinetLabel.setBounds(cabinetArea); // ez egy gomb lesz 
 
-        mainSectionBounds = leftSide;
+        //attack, decay, release knobok
+        placeKnob(hardnessSlider, hardnessLabel, titleSection.removeFromLeft(verticalSectionWidth).reduced(10));
+        placeKnob(decaySlider, decayLabel, titleSection.removeFromLeft(verticalSectionWidth).reduced(10));
+        placeKnob(releaseSlider, releaseLabel, titleSection.removeFromLeft(verticalSectionWidth).reduced(10));
 
-        auto leftSideTop = leftSide.removeFromTop(controlHeight);
-        auto leftSideBottom = leftSide.removeFromBottom(controlHeight);
-
-        placeKnob(hardnessSlider, hardnessLabel, leftSideTop.removeFromLeft(controlWidth).reduced(10));
-        placeKnob(decaySlider, decayLabel, leftSideTop.removeFromLeft(controlWidth).reduced(10));
-        placeKnob(releaseSlider, releaseLabel, leftSideTop.removeFromLeft(controlWidth).reduced(10));
-
-        placeKnob(bassSlider, bassLabel, leftSideBottom.removeFromLeft(controlWidth).reduced(10));
-        placeKnob(trebleSlider, trebleLabel, leftSideBottom.removeFromLeft(controlWidth).reduced(10));
-        placeKnob(symmetrySlider, symmetryLabel, leftSideBottom.removeFromLeft(controlWidth).reduced(10));
-
-        //in out
-        auto rightSection1 = area.removeFromLeft(controlWidth);
-        auto linearSliderAreaWidth = rightSection1.getWidth() / 2;
-
-        auto linearSlider1 = rightSection1.removeFromLeft(linearSliderAreaWidth);
-        auto linearHeader1 = linearSlider1.removeFromTop(20);
-        inLabel.setBounds(linearHeader1);
-        linearSlider1.removeFromBottom(10);
-        driveSlider.setBounds(linearSlider1);
-
-        auto linearSlider2 = rightSection1.removeFromLeft(linearSliderAreaWidth);
-        auto linearHeader2 = linearSlider2.removeFromTop(20);
-        outLabel.setBounds(linearHeader2);
-        linearSlider2.removeFromBottom(10);
-        outputSlider.setBounds(linearSlider2);
-
-        //reverb
-        auto rightSection2 = area.removeFromLeft(controlWidth);
-        auto rightSection2Header = rightSection2.removeFromTop(20);
-
-        reverbBounds = rightSection2;
-
-        auto rightSectionControlHeight = rightSection2.getHeight() / 2;
-
-        auto reverbButtonArea = rightSection2Header.removeFromLeft(20);
-        reverbToggleButton.setBounds(reverbButtonArea.withSizeKeepingCentre(20, 20));
-
-        rightSection2Header.removeFromRight(20);
-        reverbLabel.setBounds(rightSection2Header);
-
-        placeKnob(reverbDrySlider, reverbDryLabel, rightSection2.removeFromTop(rightSectionControlHeight).reduced(10));
-        placeKnob(reverbWetSlider, reverbWetLabel, rightSection2.removeFromTop(rightSectionControlHeight).reduced(10));
-
+        //effekt resz
+        auto effectsArea = controllArea.removeFromLeft(verticalSectionWidth * 3);
+        auto effectSectionWidth = effectsArea.getWidth() / 4;
+        auto labelHeight = horizontalSectionHeight * 0.25;
 
         //tremolo
-        auto rightSection3 = area.removeFromLeft(controlWidth);
-        auto rightSection3Header = rightSection3.removeFromTop(20);
+        auto tremoloArea = effectsArea.removeFromLeft(effectSectionWidth);
+        tremoloLabel.setBounds(tremoloArea.removeFromTop(labelHeight));
+        tremoloBounds = tremoloArea;
+        tremoloToggleButton.setBounds(tremoloArea.getX() + 5, tremoloArea.getY() + 5, 20, 20);
+        placeKnob(tremDepthSlider, tremDepthLabel, tremoloArea.removeFromTop(horizontalSectionHeight).reduced(10));
+        placeKnob(tremRateSlider, tremRateLabel, tremoloArea.removeFromTop(horizontalSectionHeight).reduced(10));
 
-        tremoloBounds = rightSection3;
-
-        auto tremoloButtonArea = rightSection3Header.removeFromLeft(20);
-        tremoloToggleButton.setBounds(tremoloButtonArea.withSizeKeepingCentre(20, 20));
-
-        rightSection3Header.removeFromRight(20);
-        tremoloLabel.setBounds(rightSection3Header);
-
-        placeKnob(tremDepthSlider, tremDepthLabel, rightSection3.removeFromTop(rightSectionControlHeight).reduced(10));
-        placeKnob(tremRateSlider, tremRateLabel, rightSection3.removeFromTop(rightSectionControlHeight).reduced(10));
+        //reverb
+        auto reverbArea = effectsArea.removeFromLeft(effectSectionWidth);
+        reverbLabel.setBounds(reverbArea.removeFromTop(labelHeight));
+        reverbBounds = reverbArea;
+        reverbToggleButton.setBounds(reverbArea.getX() + 5, reverbArea.getY() + 5, 20, 20);
+        placeKnob(reverbDrySlider, reverbDryLabel, reverbArea.removeFromTop(horizontalSectionHeight).reduced(10));
+        placeKnob(reverbWetSlider, reverbWetLabel, reverbArea.removeFromTop(horizontalSectionHeight).reduced(10));
 
         //delay
-        auto rightSection4 = area.removeFromLeft(controlWidth);
-        auto rightSection4Header = rightSection4.removeFromTop(20);
+        auto delayArea = effectsArea.removeFromLeft(effectSectionWidth * 2);
+        delayLabel.setBounds(delayArea.removeFromTop(labelHeight));
+        delayBounds = delayArea;
+        delayToggleButton.setBounds(delayArea.getX() + 5, delayArea.getY() + 5, 20, 20);
+        auto delayAreaTop = delayArea.removeFromTop(delayArea.getHeight() / 2);
+        placeKnob(delayTimeSlider, delayTimeLabel, delayAreaTop.removeFromLeft(effectSectionWidth).reduced(10));
+        placeKnob(delayFeedbackSlider, delayFeedbackLabel, delayAreaTop.removeFromLeft(effectSectionWidth).reduced(10));
+        placeKnob(delayMixSlider, delayMixLabel, delayArea.removeFromLeft(effectSectionWidth).reduced(10));
+        placeKnob(delayToneSlider, delayToneLabel, delayArea.removeFromLeft(effectSectionWidth).reduced(10));
 
-        delayBounds = rightSection4;
+        //csuszkak
+        auto linearSliderWidth = linearSliderArea.getWidth() / 3;
+        auto linearSliderTextArea = linearSliderArea.removeFromTop(labelHeight);
+        linearBounds = linearSliderArea;
+        auto inputSliderArea = linearSliderArea.removeFromLeft(linearSliderWidth).reduced(0,10);
+        auto outputSliderArea = linearSliderArea.removeFromRight(linearSliderWidth).reduced(0, 10);
 
-        auto delayButtonArea = rightSection4Header.removeFromLeft(20);
-        delayToggleButton.setBounds(delayButtonArea.withSizeKeepingCentre(20, 20));
+        inLabel.setBounds(linearSliderTextArea.removeFromLeft(50));
+        outLabel.setBounds(linearSliderTextArea.removeFromRight(50));
+        driveSlider.setBounds(inputSliderArea);
+        outputSlider.setBounds(outputSliderArea);
 
-        rightSection4Header.removeFromRight(20);
-        delayLabel.setBounds(rightSection4Header);
+        //bass treble symm
+        auto boostControllerArea = controllArea.removeFromBottom(horizontalSectionHeight);
+        boostBounds = boostControllerArea;
+        placeKnob(bassSlider, bassLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10));
+        placeKnob(trebleSlider, trebleLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10));
+        placeKnob(symmetrySlider, symmetryLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10));
 
-        //placeKnob(, , rightSection3.removeFromTop(rightSectionControlHeight).reduced(10));
-        //placeKnob(, , rightSection3.removeFromTop(rightSectionControlHeight).reduced(10));
+        //maradek hely a cabinet
+        controllArea.removeFromTop(labelHeight);
+        cabinetBounds = controllArea;
+        auto cabinetArea = controllArea.reduced(0,10);
+        auto cabinetLabelArea = cabinetArea.removeFromTop(cabinetArea.getHeight()/3);
+        cabinetLabel.setBounds(cabinetLabelArea);
+        //gombok
+        auto buttonArea = cabinetArea.reduced(40, 10);
+        auto buttonWidth = buttonArea.getWidth() / 2;
+        cabinetOnButton.setBounds(buttonArea.removeFromLeft(buttonWidth).reduced(30,0));
+        cabinetOffButton.setBounds(buttonArea.removeFromLeft(buttonWidth).reduced(30,0));
+
     }
 }
 

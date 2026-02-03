@@ -137,6 +137,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
     params.push_back(std::make_unique<juce::AudioParameterBool>("CABINET_SWITCH", "Cabinet Switch", true));
     params.push_back(std::make_unique<juce::AudioParameterBool>("DELAY_SWITCH", "Delay Switch", true));
 
+    //delay
+    params.push_back(std::make_unique<juce::AudioParameterBool>("TIME", "Time", true));
+    params.push_back(std::make_unique<juce::AudioParameterBool>("FEEDBACK", "Feedback", true));
+    params.push_back(std::make_unique<juce::AudioParameterBool>("MIX", "Mix", true));
+    params.push_back(std::make_unique<juce::AudioParameterBool>("TONE", "Tone", true));
+
     return { params.begin(), params.end() };
 
 }
@@ -237,6 +243,11 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     bool isReverbOn = *apvts.getRawParameterValue("REVERB_SWITCH") > 0.5f;
     bool isCabinetOn = *apvts.getRawParameterValue("CABINET_SWITCH") > 0.5f;
     bool isDelayOn = *apvts.getRawParameterValue("DELAY_SWITCH") > 0.5f;
+
+    float delayTime = *apvts.getRawParameterValue("TIME");
+    float delayfeedback = *apvts.getRawParameterValue("FEEDBACK");
+    float delayMix = *apvts.getRawParameterValue("MIX");
+    float delayTone = *apvts.getRawParameterValue("TONE");
     
     for (int i = 0; i < rhodesSynth.getNumVoices(); ++i) {
         if (auto* voice = dynamic_cast<RhodesVoice*>(rhodesSynth.getVoice(i))) {
@@ -257,6 +268,8 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
             reverbParams.wetLevel = wet;
             reverbParams.dryLevel = dry;
             reverb.setParameters(reverbParams);
+
+            delay.setParameters(delayTime, delayfeedback, delayMix, delayTone);
         }
     }
 
@@ -277,11 +290,12 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 
     //a maradek modul itt dolgozza fel a jelet nem hangonkent, hanem mar a teljes mixen egyszerre
     preamp.process(context);
-    if(isReverbOn) cabinet.process(context);
 
-    delay.process(context);
+    if(isCabinetOn) cabinet.process(context);
 
-    if(isCabinetOn) reverb.process(context);
+    if(isDelayOn) delay.process(context);
+
+    if(isReverbOn) reverb.process(context);
 
 }
 
