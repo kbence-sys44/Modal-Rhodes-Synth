@@ -19,6 +19,8 @@
               file="Source/CrossleyHammer.h"/>
       </GROUP>
       <GROUP id="{05F0820F-638A-B182-8EC2-7B79FB777DD2}" name="GUI">
+        <FILE id="Ub2R1o" name="LevelMeter.cpp" compile="1" resource="0" file="Source/LevelMeter.cpp"/>
+        <FILE id="w6r57f" name="LevelMeter.h" compile="0" resource="0" file="Source/LevelMeter.h"/>
         <FILE id="RsPCu2" name="CustomKnob.cpp" compile="1" resource="0" file="Source/CustomKnob.cpp"/>
         <FILE id="cZupAX" name="CustomKnob.h" compile="0" resource="0" file="Source/CustomKnob.h"/>
         <FILE id="bYIE2i" name="PluginEditor.cpp" compile="1" resource="0"

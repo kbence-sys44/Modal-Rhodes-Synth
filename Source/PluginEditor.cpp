@@ -362,3 +362,34 @@ void ModalRhodesAudioProcessorEditor::resized()
     }
 }
 
+//lekerekitett zongora sarkak
+void ModalRhodesAudioProcessorEditor::paintOverChildren(juce::Graphics& g) {
+
+    if (isDebugOn || !keyboardComponent.isVisible()) return;
+
+    auto keyboardBounds = keyboardComponent.getBounds().toFloat();
+    float radius = 10.0f;
+
+    //teglalap
+    juce::Path rectanglePath;
+    rectanglePath.addRectangle(keyboardBounds);
+
+    //lekerekitett
+    juce::Path roundedPath;
+    roundedPath.addRoundedRectangle(keyboardBounds, radius);
+
+    //teglalap - lekerekitett
+    juce::Path cornerPath = rectanglePath;
+    cornerPath.setUsingNonZeroWinding(false);
+    cornerPath.addPath(roundedPath);
+
+    //hatterszin
+    g.setColour(juce::Colour(0xff2b2b2b));
+    g.fillPath(cornerPath);
+
+    //keret
+    g.setColour(juce::Colours::white.withAlpha(0.15f));
+    g.drawRoundedRectangle(keyboardBounds, radius, 1.5f);
+
+}
+
