@@ -132,16 +132,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
     params.push_back(std::make_unique<juce::AudioParameterFloat>("DRY_LEVEL", "Dry Level", 0.0f, 2.0f, 0.8f));
 
     //on off
-    params.push_back(std::make_unique<juce::AudioParameterBool>("TREM_SWITH", "Tremolo Switch", true));
+    params.push_back(std::make_unique<juce::AudioParameterBool>("TREM_SWITCH", "Tremolo Switch", true));
     params.push_back(std::make_unique<juce::AudioParameterBool>("REVERB_SWITCH", "Reverb Switch", true));
     params.push_back(std::make_unique<juce::AudioParameterBool>("CABINET_SWITCH", "Cabinet Switch", true));
     params.push_back(std::make_unique<juce::AudioParameterBool>("DELAY_SWITCH", "Delay Switch", true));
 
     //delay
-    params.push_back(std::make_unique<juce::AudioParameterBool>("TIME", "Time", true));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("FEEDBACK", "Feedback", true));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("MIX", "Mix", true));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("TONE", "Tone", true));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("TIME", "Time", 0.0f, 1000.0f, 350.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("FEEDBACK", "Feedback", 0.0f, 0.95f, 0.4f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("MIX", "Mix", 0.0f, 1.0f, 0.3f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("TONE", "Tone", 100.0f, 5000.0f, 2500.0f));
 
     return { params.begin(), params.end() };
 
@@ -239,7 +239,7 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     float wet = *apvts.getRawParameterValue("WET_LEVEL");
     float dry = *apvts.getRawParameterValue("DRY_LEVEL");
 
-    bool isTremoloOn = *apvts.getRawParameterValue("TREM_SWITH") > 0.5f;
+    bool isTremoloOn = *apvts.getRawParameterValue("TREM_SWITCH") > 0.5f;
     bool isReverbOn = *apvts.getRawParameterValue("REVERB_SWITCH") > 0.5f;
     bool isCabinetOn = *apvts.getRawParameterValue("CABINET_SWITCH") > 0.5f;
     bool isDelayOn = *apvts.getRawParameterValue("DELAY_SWITCH") > 0.5f;

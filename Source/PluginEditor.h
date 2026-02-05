@@ -43,6 +43,8 @@ private:
     LevelMeter lvlMeter;
 
     std::vector<std::unique_ptr<SliderStruct>> sliders;
+    void addSlider(juce::String parameterID, juce::String name, ControlGroup group);
+    SliderStruct* findSlider(juce::String parameterID);
 
     //cim
     juce::Label titleLabel;
@@ -60,72 +62,6 @@ private:
     CustomTestRunner runner;
 
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
-
-    //fizikai parameterek
-    juce::Slider hardnessSlider;
-    juce::Label hardnessLabel;
-    std::unique_ptr<SliderAttachment> hardnessAttachment;
-
-    juce::Slider decaySlider;
-    juce::Label decayLabel;
-    std::unique_ptr<SliderAttachment> decayAttachment;
-
-    juce::Slider releaseSlider;
-    juce::Label releaseLabel;
-    std::unique_ptr<SliderAttachment> releaseAttachment;
-
-    juce::Slider symmetrySlider;
-    juce::Label symmetryLabel;
-    std::unique_ptr<SliderAttachment> symmetryAttachment;
-
-    //elektronika/ effektek
-    juce::Slider driveSlider;
-    juce::Label driveLabel;
-    std::unique_ptr<SliderAttachment> driveAttachment;
-
-    juce::Slider bassSlider;
-    juce::Label bassLabel;
-    std::unique_ptr<SliderAttachment> bassAttachment;
-
-    juce::Slider trebleSlider;
-    juce::Label trebleLabel;
-    std::unique_ptr<SliderAttachment> trebleAttachment;
-
-    juce::Slider outputSlider;
-    juce::Label outputLabel;
-    std::unique_ptr<SliderAttachment> outputAttachment;
-
-    juce::Slider tremDepthSlider;
-    juce::Label tremDepthLabel;
-    std::unique_ptr<SliderAttachment> tremDepthAttachment;
-
-    juce::Slider tremRateSlider;
-    juce::Label tremRateLabel;
-    std::unique_ptr<SliderAttachment> tremRateAttachment;
-
-    juce::Slider reverbWetSlider;
-    juce::Label reverbWetLabel;
-    std::unique_ptr<SliderAttachment> reverbWetAttachment;
-
-    juce::Slider reverbDrySlider;
-    juce::Label reverbDryLabel;
-    std::unique_ptr<SliderAttachment> reverbDryAttachment;
-
-    juce::Slider delayTimeSlider;
-    juce::Label delayTimeLabel;
-    std::unique_ptr<SliderAttachment> delayTimeAttachment;
-
-    juce::Slider delayFeedbackSlider;
-    juce::Label delayFeedbackLabel;
-    std::unique_ptr<SliderAttachment> delayFeedbackAttachment;
-
-    juce::Slider delayMixSlider;
-    juce::Label delayMixLabel;
-    std::unique_ptr<SliderAttachment> delayMixAttachment;
-
-    juce::Slider delayToneSlider;
-    juce::Label delayToneLabel;
-    std::unique_ptr<SliderAttachment> delayToneAttachment;
 
     //gombok
     juce::Label tremoloLabel;

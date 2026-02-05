@@ -14,8 +14,6 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     : AudioProcessorEditor (&p), audioProcessor (p),
     keyboardComponent(p.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
-    //ablak merete
-    setSize (900, 500);
 
     //cim
     static auto typeface = juce::Typeface::createSystemTypefaceFor(BinaryData::FelipaRegular_ttf, BinaryData::FelipaRegular_ttfSize);
@@ -26,6 +24,8 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     titleLabel.setColour(juce::Label::textColourId, darkTextColour);
     addAndMakeVisible(titleLabel);
 
+    addAndMakeVisible(lvlMeter);
+    startTimer(24);
 
     //debug mode
     addAndMakeVisible(debugButton);
@@ -99,93 +99,75 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
 
     updateCabinetState();
 
-    addAndMakeVisible(lvlMeter);
-    startTimer(24); //24fps
-
-    //segedfuggveny a sok slider miatt
-    auto sliderSetup = [this](juce::Slider& slider, juce::Label& label, std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>& attachment, juce::String paramID, juce::String name) 
-        {
-            slider.setLookAndFeel(&CustomKnobLnF);
-
-            slider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-            slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 40, 15);
-            addAndMakeVisible(slider);
-
-            label.setText(name, juce::dontSendNotification);
-            label.setColour(juce::Label::textColourId, textColour);
-            label.setJustificationType(juce::Justification::centred);
-            addAndMakeVisible(label);
-
-            //osszekotes az apvts-el a processzorban
-            attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, paramID, slider);
-        };
-
-    sliderSetup(hardnessSlider, hardnessLabel, hardnessAttachment, "HAMMER_HARDNESS", "Attack");
-    sliderSetup(decaySlider, decayLabel, decayAttachment, "SUSTAIN_DECAY", "Decay");
-    sliderSetup(releaseSlider, releaseLabel,releaseAttachment , "DAMPER_RELEASE", "Release");
-
-    hardnessLabel.setColour(juce::Label::textColourId, darkTextColour);
-    hardnessLabel.setFont(juce::Font(12.0f, juce::Font::bold));
-    decayLabel.setColour(juce::Label::textColourId, darkTextColour);
-    decayLabel.setFont(juce::Font(12.0f, juce::Font::bold));
-    releaseLabel.setColour(juce::Label::textColourId, darkTextColour);
-    releaseLabel.setFont(juce::Font(12.0f, juce::Font::bold));
-
-    hardnessSlider.setLookAndFeel(&MainKnobsLnF);
-    decaySlider.setLookAndFeel(&MainKnobsLnF);
-    releaseSlider.setLookAndFeel(&MainKnobsLnF);
-
-    sliderSetup(symmetrySlider,symmetryLabel ,symmetryAttachment , "PICKUP_SYMMETRY", "Symmetry");
-    sliderSetup(bassSlider,bassLabel,bassAttachment, "PREAMP_BASS", "Bass");
-    sliderSetup(trebleSlider,trebleLabel,trebleAttachment, "PREAMP_TREBLE", "Treble");
-    
-    sliderSetup(tremDepthSlider,tremDepthLabel,tremDepthAttachment, "TREM_DEPTH", "Depth");
-    sliderSetup(tremRateSlider,tremRateLabel,tremRateAttachment, "TREM_RATE", "Rate");
-
-    sliderSetup(reverbWetSlider,reverbWetLabel,reverbWetAttachment, "WET_LEVEL", "Wet Level");
-    sliderSetup(reverbDrySlider,reverbDryLabel,reverbDryAttachment, "DRY_LEVEL", "Dry Level");
-
-    sliderSetup(driveSlider, driveLabel, driveAttachment, "PREAMP_DRIVE", "Drive");
-    sliderSetup(outputSlider, outputLabel, outputAttachment, "OUTPUT_GAIN", "Output");
-
-    sliderSetup(delayTimeSlider, delayTimeLabel, delayTimeAttachment, "TIME", "Time");
-    sliderSetup(delayFeedbackSlider, delayFeedbackLabel, delayFeedbackAttachment, "FEEDBACK", "Feedback");
-    sliderSetup(delayMixSlider, delayMixLabel, delayMixAttachment, "MIX", "Mix");
-    sliderSetup(delayToneSlider, delayToneLabel, delayToneAttachment, "TONE", "Tone");
-
-    driveSlider.setSliderStyle(juce::Slider::LinearVertical);
-    outputSlider.setSliderStyle(juce::Slider::LinearVertical);
-
     addAndMakeVisible(tremoloToggleButton);
-    tremoloToggleAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.apvts, "TREM_SWITH", tremoloToggleButton);
+    tremoloToggleAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.apvts, "TREM_SWITCH", tremoloToggleButton);
 
     addAndMakeVisible(reverbToggleButton);
     reverbToggleAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.apvts, "REVERB_SWITCH", reverbToggleButton);
 
     addAndMakeVisible(delayToggleButton);
     delayToggleAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.apvts, "DELAY_SWITCH", delayToggleButton);
+    
+
+    struct SliderConfig {
+        juce::String id;
+        juce::String name;
+        ControlGroup group;
+        bool isLinear = false;
+    };
+
+    std::vector<SliderConfig> config = {
+
+        {"HAMMER_HARDNESS", "Attack", ControlGroup::Main, false},
+        {"SUSTAIN_DECAY", "Decay", ControlGroup::Main, false},
+        {"DAMPER_RELEASE", "Release", ControlGroup::Main, false},
+
+        {"TREM_DEPTH", "Depth", ControlGroup::Tremolo, false},
+        {"TREM_RATE", "Rate", ControlGroup::Tremolo, false},
+
+        {"WET_LEVEL", "Wet Level", ControlGroup::Reverb, false},
+        {"DRY_LEVEL", "Dry Level", ControlGroup::Reverb, false},
+
+        {"TIME", "Time", ControlGroup::Delay, false},
+        {"FEEDBACK", "Feedback", ControlGroup::Delay, false},
+        {"MIX", "Mix", ControlGroup::Delay, false},
+        {"TONE", "Tone", ControlGroup::Delay, false},
+
+        {"PREAMP_BASS", "Bass", ControlGroup::Preamp, false},
+        {"PREAMP_TREBLE", "Treble", ControlGroup::Preamp, false},
+        {"PICKUP_SYMMETRY", "Symmetry", ControlGroup::Preamp, false},//nem preamp de ez igy egyszerubb
+
+        {"PREAMP_DRIVE", "Drive", ControlGroup::Output, true},
+        {"OUTPUT_GAIN", "Output", ControlGroup::Output, true},
+
+    };
+
+    for (const auto& cfg : config) {
+
+        addSlider(cfg.id, cfg.name, cfg.group);
+
+        if (cfg.isLinear) {
+            auto* s = findSlider(cfg.id);
+            if (s) {
+                s->slider->setSliderStyle(juce::Slider::LinearVertical);
+                s->slider->setLookAndFeel(nullptr); //ehhez meg nincs lnf
+            }
+        }
+
+    }
 
     updateVisibility();
 
+    //ablak merete
+    setSize(900, 500);
 }
 
 ModalRhodesAudioProcessorEditor::~ModalRhodesAudioProcessorEditor()
 {
-    hardnessSlider.setLookAndFeel(nullptr);
-    decaySlider.setLookAndFeel(nullptr);
-    releaseSlider.setLookAndFeel(nullptr);
-    symmetrySlider.setLookAndFeel(nullptr);
-    bassSlider.setLookAndFeel(nullptr);
-    trebleSlider.setLookAndFeel(nullptr);
-    tremDepthSlider.setLookAndFeel(nullptr);
-    reverbWetSlider.setLookAndFeel(nullptr);
-    reverbDrySlider.setLookAndFeel(nullptr);
-    driveSlider.setLookAndFeel(nullptr);
-    outputSlider.setLookAndFeel(nullptr);
-    delayFeedbackSlider.setLookAndFeel(nullptr);
-    delayTimeSlider.setLookAndFeel(nullptr);
-    delayMixSlider.setLookAndFeel(nullptr);
-    delayToneSlider.setLookAndFeel(nullptr);
+
+    for (auto& s : sliders) {
+        if (s->slider) s->slider->setLookAndFeel(nullptr);
+    }
 }
 
 void ModalRhodesAudioProcessorEditor::updateVisibility() {
@@ -206,18 +188,15 @@ void ModalRhodesAudioProcessorEditor::updateVisibility() {
     inLabel.setVisible(normalUI);
     outLabel.setVisible(normalUI);
 
-    juce::Component* standardControls[] = {
-        &hardnessSlider, &hardnessLabel, &decaySlider, &decayLabel,
-        &releaseSlider, &releaseLabel, &symmetrySlider, &symmetryLabel,
-        &bassSlider, &bassLabel, &trebleSlider, &trebleLabel,
-        &tremDepthSlider, &tremDepthLabel, &tremRateSlider, &tremRateLabel,
-        &reverbDrySlider, &reverbDryLabel, &reverbWetSlider, &reverbWetLabel,
-        &driveSlider, &driveLabel, &outputSlider, &outputLabel,
-        &tremoloToggleButton, &reverbToggleButton, &cabinetOffButton, &cabinetOnButton, &delayToggleButton,
-        &delayTimeSlider, &delayFeedbackSlider, &delayMixSlider, &delayToneSlider        
+    for (auto& s : sliders) {
+        s->setVisible(normalUI);
+    }
+
+    juce::Component* otherControls[] = {
+        &tremoloToggleButton, &reverbToggleButton, &cabinetOffButton, &cabinetOnButton, &delayToggleButton     
     };
 
-    for (auto* all : standardControls) {
+    for (auto* all : otherControls) {
         all->setVisible(normalUI);
     }
 
@@ -289,12 +268,16 @@ void ModalRhodesAudioProcessorEditor::resized()
         //normal mod
 
         //custom knob elhelyezes label miatt
-        auto placeKnob = [](juce::Slider& slider, juce::Label& label, juce::Rectangle<int> bounds, bool main) {
-            juce::Rectangle labelBounds { 0, 0 , 0, 0};
-            if (!main) labelBounds = bounds.removeFromBottom(15);
-            else labelBounds = bounds.removeFromLeft(60);
-            slider.setBounds(bounds);
-            label.setBounds(labelBounds);
+        auto placeKnob = [this](juce::String parameterID, juce::Rectangle<int> bounds, bool main) {
+            auto* bundle = findSlider(parameterID);
+            if (bundle) {
+                juce::Rectangle<int> labelBounds;
+                if (!main) labelBounds = bounds.removeFromBottom(15);
+                else labelBounds = bounds.removeFromLeft(60);
+
+                bundle->slider->setBounds(bounds);
+                bundle->label->setBounds(labelBounds);
+            }
            };
 
         //fo reszek meghatarozasa
@@ -320,9 +303,9 @@ void ModalRhodesAudioProcessorEditor::resized()
 
         //attack, decay, release knobok
         auto mainKnobAreaWidth = titleSection.getWidth() / 3;
-        placeKnob(hardnessSlider, hardnessLabel, titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
-        placeKnob(decaySlider, decayLabel, titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
-        placeKnob(releaseSlider, releaseLabel, titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
+        placeKnob("HAMMER_HARDNESS", titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
+        placeKnob("SUSTAIN_DECAY", titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
+        placeKnob("DAMPER_RELEASE", titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
 
         //effekt resz
         auto effectsArea = controllArea.removeFromLeft(verticalSectionWidth * 3);
@@ -334,16 +317,16 @@ void ModalRhodesAudioProcessorEditor::resized()
         tremoloLabel.setBounds(tremoloArea.removeFromTop(labelHeight));
         tremoloBounds = tremoloArea;
         tremoloToggleButton.setBounds(tremoloArea.getX() + 5, tremoloArea.getY() + 5, 20, 20);
-        placeKnob(tremDepthSlider, tremDepthLabel, tremoloArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
-        placeKnob(tremRateSlider, tremRateLabel, tremoloArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
+        placeKnob("TREM_DEPTH", tremoloArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
+        placeKnob("TREM_RATE", tremoloArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
 
         //reverb
         auto reverbArea = effectsArea.removeFromLeft(effectSectionWidth);
         reverbLabel.setBounds(reverbArea.removeFromTop(labelHeight));
         reverbBounds = reverbArea;
         reverbToggleButton.setBounds(reverbArea.getX() + 5, reverbArea.getY() + 5, 20, 20);
-        placeKnob(reverbDrySlider, reverbDryLabel, reverbArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
-        placeKnob(reverbWetSlider, reverbWetLabel, reverbArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
+        placeKnob("DRY_LEVEL", reverbArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
+        placeKnob("WET_LEVEL", reverbArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
 
         //delay
         auto delayArea = effectsArea.removeFromLeft(effectSectionWidth * 2);
@@ -351,10 +334,10 @@ void ModalRhodesAudioProcessorEditor::resized()
         delayBounds = delayArea;
         delayToggleButton.setBounds(delayArea.getX() + 5, delayArea.getY() + 5, 20, 20);
         auto delayAreaTop = delayArea.removeFromTop(delayArea.getHeight() / 2);
-        placeKnob(delayTimeSlider, delayTimeLabel, delayAreaTop.removeFromLeft(effectSectionWidth).reduced(10), false);
-        placeKnob(delayFeedbackSlider, delayFeedbackLabel, delayAreaTop.removeFromLeft(effectSectionWidth).reduced(10), false);
-        placeKnob(delayMixSlider, delayMixLabel, delayArea.removeFromLeft(effectSectionWidth).reduced(10), false);
-        placeKnob(delayToneSlider, delayToneLabel, delayArea.removeFromLeft(effectSectionWidth).reduced(10), false);
+        placeKnob("TIME", delayAreaTop.removeFromLeft(effectSectionWidth).reduced(10), false);
+        placeKnob("FEEDBACK", delayAreaTop.removeFromLeft(effectSectionWidth).reduced(10), false);
+        placeKnob("MIX", delayArea.removeFromLeft(effectSectionWidth).reduced(10), false);
+        placeKnob("TONE", delayArea.removeFromLeft(effectSectionWidth).reduced(10), false);
 
         //csuszkak
         auto linearSliderWidth = linearSliderArea.getWidth() / 3;
@@ -368,17 +351,17 @@ void ModalRhodesAudioProcessorEditor::resized()
         inLabel.setBounds(linearSliderTextArea.removeFromLeft(50));
         outLabel.setBounds(linearSliderTextArea.removeFromRight(50));
 
-        driveSlider.setBounds(inputSliderArea);
-        outputSlider.setBounds(outputSliderArea);
+        if(auto* s = findSlider("PREAMP_DRIVE")) s->slider->setBounds(inputSliderArea);
+        if (auto* s = findSlider("OUTPUT_GAIN")) s->slider->setBounds(outputSliderArea);
 
         lvlMeter.setBounds(lvlMeterArea);
 
         //bass treble symm
         auto boostControllerArea = controllArea.removeFromBottom(horizontalSectionHeight);
         boostBounds = boostControllerArea;
-        placeKnob(bassSlider, bassLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
-        placeKnob(trebleSlider, trebleLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
-        placeKnob(symmetrySlider, symmetryLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
+        placeKnob("PREAMP_BASS", boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
+        placeKnob("PREAMP_TREBLE", boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
+        placeKnob("PICKUP_SYMMETRY", boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
 
         //maradek hely a cabinet
         controllArea.removeFromTop(labelHeight);
@@ -427,5 +410,52 @@ void ModalRhodesAudioProcessorEditor::timerCallback() {
     float lvl = audioProcessor.currentOutputLevel.load();
     lvlMeter.setLevel(lvl);
 
+}
+
+void ModalRhodesAudioProcessorEditor::addSlider(juce::String parameterID, juce::String name, ControlGroup group) {
+
+    auto newBundle = std::make_unique<SliderStruct>();
+    newBundle->parameterID = parameterID;
+    newBundle->group = group;
+
+    newBundle->slider = std::make_unique<juce::Slider>();
+    newBundle->slider->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+    newBundle->slider->setTextBoxStyle(juce::Slider::NoTextBox, true, 40, 15);
+
+    if (group == ControlGroup::Main) {
+        newBundle->slider->setLookAndFeel(&MainKnobsLnF);
+    }
+    else if( group == ControlGroup::Preamp && (parameterID == "PREAMP_DRIVE" || parameterID == "OUTPUT_GAIN")) {
+        //linearis sliderek
+    }
+    else {
+        newBundle->slider->setLookAndFeel(&CustomKnobLnF);
+    }
+
+    addAndMakeVisible(*newBundle->slider);
+
+    newBundle->label = std::make_unique<juce::Label>();
+    newBundle->label->setText(name, juce::dontSendNotification);
+    newBundle->label->setJustificationType(juce::Justification::centred);
+
+    if (group == ControlGroup::Main) {
+        newBundle->label->setColour(juce::Label::textColourId, darkTextColour);
+    }
+    else {
+        newBundle->label->setColour(juce::Label::textColourId, textColour);
+    }
+    addAndMakeVisible(*newBundle->label);
+
+    newBundle->attachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, parameterID, *newBundle->slider);
+
+    sliders.push_back(std::move(newBundle));
+
+}
+
+SliderStruct* ModalRhodesAudioProcessorEditor::findSlider(juce::String parameterID) {
+    for (auto& s : sliders) {
+        if (s->parameterID == parameterID) return s.get();
+    }
+    return nullptr;
 }
 
