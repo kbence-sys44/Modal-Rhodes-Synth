@@ -297,6 +297,10 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
 
     if(isReverbOn) reverb.process(context);
 
+    //hangero
+    float rms = buffer.getRMSLevel(0, 0, buffer.getNumSamples()); //kimeneti buffer ereje
+    currentOutputLevel.store(rms);
+
 }
 
 //==============================================================================

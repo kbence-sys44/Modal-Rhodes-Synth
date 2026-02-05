@@ -62,6 +62,8 @@ public:
 
     juce::AudioProcessorValueTreeState apvts;
 
+    std::atomic<float> currentOutputLevel{ 0.0f };
+
 private:
     //==============================================================================
     juce::Synthesiser rhodesSynth;
@@ -75,7 +77,6 @@ private:
 
     bool isReverbActive = true;
     bool isCabinetActive = true;
-
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 

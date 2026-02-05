@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "CustomKnob.h"
+#include "CustomKnobLnF.h"
 
 void CustomKnob::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPosition,
     const float rotationStartAngle, const float rotationEndAngle, juce::Slider& slider) 
@@ -29,7 +29,7 @@ void CustomKnob::drawRotarySlider(juce::Graphics& g, int x, int y, int width, in
         g.strokePath(tick, juce::PathStrokeType(1.0f));
     }
 
-    float knobRadius = radius * 0.83f; //gomb kisebb
+    float knobRadius = radius * 0.80f; //gomb kisebb
 
     juce::ColourGradient ringGradient(juce::Colour(0xff4b4b4b), centre.x, centre.y - knobRadius, juce::Colour(0xff2a2a2a), centre.x, centre.y + knobRadius, false);
     g.setGradientFill(ringGradient);
@@ -63,14 +63,14 @@ void CustomKnob::drawRotarySlider(juce::Graphics& g, int x, int y, int width, in
     //belso resz
     float faceRadius = knobRadius * 0.75f;
 
-    juce::ColourGradient faceGradient(juce::Colour(0xffeecfa1).brighter(0.2f), centre.x - faceRadius, centre.y - faceRadius, juce::Colour(0xff888888), centre.x + faceRadius, centre.y + faceRadius, false);
+    juce::ColourGradient faceGradient(juce::Colour(227, 242, 253).brighter(0.2f), centre.x - faceRadius, centre.y - faceRadius, juce::Colour(15, 17, 26), centre.x + faceRadius, centre.y + faceRadius, false);
 
     g.setGradientFill(faceGradient);
     g.fillEllipse(centre.x - faceRadius, centre.y - faceRadius, faceRadius * 2.0f, faceRadius * 2.0f);
 
-    //elvaéaszto
-    g.setColour(juce::Colour(0x40000000));
-    g.drawEllipse(centre.x - faceRadius, centre.y - faceRadius, faceRadius * 2.0f, faceRadius * 2.0f, 3.0f);
+    //elva	zto
+    g.setColour(juce::Colours::black);
+    g.drawEllipse(centre.x - faceRadius, centre.y - faceRadius, faceRadius * 2.0f, faceRadius * 2.0f, 2.0f);
 
 
     //mutato

@@ -12,12 +12,17 @@
 #include "PluginProcessor.h"
 #include "TestRunner.h"
 #include "CustomToggleButton.h"
-#include "CustomKnob.h"
+#include "CustomKnobLnF.h"
+#include "MainKnobsLnF.h"
+#include "LevelMeter.h"
+#include "SliderBundle.h"
 
 //==============================================================================
 /**
 */
-class ModalRhodesAudioProcessorEditor  : public juce::AudioProcessorEditor
+
+
+class ModalRhodesAudioProcessorEditor  : public juce::AudioProcessorEditor, public juce::Timer
 {
 public:
     ModalRhodesAudioProcessorEditor(ModalRhodesAudioProcessor&);
@@ -27,12 +32,17 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
     void paintOverChildren(juce::Graphics& g) override;
+    void timerCallback() override;
 
 private:
 
     ModalRhodesAudioProcessor& audioProcessor;
 
     CustomKnob CustomKnobLnF;
+    MainKnobsLnF MainKnobsLnF;
+    LevelMeter lvlMeter;
+
+    std::vector<std::unique_ptr<SliderStruct>> sliders;
 
     //cim
     juce::Label titleLabel;
@@ -147,6 +157,20 @@ private:
     juce::Rectangle<int> linearBounds;
     juce::Rectangle<int> boostBounds;
     juce::Rectangle<int> cabinetBounds;
+
+    juce::Colour textColour { 252, 239, 249 };
+    juce::Colour darkTextColour { 12, 12, 12 };
+
+    juce::Colour backgroundColour{ 3, 3, 1 };
+    juce::Colour secondaryColour{ 15, 17, 26 };
+    juce::Colour thirdColour{ 250, 250, 250 };
+    juce::Colour accentColour{ 219, 84, 97 };
+
+    //brgiht snow 250, 250, 250
+    //alice blue 227, 242, 253
+    //lobster pink 219, 84, 97
+    //ink black 15, 17, 26
+    //black 3, 3, 1
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModalRhodesAudioProcessorEditor)

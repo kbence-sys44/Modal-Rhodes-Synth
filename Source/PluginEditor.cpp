@@ -18,10 +18,12 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     setSize (900, 500);
 
     //cim
+    static auto typeface = juce::Typeface::createSystemTypefaceFor(BinaryData::FelipaRegular_ttf, BinaryData::FelipaRegular_ttfSize);
+
     titleLabel.setText("Modal Rhodes VST", juce::dontSendNotification);
-    titleLabel.setFont(juce::Font(30.0f, juce::Font::bold));
+    titleLabel.setFont(juce::Font(typeface).withHeight(35.0f).withStyle(juce::Font::bold));
     titleLabel.setJustificationType(juce::Justification::centred);
-    titleLabel.setColour(juce::Label::textColourId, juce::Colours::white);
+    titleLabel.setColour(juce::Label::textColourId, darkTextColour);
     addAndMakeVisible(titleLabel);
 
 
@@ -58,7 +60,7 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
             label.setText(title, juce::dontSendNotification);
             label.setFont(juce::Font(15.0f, juce::Font::bold));
             label.setJustificationType(juce::Justification::centred);
-            label.setColour(juce::Label::textColourId, juce::Colours::cadetblue);
+            label.setColour(juce::Label::textColourId, textColour);
             addAndMakeVisible(label);
         };
 
@@ -85,6 +87,7 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     cabinetOnButton.setRadioGroupId(101);
     cabinetOffButton.setRadioGroupId(101);
 
+
     cabinetOnButton.onClick = [this] {
         if (auto* param = audioProcessor.apvts.getParameter("CABINET_SWITCH"))
             param->setValueNotifyingHost(1.0f);
@@ -96,6 +99,9 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
 
     updateCabinetState();
 
+    addAndMakeVisible(lvlMeter);
+    startTimer(24); //24fps
+
     //segedfuggveny a sok slider miatt
     auto sliderSetup = [this](juce::Slider& slider, juce::Label& label, std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>& attachment, juce::String paramID, juce::String name) 
         {
@@ -106,6 +112,7 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
             addAndMakeVisible(slider);
 
             label.setText(name, juce::dontSendNotification);
+            label.setColour(juce::Label::textColourId, textColour);
             label.setJustificationType(juce::Justification::centred);
             addAndMakeVisible(label);
 
@@ -116,6 +123,18 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     sliderSetup(hardnessSlider, hardnessLabel, hardnessAttachment, "HAMMER_HARDNESS", "Attack");
     sliderSetup(decaySlider, decayLabel, decayAttachment, "SUSTAIN_DECAY", "Decay");
     sliderSetup(releaseSlider, releaseLabel,releaseAttachment , "DAMPER_RELEASE", "Release");
+
+    hardnessLabel.setColour(juce::Label::textColourId, darkTextColour);
+    hardnessLabel.setFont(juce::Font(12.0f, juce::Font::bold));
+    decayLabel.setColour(juce::Label::textColourId, darkTextColour);
+    decayLabel.setFont(juce::Font(12.0f, juce::Font::bold));
+    releaseLabel.setColour(juce::Label::textColourId, darkTextColour);
+    releaseLabel.setFont(juce::Font(12.0f, juce::Font::bold));
+
+    hardnessSlider.setLookAndFeel(&MainKnobsLnF);
+    decaySlider.setLookAndFeel(&MainKnobsLnF);
+    releaseSlider.setLookAndFeel(&MainKnobsLnF);
+
     sliderSetup(symmetrySlider,symmetryLabel ,symmetryAttachment , "PICKUP_SYMMETRY", "Symmetry");
     sliderSetup(bassSlider,bassLabel,bassAttachment, "PREAMP_BASS", "Bass");
     sliderSetup(trebleSlider,trebleLabel,trebleAttachment, "PREAMP_TREBLE", "Treble");
@@ -216,34 +235,40 @@ void ModalRhodesAudioProcessorEditor::updateCabinetState() {
 void ModalRhodesAudioProcessorEditor::paint(juce::Graphics& g)
 {
     //hatter
-    g.fillAll(juce::Colour(0xff2b2b2b));
-
-    //elvalaszto vonal
-    //g.setColour(juce::Colours::white.withAlpha(0.2f));
-    //g.drawLine(20, 50, getWidth() - 20, 50, 1.0f);
+    g.fillAll(backgroundColour);
 
     if (debugButton.getToggleState()) {
         return;
     }
 
-    auto drawSection = [&](juce::Rectangle<int> bounds) {
+    auto drawSection = [&](juce::Rectangle<int> bounds, bool accent) {
 
         auto frame = bounds.toFloat().reduced(5.0f);
 
-        g.setColour(juce::Colour(0xff333333)); //hatter
-        g.fillRoundedRectangle(frame, 10.0f); //lekerekitett frame
+        if (!accent) {
 
-        g.setColour(juce::Colours::white.withAlpha(0.15f));
-        g.drawRoundedRectangle(frame, 10.0f, 1.5f);
+            g.setColour(secondaryColour);//hatter
+            g.fillRoundedRectangle(frame, 12.0f); //lekerekitett frame
+
+            
+        }
+        else {
+            g.setColour(thirdColour);
+            g.fillRoundedRectangle(frame, 12.0f);
+        }
+
+        g.setColour(secondaryColour.brighter(0.5f));
+        g.drawRoundedRectangle(frame, 12.0f, 1.5f);
+        
     };
 
-    drawSection(mainSectionBounds);
-    drawSection(reverbBounds);
-    drawSection(tremoloBounds);
-    drawSection(delayBounds);
-    drawSection(linearBounds);
-    drawSection(boostBounds);
-    drawSection(cabinetBounds);
+    drawSection(mainSectionBounds, true);
+    drawSection(reverbBounds, false);
+    drawSection(tremoloBounds, false);
+    drawSection(delayBounds, false);
+    drawSection(linearBounds, false);
+    drawSection(boostBounds, false);
+    drawSection(cabinetBounds, false);
 
 }
 
@@ -264,8 +289,10 @@ void ModalRhodesAudioProcessorEditor::resized()
         //normal mod
 
         //custom knob elhelyezes label miatt
-        auto placeKnob = [](juce::Slider& slider, juce::Label& label, juce::Rectangle<int> bounds) {
-            auto labelBounds = bounds.removeFromBottom(15);
+        auto placeKnob = [](juce::Slider& slider, juce::Label& label, juce::Rectangle<int> bounds, bool main) {
+            juce::Rectangle labelBounds { 0, 0 , 0, 0};
+            if (!main) labelBounds = bounds.removeFromBottom(15);
+            else labelBounds = bounds.removeFromLeft(60);
             slider.setBounds(bounds);
             label.setBounds(labelBounds);
            };
@@ -276,7 +303,7 @@ void ModalRhodesAudioProcessorEditor::resized()
         auto controllArea = totalArea.removeFromTop(((totalArea.getHeight() / 6) * 4) - 10);
 
         //billentyu elhelyezes
-        keyboardComponent.setBounds(totalArea.removeFromBottom(keyboardAreaHeight));
+        keyboardComponent.setBounds(totalArea.removeFromBottom(keyboardAreaHeight).reduced(5,0));
 
         //fo arany ertekek
         auto horizontalSectionHeight = controllArea.getHeight() / 3.25;
@@ -286,15 +313,16 @@ void ModalRhodesAudioProcessorEditor::resized()
         auto linearSliderArea = controllArea.removeFromRight(verticalSectionWidth);
         auto titleSection = controllArea.removeFromBottom(horizontalSectionHeight);
         mainSectionBounds = titleSection;
-        auto titleTextArea = titleSection.removeFromLeft(titleSection.getWidth() / 2);
+        auto titleTextArea = titleSection.removeFromLeft(titleSection.getWidth() / 2.5);
         titleLabel.setBounds(titleTextArea);
         //debugButton.setBounds(titleTextArea.removeFromLeft(100));
 
 
         //attack, decay, release knobok
-        placeKnob(hardnessSlider, hardnessLabel, titleSection.removeFromLeft(verticalSectionWidth).reduced(10));
-        placeKnob(decaySlider, decayLabel, titleSection.removeFromLeft(verticalSectionWidth).reduced(10));
-        placeKnob(releaseSlider, releaseLabel, titleSection.removeFromLeft(verticalSectionWidth).reduced(10));
+        auto mainKnobAreaWidth = titleSection.getWidth() / 3;
+        placeKnob(hardnessSlider, hardnessLabel, titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
+        placeKnob(decaySlider, decayLabel, titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
+        placeKnob(releaseSlider, releaseLabel, titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
 
         //effekt resz
         auto effectsArea = controllArea.removeFromLeft(verticalSectionWidth * 3);
@@ -306,16 +334,16 @@ void ModalRhodesAudioProcessorEditor::resized()
         tremoloLabel.setBounds(tremoloArea.removeFromTop(labelHeight));
         tremoloBounds = tremoloArea;
         tremoloToggleButton.setBounds(tremoloArea.getX() + 5, tremoloArea.getY() + 5, 20, 20);
-        placeKnob(tremDepthSlider, tremDepthLabel, tremoloArea.removeFromTop(horizontalSectionHeight).reduced(10));
-        placeKnob(tremRateSlider, tremRateLabel, tremoloArea.removeFromTop(horizontalSectionHeight).reduced(10));
+        placeKnob(tremDepthSlider, tremDepthLabel, tremoloArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
+        placeKnob(tremRateSlider, tremRateLabel, tremoloArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
 
         //reverb
         auto reverbArea = effectsArea.removeFromLeft(effectSectionWidth);
         reverbLabel.setBounds(reverbArea.removeFromTop(labelHeight));
         reverbBounds = reverbArea;
         reverbToggleButton.setBounds(reverbArea.getX() + 5, reverbArea.getY() + 5, 20, 20);
-        placeKnob(reverbDrySlider, reverbDryLabel, reverbArea.removeFromTop(horizontalSectionHeight).reduced(10));
-        placeKnob(reverbWetSlider, reverbWetLabel, reverbArea.removeFromTop(horizontalSectionHeight).reduced(10));
+        placeKnob(reverbDrySlider, reverbDryLabel, reverbArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
+        placeKnob(reverbWetSlider, reverbWetLabel, reverbArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
 
         //delay
         auto delayArea = effectsArea.removeFromLeft(effectSectionWidth * 2);
@@ -323,10 +351,10 @@ void ModalRhodesAudioProcessorEditor::resized()
         delayBounds = delayArea;
         delayToggleButton.setBounds(delayArea.getX() + 5, delayArea.getY() + 5, 20, 20);
         auto delayAreaTop = delayArea.removeFromTop(delayArea.getHeight() / 2);
-        placeKnob(delayTimeSlider, delayTimeLabel, delayAreaTop.removeFromLeft(effectSectionWidth).reduced(10));
-        placeKnob(delayFeedbackSlider, delayFeedbackLabel, delayAreaTop.removeFromLeft(effectSectionWidth).reduced(10));
-        placeKnob(delayMixSlider, delayMixLabel, delayArea.removeFromLeft(effectSectionWidth).reduced(10));
-        placeKnob(delayToneSlider, delayToneLabel, delayArea.removeFromLeft(effectSectionWidth).reduced(10));
+        placeKnob(delayTimeSlider, delayTimeLabel, delayAreaTop.removeFromLeft(effectSectionWidth).reduced(10), false);
+        placeKnob(delayFeedbackSlider, delayFeedbackLabel, delayAreaTop.removeFromLeft(effectSectionWidth).reduced(10), false);
+        placeKnob(delayMixSlider, delayMixLabel, delayArea.removeFromLeft(effectSectionWidth).reduced(10), false);
+        placeKnob(delayToneSlider, delayToneLabel, delayArea.removeFromLeft(effectSectionWidth).reduced(10), false);
 
         //csuszkak
         auto linearSliderWidth = linearSliderArea.getWidth() / 3;
@@ -334,18 +362,23 @@ void ModalRhodesAudioProcessorEditor::resized()
         linearBounds = linearSliderArea;
         auto inputSliderArea = linearSliderArea.removeFromLeft(linearSliderWidth).reduced(0,10);
         auto outputSliderArea = linearSliderArea.removeFromRight(linearSliderWidth).reduced(0, 10);
+        auto lvlMeterArea = linearSliderArea.reduced(10, 20);
+    
 
         inLabel.setBounds(linearSliderTextArea.removeFromLeft(50));
         outLabel.setBounds(linearSliderTextArea.removeFromRight(50));
+
         driveSlider.setBounds(inputSliderArea);
         outputSlider.setBounds(outputSliderArea);
+
+        lvlMeter.setBounds(lvlMeterArea);
 
         //bass treble symm
         auto boostControllerArea = controllArea.removeFromBottom(horizontalSectionHeight);
         boostBounds = boostControllerArea;
-        placeKnob(bassSlider, bassLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10));
-        placeKnob(trebleSlider, trebleLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10));
-        placeKnob(symmetrySlider, symmetryLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10));
+        placeKnob(bassSlider, bassLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
+        placeKnob(trebleSlider, trebleLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
+        placeKnob(symmetrySlider, symmetryLabel, boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
 
         //maradek hely a cabinet
         controllArea.removeFromTop(labelHeight);
@@ -384,12 +417,15 @@ void ModalRhodesAudioProcessorEditor::paintOverChildren(juce::Graphics& g) {
     cornerPath.addPath(roundedPath);
 
     //hatterszin
-    g.setColour(juce::Colour(0xff2b2b2b));
+    g.setColour(juce::Colour(12, 12, 12));
     g.fillPath(cornerPath);
 
-    //keret
-    g.setColour(juce::Colours::white.withAlpha(0.15f));
-    g.drawRoundedRectangle(keyboardBounds, radius, 1.5f);
+}
+
+void ModalRhodesAudioProcessorEditor::timerCallback() {
+    
+    float lvl = audioProcessor.currentOutputLevel.load();
+    lvlMeter.setLevel(lvl);
 
 }
 
