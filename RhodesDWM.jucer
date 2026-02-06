@@ -25,6 +25,8 @@
               file="Source/CrossleyHammer.h"/>
       </GROUP>
       <GROUP id="{05F0820F-638A-B182-8EC2-7B79FB777DD2}" name="GUI">
+        <FILE id="ZZTVld" name="VolumeFader.cpp" compile="1" resource="0" file="Source/VolumeFader.cpp"/>
+        <FILE id="GsBJYT" name="VolumeFader.h" compile="0" resource="0" file="Source/VolumeFader.h"/>
         <FILE id="ZYzg26" name="SliderBundle.h" compile="0" resource="0" file="Source/SliderBundle.h"/>
         <FILE id="q7EqSs" name="MainKnobsLnF.cpp" compile="1" resource="0"
               file="Source/MainKnobsLnF.cpp"/>

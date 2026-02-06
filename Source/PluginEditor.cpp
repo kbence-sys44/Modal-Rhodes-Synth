@@ -150,7 +150,7 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
             auto* s = findSlider(cfg.id);
             if (s) {
                 s->slider->setSliderStyle(juce::Slider::LinearVertical);
-                s->slider->setLookAndFeel(nullptr); //ehhez meg nincs lnf
+                s->slider->setLookAndFeel(&FaderLnF);
             }
         }
 
@@ -340,7 +340,7 @@ void ModalRhodesAudioProcessorEditor::resized()
         placeKnob("TONE", delayArea.removeFromLeft(effectSectionWidth).reduced(10), false);
 
         //csuszkak
-        auto linearSliderWidth = linearSliderArea.getWidth() / 3;
+        auto linearSliderWidth = linearSliderArea.getWidth() / 5 * 2;
         auto linearSliderTextArea = linearSliderArea.removeFromTop(labelHeight);
         linearBounds = linearSliderArea;
         auto inputSliderArea = linearSliderArea.removeFromLeft(linearSliderWidth).reduced(0,10);
@@ -426,7 +426,8 @@ void ModalRhodesAudioProcessorEditor::addSlider(juce::String parameterID, juce::
         newBundle->slider->setLookAndFeel(&MainKnobsLnF);
     }
     else if( group == ControlGroup::Preamp && (parameterID == "PREAMP_DRIVE" || parameterID == "OUTPUT_GAIN")) {
-        //linearis sliderek
+        newBundle->slider->setSliderStyle(juce::Slider::LinearVertical);
+        newBundle->slider->setLookAndFeel(&FaderLnF);
     }
     else {
         newBundle->slider->setLookAndFeel(&CustomKnobLnF);

@@ -16,6 +16,7 @@
 #include "MainKnobsLnF.h"
 #include "LevelMeter.h"
 #include "SliderBundle.h"
+#include "VolumeFader.h"
 
 //==============================================================================
 /**
@@ -41,6 +42,7 @@ private:
     CustomKnob CustomKnobLnF;
     MainKnobsLnF MainKnobsLnF;
     LevelMeter lvlMeter;
+    VolumeFader FaderLnF;
 
     std::vector<std::unique_ptr<SliderStruct>> sliders;
     void addSlider(juce::String parameterID, juce::String name, ControlGroup group);
