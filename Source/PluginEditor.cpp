@@ -11,13 +11,15 @@
 
 //==============================================================================
 ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p),
+    : AudioProcessorEditor(&p), audioProcessor(p),
     keyboardComponent(p.keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard)
 {
-
-    //cim
+    //font
     static auto typeface = juce::Typeface::createSystemTypefaceFor(BinaryData::FelipaRegular_ttf, BinaryData::FelipaRegular_ttfSize);
-
+    static auto regularTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::QuicksandBold_ttf, BinaryData::QuicksandBold_ttfSize);
+    static auto regularTypefaceSecond = juce::Typeface::createSystemTypefaceFor(BinaryData::CalSansRegular_ttf, BinaryData::CalSansRegular_ttfSize);
+    //cim
+    
     titleLabel.setText("Modal Rhodes VST", juce::dontSendNotification);
     titleLabel.setFont(juce::Font(typeface).withHeight(35.0f).withStyle(juce::Font::bold));
     titleLabel.setJustificationType(juce::Justification::centred);
@@ -38,7 +40,7 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
         updateVisibility();
         repaint(); //ujrarajzolas
         resized(); //ujratordeli a feluletet
-    };
+        };
 
     //teszt elemek
     addAndMakeVisible(runTestsButton);
@@ -58,9 +60,9 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     auto labelSetup = [this](juce::Label& label, std::string title)
         {
             label.setText(title, juce::dontSendNotification);
-            label.setFont(juce::Font(15.0f, juce::Font::bold));
+            label.setFont(juce::Font(regularTypefaceSecond).withHeight(20.0f));
             label.setJustificationType(juce::Justification::centred);
-            label.setColour(juce::Label::textColourId, textColour);
+            label.setColour(juce::Label::textColourId, accentColour);
             addAndMakeVisible(label);
         };
 
@@ -71,30 +73,40 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     labelSetup(inLabel, "IN");
     labelSetup(outLabel, "OUT");
 
-    inLabel.setJustificationType(juce::Justification::left);
-    outLabel.setJustificationType(juce::Justification::right);
+    //inLabel.setJustificationType(juce::Justification::left);
+    //outLabel.setJustificationType(juce::Justification::right);
 
     //keyboard
     keyboardComponent.setAvailableRange(48, 96);
     keyboardComponent.setKeyWidth(30.45);
     addAndMakeVisible(keyboardComponent);
 
+    cabinetOnButton.setType(Type::On);
+    cabinetOffButton.setType(Type::Off);
+
     addAndMakeVisible(cabinetOnButton);
     addAndMakeVisible(cabinetOffButton);
 
-    cabinetOnButton.setClickingTogglesState(true);
-    cabinetOffButton.setClickingTogglesState(true);
+    cabinetOnButton.setClickingTogglesState(false);
+    cabinetOffButton.setClickingTogglesState(false);
     cabinetOnButton.setRadioGroupId(101);
     cabinetOffButton.setRadioGroupId(101);
 
+    cabinetOnButton.setButtonText("ON");
+    cabinetOffButton.setButtonText("OFF");
 
     cabinetOnButton.onClick = [this] {
-        if (auto* param = audioProcessor.apvts.getParameter("CABINET_SWITCH"))
-            param->setValueNotifyingHost(1.0f);
+        if (auto* param = audioProcessor.apvts.getParameter("CABINET_SWITCH")) {
+            if (param->getValue() < 0.5f) param->setValueNotifyingHost(1.0f);
+        }
+        updateCabinetState();
         };
+
     cabinetOffButton.onClick = [this] {
-        if (auto* param = audioProcessor.apvts.getParameter("CABINET_SWITCH"))
-            param->setValueNotifyingHost(0.0f);
+        if (auto* param = audioProcessor.apvts.getParameter("CABINET_SWITCH")){
+            if (param->getValue() > 0.5f) param->setValueNotifyingHost(0.0f);
+        }
+        updateCabinetState();
         };
 
     updateCabinetState();
@@ -142,6 +154,9 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
 
     };
 
+    FaderLnFLeft.side = Side::Left;
+    FaderLnFRight.side = Side::Right;
+
     for (const auto& cfg : config) {
 
         addSlider(cfg.id, cfg.name, cfg.group);
@@ -150,7 +165,9 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
             auto* s = findSlider(cfg.id);
             if (s) {
                 s->slider->setSliderStyle(juce::Slider::LinearVertical);
-                s->slider->setLookAndFeel(&FaderLnF);
+
+                if (cfg.id == "PREAMP_DRIVE") s->slider->setLookAndFeel(&FaderLnFRight);
+                else if (cfg.id == "OUTPUT_GAIN") s->slider->setLookAndFeel(&FaderLnFLeft);
             }
         }
 
@@ -204,10 +221,10 @@ void ModalRhodesAudioProcessorEditor::updateVisibility() {
 
 void ModalRhodesAudioProcessorEditor::updateCabinetState() {
     float value = *audioProcessor.apvts.getRawParameterValue("CABINET_SWITCH");
-    bool cabinetOn = value > 0.5f;
+    bool cabinetOn = value < 0.5f;
 
     cabinetOnButton.setToggleState(cabinetOn, juce::dontSendNotification);
-    cabinetOffButton.setToggleState(cabinetOn, juce::dontSendNotification);
+    cabinetOffButton.setToggleState(!cabinetOn, juce::dontSendNotification);
 }
 
 //==============================================================================
@@ -290,13 +307,13 @@ void ModalRhodesAudioProcessorEditor::resized()
 
         //fo arany ertekek
         auto horizontalSectionHeight = controllArea.getHeight() / 3.25;
-        auto verticalSectionWidth = controllArea.getWidth() / 7;
+        auto verticalSectionWidth = controllArea.getWidth() / 7.5;
 
         //cim es jobb szekcio
-        auto linearSliderArea = controllArea.removeFromRight(verticalSectionWidth);
+        auto linearSliderArea = controllArea.removeFromRight(verticalSectionWidth * 1.5);
         auto titleSection = controllArea.removeFromBottom(horizontalSectionHeight);
         mainSectionBounds = titleSection;
-        auto titleTextArea = titleSection.removeFromLeft(titleSection.getWidth() / 2.5);
+        auto titleTextArea = titleSection.removeFromLeft(titleSection.getWidth() / 2.7);
         titleLabel.setBounds(titleTextArea);
         //debugButton.setBounds(titleTextArea.removeFromLeft(100));
 
@@ -308,7 +325,7 @@ void ModalRhodesAudioProcessorEditor::resized()
         placeKnob("DAMPER_RELEASE", titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
 
         //effekt resz
-        auto effectsArea = controllArea.removeFromLeft(verticalSectionWidth * 3);
+        auto effectsArea = controllArea.removeFromLeft(verticalSectionWidth * 3.5);
         auto effectSectionWidth = effectsArea.getWidth() / 4;
         auto labelHeight = horizontalSectionHeight * 0.25;
 
@@ -340,16 +357,16 @@ void ModalRhodesAudioProcessorEditor::resized()
         placeKnob("TONE", delayArea.removeFromLeft(effectSectionWidth).reduced(10), false);
 
         //csuszkak
-        auto linearSliderWidth = linearSliderArea.getWidth() / 5 * 2;
+        auto linearSliderWidth = linearSliderArea.getWidth() / 11 * 5;
         auto linearSliderTextArea = linearSliderArea.removeFromTop(labelHeight);
         linearBounds = linearSliderArea;
         auto inputSliderArea = linearSliderArea.removeFromLeft(linearSliderWidth).reduced(0,10);
         auto outputSliderArea = linearSliderArea.removeFromRight(linearSliderWidth).reduced(0, 10);
-        auto lvlMeterArea = linearSliderArea.reduced(10, 20);
-    
+        auto lvlMeterArea = linearSliderArea.reduced(0, 20);
+  
 
-        inLabel.setBounds(linearSliderTextArea.removeFromLeft(50));
-        outLabel.setBounds(linearSliderTextArea.removeFromRight(50));
+        inLabel.setBounds(linearSliderTextArea.removeFromLeft(linearSliderWidth));
+        outLabel.setBounds(linearSliderTextArea.removeFromRight(linearSliderWidth));
 
         if(auto* s = findSlider("PREAMP_DRIVE")) s->slider->setBounds(inputSliderArea);
         if (auto* s = findSlider("OUTPUT_GAIN")) s->slider->setBounds(outputSliderArea);
@@ -357,11 +374,13 @@ void ModalRhodesAudioProcessorEditor::resized()
         lvlMeter.setBounds(lvlMeterArea);
 
         //bass treble symm
-        auto boostControllerArea = controllArea.removeFromBottom(horizontalSectionHeight);
+        auto boostControllerAreaHeight = controllArea.getHeight() / 2;
+        auto boostControllerArea = controllArea.removeFromBottom(boostControllerAreaHeight);
         boostBounds = boostControllerArea;
-        placeKnob("PREAMP_BASS", boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
-        placeKnob("PREAMP_TREBLE", boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
-        placeKnob("PICKUP_SYMMETRY", boostControllerArea.removeFromLeft(verticalSectionWidth).reduced(10), false);
+        auto boostControllerWidth = boostControllerArea.getWidth() / 3;
+        placeKnob("PREAMP_BASS", boostControllerArea.removeFromLeft(boostControllerWidth).reduced(15, 10), false);
+        placeKnob("PREAMP_TREBLE", boostControllerArea.removeFromLeft(boostControllerWidth).reduced(15,10), false);
+        placeKnob("PICKUP_SYMMETRY", boostControllerArea.removeFromLeft(boostControllerWidth).reduced(15,10), false);
 
         //maradek hely a cabinet
         controllArea.removeFromTop(labelHeight);
@@ -370,10 +389,10 @@ void ModalRhodesAudioProcessorEditor::resized()
         auto cabinetLabelArea = cabinetArea.removeFromTop(cabinetArea.getHeight()/3);
         cabinetLabel.setBounds(cabinetLabelArea);
         //gombok
-        auto buttonArea = cabinetArea.reduced(40, 10);
+        auto buttonArea = cabinetArea.reduced(70, 0);
         auto buttonWidth = buttonArea.getWidth() / 2;
-        cabinetOnButton.setBounds(buttonArea.removeFromLeft(buttonWidth).reduced(30,0));
-        cabinetOffButton.setBounds(buttonArea.removeFromLeft(buttonWidth).reduced(30,0));
+        cabinetOnButton.setBounds(buttonArea.removeFromLeft(buttonWidth).reduced(0,5));
+        cabinetOffButton.setBounds(buttonArea.removeFromLeft(buttonWidth).reduced(0,5));
 
     }
 }
@@ -413,6 +432,8 @@ void ModalRhodesAudioProcessorEditor::timerCallback() {
 }
 
 void ModalRhodesAudioProcessorEditor::addSlider(juce::String parameterID, juce::String name, ControlGroup group) {
+    static auto regularTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::QuicksandBold_ttf, BinaryData::QuicksandBold_ttfSize);
+
 
     auto newBundle = std::make_unique<SliderStruct>();
     newBundle->parameterID = parameterID;
@@ -425,9 +446,11 @@ void ModalRhodesAudioProcessorEditor::addSlider(juce::String parameterID, juce::
     if (group == ControlGroup::Main) {
         newBundle->slider->setLookAndFeel(&MainKnobsLnF);
     }
-    else if( group == ControlGroup::Preamp && (parameterID == "PREAMP_DRIVE" || parameterID == "OUTPUT_GAIN")) {
+    else if( group == ControlGroup::Output && (parameterID == "PREAMP_DRIVE" || parameterID == "OUTPUT_GAIN")) {
         newBundle->slider->setSliderStyle(juce::Slider::LinearVertical);
-        newBundle->slider->setLookAndFeel(&FaderLnF);
+
+        if (parameterID == "PREAMP_DRIVE") newBundle->slider->setLookAndFeel(&FaderLnFRight);
+        else if (parameterID == "OUTPUT_GAIN") newBundle->slider->setLookAndFeel(&FaderLnFLeft);
     }
     else {
         newBundle->slider->setLookAndFeel(&CustomKnobLnF);
@@ -437,6 +460,10 @@ void ModalRhodesAudioProcessorEditor::addSlider(juce::String parameterID, juce::
 
     newBundle->label = std::make_unique<juce::Label>();
     newBundle->label->setText(name, juce::dontSendNotification);
+
+    if(group == ControlGroup::Main) newBundle->label->setFont(juce::Font(regularTypeface).withHeight(22.0f));
+    else newBundle->label->setFont(juce::Font(regularTypeface).withHeight(18.0f));
+
     newBundle->label->setJustificationType(juce::Justification::centred);
 
     if (group == ControlGroup::Main) {

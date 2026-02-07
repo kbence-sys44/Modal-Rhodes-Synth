@@ -17,6 +17,7 @@
 #include "LevelMeter.h"
 #include "SliderBundle.h"
 #include "VolumeFader.h"
+#include "OnOffButton.h"
 
 //==============================================================================
 /**
@@ -42,7 +43,8 @@ private:
     CustomKnob CustomKnobLnF;
     MainKnobsLnF MainKnobsLnF;
     LevelMeter lvlMeter;
-    VolumeFader FaderLnF;
+    VolumeFader FaderLnFLeft;
+    VolumeFader FaderLnFRight; 
 
     std::vector<std::unique_ptr<SliderStruct>> sliders;
     void addSlider(juce::String parameterID, juce::String name, ControlGroup group);
@@ -75,8 +77,8 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> reverbToggleAttachment;
 
     juce::Label cabinetLabel;
-    juce::TextButton cabinetOnButton;
-    juce::TextButton cabinetOffButton;
+    OnOffButton cabinetOnButton;
+    OnOffButton cabinetOffButton;
 
     juce::Label delayLabel;
     CustomToggleButton delayToggleButton;
@@ -109,6 +111,7 @@ private:
     //lobster pink 219, 84, 97
     //ink black 15, 17, 26
     //black 3, 3, 1
+    //green 150, 224, 114
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModalRhodesAudioProcessorEditor)

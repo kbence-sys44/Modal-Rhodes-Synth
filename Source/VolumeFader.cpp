@@ -21,7 +21,10 @@ void VolumeFader::drawLinearSlider(juce::Graphics& g, int x, int y, int width, i
     auto bounds = juce::Rectangle<float>((float)x, (float)y, (float)width, (float)height);
     const float centerX = bounds.getCentreX();
 
-    float trackCenterX = centerX - (ledBarOffset / 2.0f); //balra toljuk a led csik miatt
+    float trackCenterX = 0.0f;
+    if(side == Side::Right) trackCenterX = centerX - (ledBarOffset / 2.0f); //eltolas
+    if(side == Side::Left) trackCenterX = centerX + (ledBarOffset / 2.0f);
+
     juce::Rectangle<float> trackBounds(trackCenterX - trackWidth / 2.0f, (float)y, trackWidth, (float)height);
 
     //sav
@@ -33,7 +36,9 @@ void VolumeFader::drawLinearSlider(juce::Graphics& g, int x, int y, int width, i
 
 
     //ledek
-    float ledX = trackBounds.getRight() + ledBarOffset;
+    float ledX = 0.0f;
+    if (side == Side::Right) ledX = trackBounds.getRight() + ledBarOffset;
+    if (side == Side::Left) ledX = trackBounds.getX() - ledBarOffset;
 
     float halfThumb = thumbHeight / 2.0f;
 
@@ -43,8 +48,8 @@ void VolumeFader::drawLinearSlider(juce::Graphics& g, int x, int y, int width, i
     if (ledMaxHeight < 1.0f) ledMaxHeight = 1.0f;
     float spacing = ledMaxHeight / (float)(ledNum - 1);
 
-    juce::ColourGradient activeLedGrad(juce::Colours::lightgreen.brighter(0.2f), ledX, ledAreaBottom,
-        juce::Colours::yellow.darker(0.1f), ledX, ledAreaTop, false);
+    juce::ColourGradient activeLedGrad(juce::Colour(219, 84, 97).brighter(0.3f), ledX, ledAreaBottom,
+        juce::Colour(219, 84, 97).darker(0.6f), ledX, ledAreaTop, false);
 
     for (int i = 0; i < ledNum; ++i) {
         float dotCenterY = ledAreaBottom - (i * spacing);
@@ -57,9 +62,10 @@ void VolumeFader::drawLinearSlider(juce::Graphics& g, int x, int y, int width, i
             float gradPos = (dotCenterY - ledAreaTop) / ledMaxHeight;
 
             g.setGradientFill(activeLedGrad);
+            //g.setColour(juce::Colour(219, 84, 97));
 
             g.setOpacity(0.4f);
-            g.fillEllipse(ledX - 1.0f, dotCenterY - radius - 1.0f, ledSize + 2.0f, ledSize + 2.0f);
+            g.fillEllipse(ledX - radius - 0.4f, dotCenterY - radius - 0.4f, ledSize + 2.0f, ledSize + 2.0f);
 
             g.setOpacity(1.0f);
             g.fillEllipse(ledX - radius, dotCenterY - radius, ledSize, ledSize);

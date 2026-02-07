@@ -291,7 +291,9 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     //a maradek modul itt dolgozza fel a jelet nem hangonkent, hanem mar a teljes mixen egyszerre
     preamp.process(context);
 
-    if(isCabinetOn) cabinet.process(context);
+    if (isCabinetOn) {
+        cabinet.process(context);
+    }
 
     if(isDelayOn) delay.process(context);
 

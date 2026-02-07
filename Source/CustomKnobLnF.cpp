@@ -31,9 +31,16 @@ void CustomKnob::drawRotarySlider(juce::Graphics& g, int x, int y, int width, in
 
     float knobRadius = radius * 0.80f; //gomb kisebb
 
-    juce::ColourGradient ringGradient(juce::Colour(0xff4b4b4b), centre.x, centre.y - knobRadius, juce::Colour(0xff2a2a2a), centre.x, centre.y + knobRadius, false);
-    g.setGradientFill(ringGradient);
-    g.fillEllipse(centre.x - knobRadius, centre.y - knobRadius, knobRadius * 2.0f, knobRadius * 2.0f);
+    if (slider.isMouseButtonDown()) {
+        juce::ColourGradient ringGradient(highlightColour, centre.x, centre.y - knobRadius, highlightColour.darker(0.5f), centre.x, centre.y + knobRadius, false);
+        g.setGradientFill(ringGradient);
+        g.fillEllipse(centre.x - knobRadius, centre.y - knobRadius, knobRadius * 2.0f, knobRadius * 2.0f);
+    }
+    else {
+        juce::ColourGradient ringGradient(juce::Colour(0xff4b4b4b), centre.x, centre.y - knobRadius, juce::Colour(0xff2a2a2a), centre.x, centre.y + knobRadius, false);
+        g.setGradientFill(ringGradient);
+        g.fillEllipse(centre.x - knobRadius, centre.y - knobRadius, knobRadius * 2.0f, knobRadius * 2.0f);
+    }
 
 
     //bordak

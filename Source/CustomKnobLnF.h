@@ -22,5 +22,5 @@ public:
 
 
 private:
-
+    juce::Colour highlightColour{ 201, 44, 60 };
 };

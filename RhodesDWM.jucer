@@ -6,10 +6,22 @@
   <MAINGROUP id="JHWxRr" name="Modal-Rhodes">
     <GROUP id="{AB6CD702-9356-685F-D99C-3629DBB14DC6}" name="Source">
       <GROUP id="{3207601F-1F81-2893-C78D-0D4B78B05EEF}" name="Binary Data">
-        <FILE id="yrfxcb" name="Felipa-Regular.ttf" compile="0" resource="1"
-              file="Source/Felipa-Regular.ttf"/>
-        <FILE id="xBC1Cd" name="RubikDistressed-Regular.ttf" compile="0" resource="1"
-              file="Source/RubikDistressed-Regular.ttf"/>
+        <FILE id="xi0ITL" name="CalSans-Regular.ttf" compile="0" resource="1"
+              file="Source/Fonts/CalSans-Regular.ttf"/>
+        <FILE id="K8ck9b" name="Felipa-Regular.ttf" compile="0" resource="1"
+              file="Source/Fonts/Felipa-Regular.ttf"/>
+        <FILE id="H8zJuE" name="Quicksand-Bold.ttf" compile="0" resource="1"
+              file="Source/Fonts/Quicksand-Bold.ttf"/>
+        <FILE id="QuDiXq" name="Quicksand-Light.ttf" compile="0" resource="1"
+              file="Source/Fonts/Quicksand-Light.ttf"/>
+        <FILE id="DJTqSy" name="Quicksand-Medium.ttf" compile="0" resource="1"
+              file="Source/Fonts/Quicksand-Medium.ttf"/>
+        <FILE id="wigSGU" name="Quicksand-Regular.ttf" compile="0" resource="1"
+              file="Source/Fonts/Quicksand-Regular.ttf"/>
+        <FILE id="uwlSmc" name="Quicksand-SemiBold.ttf" compile="0" resource="1"
+              file="Source/Fonts/Quicksand-SemiBold.ttf"/>
+        <FILE id="UXYj4b" name="RubikDistressed-Regular.ttf" compile="0" resource="1"
+              file="Source/Fonts/RubikDistressed-Regular.ttf"/>
       </GROUP>
       <GROUP id="{0F2655E1-7308-4DD1-5632-C3256DF240CD}" name="Sound">
         <FILE id="cvseDu" name="ModalTine.cpp" compile="1" resource="0" file="Source/ModalTine.cpp"/>
@@ -25,6 +37,8 @@
               file="Source/CrossleyHammer.h"/>
       </GROUP>
       <GROUP id="{05F0820F-638A-B182-8EC2-7B79FB777DD2}" name="GUI">
+        <FILE id="XW6KVI" name="OnOffButton.cpp" compile="1" resource="0" file="Source/OnOffButton.cpp"/>
+        <FILE id="NWjrzW" name="OnOffButton.h" compile="0" resource="0" file="Source/OnOffButton.h"/>
         <FILE id="ZZTVld" name="VolumeFader.cpp" compile="1" resource="0" file="Source/VolumeFader.cpp"/>
         <FILE id="GsBJYT" name="VolumeFader.h" compile="0" resource="0" file="Source/VolumeFader.h"/>
         <FILE id="ZYzg26" name="SliderBundle.h" compile="0" resource="0" file="Source/SliderBundle.h"/>
