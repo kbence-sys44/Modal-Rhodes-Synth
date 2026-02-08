@@ -23,6 +23,7 @@
 
 //==============================================================================
 /**
+* a teljes gui rendereleseert felelos modul
 */
 
 
@@ -42,90 +43,72 @@ private:
 
     ModalRhodesAudioProcessor& audioProcessor;
 
+    //lnf classok
     CustomKnob CustomKnobLnF;
     MainKnobsLnF MainKnobsLnF;
-    LevelMeter lvlMeter;
     VolumeFader FaderLnFLeft;
     VolumeFader FaderLnFRight; 
 
+    //fontok
+    juce::Font titleFont;
+    juce::Font regularFont;
+    juce::Font labelFont;
+    juce::Font textboxFont;
+
+    //sliderek
     std::vector<std::unique_ptr<SliderStruct>> sliders;
     void addSlider(juce::String parameterID, juce::String name, ControlGroup group);
     SliderStruct* findSlider(juce::String parameterID);
+    void placeKnob(juce::String parameterID, juce::Rectangle<int>& area, int width, bool isMain);
 
-    //cim
+    //textek
     juce::Label titleLabel;
+    juce::Label minLabel, actualLabel, maxLabel;
+    juce::Label tremoloLabel, cabinetLabel, reverbLabel, delayLabel, inLabel, outLabel;
 
-    //szam kiiras
-    juce::Label minLabel;
-    juce::Label actualLabel;
-    juce::Label maxLabel;
-
-    //vizualis billenytu
-    juce::MidiKeyboardComponent keyboardComponent;
-
+    //gombok, egyeb
+    CustomToggleButton tremoloToggleButton, reverbToggleButton, delayToggleButton;
+    OnOffButton cabinetOnButton, cabinetOffButton;
     DebugButton debugButton;
-    bool isDebugOn = false;
-    void updateVisibility();
-    void updateCabinetState();
-    void updateModuleState();
-
     RunTestButton runTestsButton;
     juce::TextEditor textResults;
-    CustomTestRunner runner;
+    LevelMeter lvlMeter;
+    juce::MidiKeyboardComponent keyboardComponent;
 
-    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
-
-    //gombok
-    juce::Label tremoloLabel;
-    CustomToggleButton tremoloToggleButton;
+    //attachmentek
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> tremoloToggleAttachment;
-
-    juce::Label reverbLabel;
-    CustomToggleButton reverbToggleButton;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> reverbToggleAttachment;
-
-    juce::Label cabinetLabel;
-    OnOffButton cabinetOnButton;
-    OnOffButton cabinetOffButton;
-
-    juce::Label delayLabel;
-    CustomToggleButton delayToggleButton;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> delayToggleAttachment;
 
-    juce::Label inLabel;
-    juce::Label outLabel;
 
+    //layout
+    juce::Rectangle<int> mainSectionBounds, tremoloBounds, reverbBounds, delayBounds, linearBounds, boostBounds, cabinetBounds;
+    juce::Rectangle<int> tremoloLabelBounds, reverbLabelBounds, linearLabelBounds, delayLabelBounds, numberDataBounds;
 
-    //keretekhez
-
-    juce::Rectangle<int> mainSectionBounds;
-    juce::Rectangle<int> tremoloBounds;
-    juce::Rectangle<int> reverbBounds;
-    juce::Rectangle<int> delayBounds;
-    juce::Rectangle<int> linearBounds;
-    juce::Rectangle<int> boostBounds;
-    juce::Rectangle<int> cabinetBounds;
-
-    juce::Rectangle<int> tremoloLabelBounds;
-    juce::Rectangle<int> reverbLabelBounds;
-    juce::Rectangle<int> linearLabelBounds;
-    juce::Rectangle<int> delayLabelBounds;
-    juce::Rectangle<int> numberDataBounds;
-
-    juce::Colour textColour { 252, 239, 249 };
-    juce::Colour darkTextColour { 12, 12, 12 };
-
+    //szinek
+    juce::Colour textColour{ 252, 239, 249 };
+    juce::Colour darkTextColour{ 12, 12, 12 };
     juce::Colour backgroundColour{ 3, 3, 1 };
     juce::Colour secondaryColour{ 15, 17, 26 };
     juce::Colour thirdColour{ 250, 250, 250 };
     juce::Colour accentColour{ 219, 84, 97 };
 
-    //brgiht snow 250, 250, 250
-    //alice blue 227, 242, 253
-    //lobster pink 219, 84, 97
-    //ink black 15, 17, 26
-    //black 3, 3, 1
-    //green 150, 224, 114
+
+    CustomTestRunner runner;
+    bool isDebugOn = false;
+    
+    void updateVisibility();
+    void updateCabinetState();
+    void updateModuleState();
+    void drawSectionFrame(juce::Graphics& g, juce::Rectangle<int> bounds, bool accent); //keretek
+    void drawDec(juce::Graphics& g); //vonalak
+
+    //inicializacio segedfuggvenyek
+    void initializeFonts();
+    void initializeLabels();
+    void initializeButtons();
+    void initializeSliders();
+    void initializeDebugElements();
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ModalRhodesAudioProcessorEditor)
