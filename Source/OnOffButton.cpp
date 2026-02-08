@@ -18,7 +18,7 @@ void OnOffButton::paintButton(juce::Graphics& g, bool shouldDrawButtonAsMouseOve
     if (buttonType == Type::Off) baseColour = getToggleState() ? offColour : offColour.darker(0.8f);
     if (buttonType == Type::On) baseColour = getToggleState() ? onColour : onColour.darker(0.8f);
 
-    if (shouldDrawButtonAsMouseOver) baseColour = baseColour.brighter(0.2f);
+    if (shouldDrawButtonAsMouseOver && getToggleState()) baseColour = baseColour.brighter(0.2f);
 
     g.setColour(baseColour);
     g.fillRoundedRectangle(bounds, 3.0f);

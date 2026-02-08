@@ -10,6 +10,8 @@
               file="Source/Fonts/CalSans-Regular.ttf"/>
         <FILE id="K8ck9b" name="Felipa-Regular.ttf" compile="0" resource="1"
               file="Source/Fonts/Felipa-Regular.ttf"/>
+        <FILE id="gNbcdr" name="Geo-Italic.ttf" compile="0" resource="1" file="Source/Fonts/Geo-Italic.ttf"/>
+        <FILE id="jSbXHY" name="Geo-Regular.ttf" compile="0" resource="1" file="Source/Fonts/Geo-Regular.ttf"/>
         <FILE id="H8zJuE" name="Quicksand-Bold.ttf" compile="0" resource="1"
               file="Source/Fonts/Quicksand-Bold.ttf"/>
         <FILE id="QuDiXq" name="Quicksand-Light.ttf" compile="0" resource="1"
@@ -37,6 +39,11 @@
               file="Source/CrossleyHammer.h"/>
       </GROUP>
       <GROUP id="{05F0820F-638A-B182-8EC2-7B79FB777DD2}" name="GUI">
+        <FILE id="BmaWeG" name="RunTestButton.cpp" compile="1" resource="0"
+              file="Source/RunTestButton.cpp"/>
+        <FILE id="SPDBw2" name="RunTestButton.h" compile="0" resource="0" file="Source/RunTestButton.h"/>
+        <FILE id="rjwuWw" name="DebugButton.cpp" compile="1" resource="0" file="Source/DebugButton.cpp"/>
+        <FILE id="Ou2Rhh" name="DebugButton.h" compile="0" resource="0" file="Source/DebugButton.h"/>
         <FILE id="XW6KVI" name="OnOffButton.cpp" compile="1" resource="0" file="Source/OnOffButton.cpp"/>
         <FILE id="NWjrzW" name="OnOffButton.h" compile="0" resource="0" file="Source/OnOffButton.h"/>
         <FILE id="ZZTVld" name="VolumeFader.cpp" compile="1" resource="0" file="Source/VolumeFader.cpp"/>

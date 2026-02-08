@@ -18,6 +18,7 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     static auto typeface = juce::Typeface::createSystemTypefaceFor(BinaryData::FelipaRegular_ttf, BinaryData::FelipaRegular_ttfSize);
     static auto regularTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::QuicksandBold_ttf, BinaryData::QuicksandBold_ttfSize);
     static auto regularTypefaceSecond = juce::Typeface::createSystemTypefaceFor(BinaryData::CalSansRegular_ttf, BinaryData::CalSansRegular_ttfSize);
+    static auto textboxTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::GeoRegular_ttf, BinaryData::GeoRegular_ttfSize);
     //cim
     
     titleLabel.setText("Modal Rhodes VST", juce::dontSendNotification);
@@ -32,9 +33,6 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     //debug mode
     addAndMakeVisible(debugButton);
     debugButton.setClickingTogglesState(true);
-    debugButton.setColour(juce::TextButton::buttonColourId, juce::Colours::darkgrey);
-    debugButton.setColour(juce::TextButton::buttonOnColourId, juce::Colours::palevioletred);
-    debugButton.setButtonText("DEBUG MODE");
 
     debugButton.onClick = [this] {
         updateVisibility();
@@ -54,7 +52,11 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     textResults.setMultiLine(true);
     textResults.setReadOnly(true);
     textResults.setReturnKeyStartsNewLine(true);
-    textResults.setFont(juce::Font("Consolas", 14.0f, juce::Font::plain));
+    textResults.setFont(juce::Font(textboxTypeface).withHeight(20.0f));
+
+    textResults.setColour(juce::TextEditor::backgroundColourId, juce::Colours::transparentBlack);
+    textResults.setColour(juce::TextEditor::outlineColourId, juce::Colours::transparentBlack);
+    textResults.setColour(juce::TextEditor::textColourId, thirdColour);
 
     //egyeb labelek
     auto labelSetup = [this](juce::Label& label, std::string title)
@@ -62,7 +64,7 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
             label.setText(title, juce::dontSendNotification);
             label.setFont(juce::Font(regularTypefaceSecond).withHeight(20.0f));
             label.setJustificationType(juce::Justification::centred);
-            label.setColour(juce::Label::textColourId, accentColour);
+            label.setColour(juce::Label::textColourId, textColour);
             addAndMakeVisible(label);
         };
 
@@ -73,8 +75,20 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
     labelSetup(inLabel, "IN");
     labelSetup(outLabel, "OUT");
 
-    //inLabel.setJustificationType(juce::Justification::left);
-    //outLabel.setJustificationType(juce::Justification::right);
+    auto setupDataLabel = [this](juce::Label& label)
+        {
+            label.setText("", juce::dontSendNotification);
+            label.setFont(juce::Font("Consolas", 14.0f, juce::Font::bold));
+            label.setJustificationType(juce::Justification::centred);
+            label.setColour(juce::Label::textColourId, textColour);
+            //label.setColour(juce::Label::backgroundColourId, secondaryColour);
+            addAndMakeVisible(label);
+        };
+
+    setupDataLabel(minLabel);
+    setupDataLabel(actualLabel);
+    setupDataLabel(maxLabel);
+
 
     //keyboard
     keyboardComponent.setAvailableRange(48, 96);
@@ -113,13 +127,15 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
 
     addAndMakeVisible(tremoloToggleButton);
     tremoloToggleAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.apvts, "TREM_SWITCH", tremoloToggleButton);
+    tremoloToggleButton.onClick = [this] {updateModuleState(); };
 
     addAndMakeVisible(reverbToggleButton);
     reverbToggleAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.apvts, "REVERB_SWITCH", reverbToggleButton);
+    reverbToggleButton.onClick = [this] {updateModuleState(); };
 
     addAndMakeVisible(delayToggleButton);
     delayToggleAttachment = std::make_unique < juce::AudioProcessorValueTreeState::ButtonAttachment>(audioProcessor.apvts, "DELAY_SWITCH", delayToggleButton);
-    
+    delayToggleButton.onClick = [this] {updateModuleState(); };
 
     struct SliderConfig {
         juce::String id;
@@ -173,7 +189,14 @@ ModalRhodesAudioProcessorEditor::ModalRhodesAudioProcessorEditor(ModalRhodesAudi
 
     }
 
+    tremoloToggleButton.toFront(true);
+    reverbToggleButton.toFront(true);
+    delayToggleButton.toFront(true);
+    debugButton.toFront(true);
+
     updateVisibility();
+    updateCabinetState();
+    updateModuleState();
 
     //ablak merete
     setSize(900, 500);
@@ -193,10 +216,11 @@ void ModalRhodesAudioProcessorEditor::updateVisibility() {
 
     runTestsButton.setVisible(isDebugOn);
     textResults.setVisible(isDebugOn);
-
+    
     bool normalUI = !isDebugOn;
 
     keyboardComponent.setVisible(normalUI);
+    titleLabel.setVisible(normalUI);
 
     tremoloLabel.setVisible(normalUI);
     reverbLabel.setVisible(normalUI);
@@ -204,6 +228,12 @@ void ModalRhodesAudioProcessorEditor::updateVisibility() {
     delayLabel.setVisible(normalUI);
     inLabel.setVisible(normalUI);
     outLabel.setVisible(normalUI);
+
+    minLabel.setVisible(normalUI);
+    actualLabel.setVisible(normalUI);
+    maxLabel.setVisible(normalUI);
+
+    lvlMeter.setVisible(normalUI);
 
     for (auto& s : sliders) {
         s->setVisible(normalUI);
@@ -234,7 +264,18 @@ void ModalRhodesAudioProcessorEditor::paint(juce::Graphics& g)
     g.fillAll(backgroundColour);
 
     if (debugButton.getToggleState()) {
+        
+        if (textResults.isVisible()) {
+            auto bounds = textResults.getBounds().toFloat();
+
+            g.setColour(secondaryColour);
+            g.fillRoundedRectangle(bounds, 12.0f);
+
+            g.setColour(accentColour);
+            g.drawRoundedRectangle(bounds, 12.0f, 1.0f);
+        }
         return;
+
     }
 
     auto drawSection = [&](juce::Rectangle<int> bounds, bool accent) {
@@ -253,18 +294,89 @@ void ModalRhodesAudioProcessorEditor::paint(juce::Graphics& g)
             g.fillRoundedRectangle(frame, 12.0f);
         }
 
-        g.setColour(secondaryColour.brighter(0.5f));
+        g.setColour(secondaryColour.brighter(0.2f));
         g.drawRoundedRectangle(frame, 12.0f, 1.5f);
         
     };
 
     drawSection(mainSectionBounds, true);
+
+    g.setColour(juce::Colours::black.withAlpha(0.15f));
+
+    auto bounds = mainSectionBounds.toFloat();
+    float titleWidth = bounds.getWidth() / 2.7f;
+    float knobAreaWidth = bounds.getWidth() - titleWidth;
+    float oneKnobWidth = knobAreaWidth / 3.0f - 5.0f;
+
+    float lineTop = bounds.getY() + 15.0f;
+    float lineBottom = bounds.getBottom() - 15.0f;
+
+    float x1 = bounds.getX() + titleWidth;
+    g.drawLine(x1, lineTop, x1, lineBottom, 1.5f);
+
+    float x2 = x1 + oneKnobWidth;
+    g.drawLine(x2, lineTop, x2, lineBottom, 1.5f);
+
+    float x3 = x2 + oneKnobWidth;
+    g.drawLine(x3, lineTop, x3, lineBottom, 1.5f);
+
     drawSection(reverbBounds, false);
+    auto reverbArea = reverbBounds.toFloat();
+    g.fillRect(reverbArea.getX() + 15, reverbArea.getCentreY(), reverbArea.getWidth() - 30, 1.5f);
+
+    g.setColour(accentColour);
+    auto reverbLabelArea = reverbLabelBounds.toFloat();
+    g.fillRect(reverbLabelArea.getX() + 20, reverbLabelArea.getY(), reverbLabelArea.getWidth() - 40, 1.5f);
+
     drawSection(tremoloBounds, false);
+    auto tremoloArea = tremoloBounds.toFloat();
+    g.fillRect(tremoloArea.getX() + 15, tremoloArea.getCentreY(), tremoloArea.getWidth() - 30, 1.5f);
+
+    auto tremoloLabelArea = tremoloLabelBounds.toFloat();
+    g.setColour(accentColour);
+    g.fillRect(tremoloLabelArea.getX() + 10, tremoloLabelArea.getY(), tremoloLabelArea.getWidth() - 20, 1.5f);
+
     drawSection(delayBounds, false);
+    auto delayArea = delayBounds.toFloat();
+
+    g.fillRect(delayArea.getX() + 15, delayArea.getCentreY(), delayArea.getWidth()/2 - 30, 1.5f);
+    g.fillRect(delayArea.getCentreX() + 15, delayArea.getCentreY(), delayArea.getWidth()/2 - 30, 1.5f);
+
+    g.setColour(accentColour);
+    auto delayLabelArea = delayLabelBounds.toFloat();
+    g.fillRect(delayLabelArea.getX() + 75, delayLabelArea.getY(), delayLabelArea.getWidth() - 150, 1.5f);
+
+    //g.fillRect(delayArea.getCentreX(), delayArea.getY() + 15, 1.5f, delayArea.getHeight() / 2 - 30);
+   // g.fillRect(delayArea.getCentreX(), delayArea.getCentreY() + 15, 1.5f, delayArea.getHeight() / 2 - 30);
+
     drawSection(linearBounds, false);
+
+    g.setColour(accentColour);
+    auto linearLabelArea = linearLabelBounds.toFloat();
+    g.fillRect(linearLabelArea.getX() + 25, linearLabelArea.getY(), (linearLabelArea.getWidth() * 5 / 11) - 50, 1.5f);
+    g.fillRect(linearLabelArea.getX() + (linearLabelArea.getWidth() * 6 / 11) + 20, linearLabelArea.getY(), (linearLabelArea.getWidth() * 5 / 11) - 40, 1.5f);
+
     drawSection(boostBounds, false);
+
+    auto boostArea = boostBounds.toFloat();
+    //g.setColour(accentColour);
+    g.fillRect(boostArea.getX() + (boostArea.getWidth()/3), boostArea.getY() + 15, 1.5f, boostArea.getHeight() - 30);
+    g.fillRect(boostArea.getX() + ((boostArea.getWidth()/3) * 2), boostArea.getY() + 15, 1.5f, boostArea.getHeight() - 30);
+
     drawSection(cabinetBounds, false);
+
+    
+    auto numberDataArea = numberDataBounds.toFloat().reduced(5.0f, 2.0f);
+    g.setColour(secondaryColour);
+    g.fillRect(numberDataArea.getX() + (numberDataArea.getWidth() / 3),numberDataArea.getY(), numberDataArea.getWidth() / 3, numberDataArea.getHeight());
+    
+    g.setColour(accentColour);
+    g.fillRect(numberDataArea.getX() + (numberDataArea.getWidth() / 3), numberDataArea.getY(), 1.5f, numberDataArea.getHeight());
+    g.fillRect(numberDataArea.getX() + (numberDataArea.getWidth() * 2/ 3), numberDataArea.getY(), 1.5f, numberDataArea.getHeight());
+
+    
+
+    g.drawRoundedRectangle(numberDataArea, 4.0f, 1.5f);
 
 }
 
@@ -276,9 +388,11 @@ void ModalRhodesAudioProcessorEditor::resized()
 
         auto debugArea = getLocalBounds().reduced(20);
 
-        runTestsButton.setBounds(debugArea.removeFromTop(40));
-        debugArea.removeFromTop(10);
+        auto topRowArea = debugArea.removeFromTop(40);
+        runTestsButton.setBounds(topRowArea.removeFromLeft(140));
+        debugButton.setBounds(topRowArea.getX(), topRowArea.getY() + 20, 20, 20);
 
+        debugArea.removeFromTop(10);
         textResults.setBounds(debugArea);
     }
     else {
@@ -315,11 +429,11 @@ void ModalRhodesAudioProcessorEditor::resized()
         mainSectionBounds = titleSection;
         auto titleTextArea = titleSection.removeFromLeft(titleSection.getWidth() / 2.7);
         titleLabel.setBounds(titleTextArea);
-        //debugButton.setBounds(titleTextArea.removeFromLeft(100));
+        debugButton.setBounds(titleTextArea.getX() + 5, titleTextArea.getY() + 5, 20, 20);
 
 
         //attack, decay, release knobok
-        auto mainKnobAreaWidth = titleSection.getWidth() / 3;
+        auto mainKnobAreaWidth = titleSection.getWidth() / 3 - 5;
         placeKnob("HAMMER_HARDNESS", titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
         placeKnob("SUSTAIN_DECAY", titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
         placeKnob("DAMPER_RELEASE", titleSection.removeFromLeft(mainKnobAreaWidth).reduced(10), true);
@@ -331,7 +445,8 @@ void ModalRhodesAudioProcessorEditor::resized()
 
         //tremolo
         auto tremoloArea = effectsArea.removeFromLeft(effectSectionWidth);
-        tremoloLabel.setBounds(tremoloArea.removeFromTop(labelHeight));
+        tremoloLabelBounds = tremoloArea.removeFromTop(labelHeight);
+        tremoloLabel.setBounds(tremoloLabelBounds);
         tremoloBounds = tremoloArea;
         tremoloToggleButton.setBounds(tremoloArea.getX() + 5, tremoloArea.getY() + 5, 20, 20);
         placeKnob("TREM_DEPTH", tremoloArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
@@ -339,7 +454,8 @@ void ModalRhodesAudioProcessorEditor::resized()
 
         //reverb
         auto reverbArea = effectsArea.removeFromLeft(effectSectionWidth);
-        reverbLabel.setBounds(reverbArea.removeFromTop(labelHeight));
+        reverbLabelBounds = reverbArea.removeFromTop(labelHeight);
+        reverbLabel.setBounds(reverbLabelBounds);
         reverbBounds = reverbArea;
         reverbToggleButton.setBounds(reverbArea.getX() + 5, reverbArea.getY() + 5, 20, 20);
         placeKnob("DRY_LEVEL", reverbArea.removeFromTop(horizontalSectionHeight).reduced(10), false);
@@ -347,7 +463,8 @@ void ModalRhodesAudioProcessorEditor::resized()
 
         //delay
         auto delayArea = effectsArea.removeFromLeft(effectSectionWidth * 2);
-        delayLabel.setBounds(delayArea.removeFromTop(labelHeight));
+        delayLabelBounds = delayArea.removeFromTop(labelHeight);
+        delayLabel.setBounds(delayLabelBounds);
         delayBounds = delayArea;
         delayToggleButton.setBounds(delayArea.getX() + 5, delayArea.getY() + 5, 20, 20);
         auto delayAreaTop = delayArea.removeFromTop(delayArea.getHeight() / 2);
@@ -358,7 +475,8 @@ void ModalRhodesAudioProcessorEditor::resized()
 
         //csuszkak
         auto linearSliderWidth = linearSliderArea.getWidth() / 11 * 5;
-        auto linearSliderTextArea = linearSliderArea.removeFromTop(labelHeight);
+        linearLabelBounds = linearSliderArea.removeFromTop(labelHeight);
+        auto linearSliderTextArea = linearLabelBounds;
         linearBounds = linearSliderArea;
         auto inputSliderArea = linearSliderArea.removeFromLeft(linearSliderWidth).reduced(0,10);
         auto outputSliderArea = linearSliderArea.removeFromRight(linearSliderWidth).reduced(0, 10);
@@ -382,8 +500,15 @@ void ModalRhodesAudioProcessorEditor::resized()
         placeKnob("PREAMP_TREBLE", boostControllerArea.removeFromLeft(boostControllerWidth).reduced(15,10), false);
         placeKnob("PICKUP_SYMMETRY", boostControllerArea.removeFromLeft(boostControllerWidth).reduced(15,10), false);
 
+        //data cells
+        auto numberDataArea = controllArea.removeFromTop(labelHeight);
+        numberDataBounds = numberDataArea;
+        auto singleCellWidth = numberDataArea.getWidth() / 3;
+        minLabel.setBounds(numberDataArea.removeFromLeft(singleCellWidth).reduced(10,0));
+        actualLabel.setBounds(numberDataArea.removeFromLeft(singleCellWidth).reduced(10, 0));
+        maxLabel.setBounds(numberDataArea.removeFromLeft(singleCellWidth).reduced(10, 0));
+
         //maradek hely a cabinet
-        controllArea.removeFromTop(labelHeight);
         cabinetBounds = controllArea;
         auto cabinetArea = controllArea.reduced(0,10);
         auto cabinetLabelArea = cabinetArea.removeFromTop(cabinetArea.getHeight()/3);
@@ -425,9 +550,42 @@ void ModalRhodesAudioProcessorEditor::paintOverChildren(juce::Graphics& g) {
 }
 
 void ModalRhodesAudioProcessorEditor::timerCallback() {
-    
+    //lvlmeter frissites
     float lvl = audioProcessor.currentOutputLevel.load();
     lvlMeter.setLevel(lvl);
+
+    //szaminfok frissitese
+    bool activeSlider = false;
+
+    for (auto& s : sliders) {
+        if (s->slider->isMouseOverOrDragging()) {
+
+            juce::String minimumValue = "MIN: " + juce::String(s->slider->getMinimum(), 1);
+            minLabel.setText(minimumValue, juce::dontSendNotification);
+
+            juce::String maximumValue = "MAX: " + juce::String(s->slider->getMaximum(), 1);
+            maxLabel.setText(maximumValue, juce::dontSendNotification);
+
+            juce::String actualValue = juce::String(s->slider->getValue(), 1);
+            if (s->slider->getTextValueSuffix().isNotEmpty()) {
+                actualValue += s->slider->getTextValueSuffix();
+            }
+
+            actualLabel.setText(actualValue, juce::dontSendNotification);
+            actualLabel.setColour(juce::Label::textColourId, accentColour);
+
+            activeSlider = true;
+            break;
+        }
+    }
+
+    //ha nincs eger semmi felett, akkor toroljuk a texteket
+    if (!activeSlider) {
+        minLabel.setText("", juce::dontSendNotification);
+        actualLabel.setText("", juce::dontSendNotification);
+        maxLabel.setText("", juce::dontSendNotification);
+        actualLabel.setColour(juce::Label::textColourId, textColour);
+    }
 
 }
 
@@ -485,5 +643,28 @@ SliderStruct* ModalRhodesAudioProcessorEditor::findSlider(juce::String parameter
         if (s->parameterID == parameterID) return s.get();
     }
     return nullptr;
+}
+
+void ModalRhodesAudioProcessorEditor::updateModuleState() {
+
+    bool isTremoloOn = *audioProcessor.apvts.getRawParameterValue("TREM_SWITCH");
+    bool isReverbOn = *audioProcessor.apvts.getRawParameterValue("REVERB_SWITCH");
+    bool isDelayOn = *audioProcessor.apvts.getRawParameterValue("DELAY_SWITCH");
+
+    for (auto& s : sliders) {
+        if (s->group == ControlGroup::Tremolo) {
+            s->slider->setEnabled(isTremoloOn);
+            s->label->setEnabled(isTremoloOn);
+        }
+        else if (s->group == ControlGroup::Reverb) {
+            s->slider->setEnabled(isReverbOn);
+            s->label->setEnabled(isReverbOn);
+        }
+        else if (s->group == ControlGroup::Delay) {
+            s->slider->setEnabled(isDelayOn);
+            s->label->setEnabled(isDelayOn);
+        }
+    }
+
 }
 

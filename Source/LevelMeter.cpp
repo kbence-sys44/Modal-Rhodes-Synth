@@ -18,15 +18,18 @@ void LevelMeter::paint(juce::Graphics& g) {
     g.setColour(juce::Colours::black.withAlpha(0.5f));
     g.fillRoundedRectangle(bounds, 4.0f);
 
+    g.setColour(juce::Colours::white.withAlpha(0.3f));
+    g.drawRoundedRectangle(bounds, 4.0f, 1.0f);
+
     float db = juce::Decibels::gainToDecibels(level, -60.0f);
     float normalized = juce::jmap(db, -60.0f, 6.0f, 0.0f, 1.0f);
     normalized = juce::jlimit(0.0f, 1.0f, normalized);
 
     float height = bounds.getHeight() * normalized;
 
-    juce::ColourGradient grad(juce::Colours::green, bounds.getBottomLeft(),
-        juce::Colours::red, bounds.getTopLeft(), false);
-    grad.addColour(0.75, juce::Colours::yellow);
+    juce::ColourGradient grad(lowVolColour, bounds.getBottomLeft(),
+        highVolColour, bounds.getTopLeft(), false);
+    grad.addColour(0.75, mediumVolColour);
 
     g.setGradientFill(grad);
     g.fillRoundedRectangle(bounds.getX(), bounds.getBottom() - height, bounds.getWidth(), height, 4.0f);

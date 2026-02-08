@@ -18,6 +18,8 @@
 #include "SliderBundle.h"
 #include "VolumeFader.h"
 #include "OnOffButton.h"
+#include "DebugButton.h"
+#include "RunTestButton.h"
 
 //==============================================================================
 /**
@@ -53,15 +55,21 @@ private:
     //cim
     juce::Label titleLabel;
 
+    //szam kiiras
+    juce::Label minLabel;
+    juce::Label actualLabel;
+    juce::Label maxLabel;
+
     //vizualis billenytu
     juce::MidiKeyboardComponent keyboardComponent;
 
-    juce::TextButton debugButton{ "DEBUG" };
+    DebugButton debugButton;
     bool isDebugOn = false;
     void updateVisibility();
     void updateCabinetState();
+    void updateModuleState();
 
-    juce::TextButton runTestsButton{ "Run all tests" };
+    RunTestButton runTestsButton;
     juce::TextEditor textResults;
     CustomTestRunner runner;
 
@@ -97,6 +105,12 @@ private:
     juce::Rectangle<int> linearBounds;
     juce::Rectangle<int> boostBounds;
     juce::Rectangle<int> cabinetBounds;
+
+    juce::Rectangle<int> tremoloLabelBounds;
+    juce::Rectangle<int> reverbLabelBounds;
+    juce::Rectangle<int> linearLabelBounds;
+    juce::Rectangle<int> delayLabelBounds;
+    juce::Rectangle<int> numberDataBounds;
 
     juce::Colour textColour { 252, 239, 249 };
     juce::Colour darkTextColour { 12, 12, 12 };

@@ -74,7 +74,7 @@ void VolumeFader::drawLinearSlider(juce::Graphics& g, int x, int y, int width, i
             g.setColour(inactiveLed);
             g.fillEllipse(ledX - radius, dotCenterY - radius, ledSize, ledSize);
 
-            g.setColour(juce::Colours::black.withAlpha(0.5f));
+            g.setColour(juce::Colours::white.withAlpha(0.3f));
             g.drawEllipse(ledX - radius, dotCenterY - radius, ledSize, ledSize, 0.5f);
         }
     }
@@ -85,16 +85,17 @@ void VolumeFader::drawLinearSlider(juce::Graphics& g, int x, int y, int width, i
     thumbBounds.setSize(thumbWidth, thumbHeight);
     thumbBounds.setCentre(trackCenterX, sliderPos);
 
-    juce::ColourGradient thumbGrad(juce::Colour(0xff666666), thumbBounds.getTopLeft(),
-        juce::Colour(0xffb0b0b0), thumbBounds.getBottomLeft(), false);
+    juce::ColourGradient thumbGrad(juce::Colour(69, 69, 69), thumbBounds.getTopLeft(),
+        juce::Colour(17, 16, 14), thumbBounds.getBottomLeft(), false);
     g.setGradientFill(thumbGrad);
-    g.fillRoundedRectangle(thumbBounds, 2.0f);
+    g.fillRoundedRectangle(thumbBounds, 4.0f);
 
     //keret
-    g.setColour(juce::Colours::black.withAlpha(0.6f));
-    g.drawRoundedRectangle(thumbBounds, 2.0f, 1.0f);
+    g.setColour(juce::Colours::black);
+    g.drawRoundedRectangle(thumbBounds, 2.0f, 1.5f);
 
-    g.setColour(juce::Colours::black.withAlpha(0.8f));
+    g.setColour(juce::Colours::black);
     float lineY = thumbBounds.getCentreY();
-    g.drawLine(thumbBounds.getX() + 2.0f, lineY, thumbBounds.getRight() - 2.0f, lineY, 1.5f);
+    g.setColour(juce::Colour(101, 101, 101));
+    g.drawLine(thumbBounds.getX() + 3.0f, lineY, thumbBounds.getRight() - 3.0f, lineY, 1.0f);
 }

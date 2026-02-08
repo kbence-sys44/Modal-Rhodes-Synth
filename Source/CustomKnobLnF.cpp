@@ -97,7 +97,7 @@ void CustomKnob::drawRotarySlider(juce::Graphics& g, int x, int y, int width, in
 
 
     //mouse down ertek kiiras
-
+    /*
     if (slider.isMouseButtonDown()) {
         g.setColour(juce::Colours::black.withAlpha(0.7f));
         //g.fillRoundedRectangle(centre.x - 20, centre.y - 10, 40, 20, 4.0f);
@@ -112,5 +112,5 @@ void CustomKnob::drawRotarySlider(juce::Graphics& g, int x, int y, int width, in
 
         g.drawText(text, x, y, width, height, juce::Justification::centred, false);
 
-    }
+    }*/
 }

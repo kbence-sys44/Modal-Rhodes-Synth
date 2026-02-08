@@ -33,5 +33,5 @@ public:
     
     Side side = Side::Right;
 
-    juce::Colour inactiveLed = juce::Colour(0xff2a2a2a);
+    juce::Colour inactiveLed = juce::Colour(11, 11, 9);
 };
