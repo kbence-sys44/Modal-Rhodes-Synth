@@ -38,8 +38,8 @@ public:
     void setDecay(float newDecay) { decayMultiplier = newDecay; };
     void setRelease(float newRelease) { releaseTime = newRelease; };
 
-    PickupModule getPickup() { return pickup; };
-    Tremolo getTremolo() { return tremolo; };
+    PickupModule& getPickup() { return pickup; };
+    Tremolo& getTremolo() { return tremolo; };
 
 private:
     ModalTine modalTine;
@@ -54,12 +54,14 @@ private:
     float voiceVolume = 1.0f;
     float currentVelocity = 0.0f;
     float outputGain = 1.0f;
+    float fadeoutGain = 1.0f;
 
     float previousTinePos = 0.0f;
 
     bool noteCurrentlyActive = false;
     bool isKeyHeld = false;
     bool triggerThump = true;
+    bool isFading = false;
 
     float prevIn = 0.0f;
     float prevOut = 0.0f;

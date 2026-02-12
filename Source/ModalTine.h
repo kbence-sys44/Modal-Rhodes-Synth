@@ -42,6 +42,7 @@ private:
     float dt = 1.0f / 44100.0f;
     float globalVolumeAdjust = 1.0f;
     float displacement = 0.0f;
+    float outputVel = 0.0f;
     
     std::vector<Modals> modes;    
 

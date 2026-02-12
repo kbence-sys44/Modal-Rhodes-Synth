@@ -48,5 +48,5 @@ void ConvolutionCabinet::process(juce::dsp::ProcessContextReplacing<float>& cont
             samples[i] = std::tanh(samples[i] * 1.5f);
         }
     }*/
-    context.getOutputBlock().multiplyBy(2.0f);
+    context.getOutputBlock().multiplyBy(makeupGain);
 }

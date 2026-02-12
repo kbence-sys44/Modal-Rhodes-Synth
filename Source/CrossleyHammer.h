@@ -27,7 +27,6 @@ public:
 
     bool isHammerActive() const;
 
-    float getThump();
     void setParameters(float newStiffness, float newMass);
 
 private:

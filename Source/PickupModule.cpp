@@ -41,10 +41,10 @@ void PickupModule::reset() {
 
 }
 
-void PickupModule::setParameters(float gainDB, float symmetryDB, float lowPassCutoff) {
+void PickupModule::setParameters(float gainDB, float symmetryVal, float lowPassCutoff) {
 
     gain.setTargetValue(juce::Decibels::decibelsToGain(gainDB));
-    symmetryGain.setTargetValue(juce::Decibels::decibelsToGain(symmetryDB));
+    symmetryGain.setTargetValue(juce::Decibels::decibelsToGain(symmetryVal));
     lowpass.setCutoffFrequency(lowPassCutoff);
 
 }
@@ -68,7 +68,7 @@ float PickupModule::processSample(float inputSample) {
 
     float symmetry = symmetryGain.getNextValue(); //paros felharmonikusok generalasa, mivel a magnes nincs tokeletesen kozepen
 
-    if (symmetry > 1.01f) { //asszimetria
+    if (symmetry > 0.01f) { //asszimetria
 
         float path1 = processedSample * symmetry;
         

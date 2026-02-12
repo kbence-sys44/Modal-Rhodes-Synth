@@ -28,7 +28,7 @@ public:
 
 private:
     double sampleRate = 44100.0;
-    float symmetryVariable = 1.0f;
+    float symmetryVariable = 6.0f;
 
     juce::dsp::StateVariableTPTFilter<float> lowpass;
     juce::dsp::StateVariableTPTFilter<float> highpass;

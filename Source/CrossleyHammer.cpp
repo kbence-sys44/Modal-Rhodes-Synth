@@ -91,15 +91,6 @@ bool CrossleyHammer::isHammerActive() const {
     return active;
 }
 
-//egyszeru zajbol szurt koppanas 
-float CrossleyHammer::getThump() {
-    float noise = (random.nextFloat() * 2.0f) - 1.0f;
-
-    float noiseBurst = noise * force * 0.3f;
-
-    return thumpFilter.processSample(noiseBurst);
-}
-
 void CrossleyHammer::setParameters(float newStiffnes, float newMass) {
     stiffness = newStiffnes;
     mass = newMass;

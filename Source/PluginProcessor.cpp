@@ -110,38 +110,38 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
     //ADSR
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("HAMMER_HARDNESS", "Hammer Hardness", 0.5f, 3.0f, 2.0f)); //Attack;
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN_DECAY", "Sustain, Decay", 0.1f, 3.0f, 1.0f)); //lecsenges
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("DAMPER_RELEASE", "Release Time", 0.001f, 0.01f, 0.005f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("HAMMER_HARDNESS", "Hammer Hardness", 0.01f, 0.1f, 0.02f)); //Attack;
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN_DECAY", "Sustain, Decay", 0.0f, 1.0f, 0.2f)); //lecsenges
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("DAMPER_RELEASE", "Release Time", 0.0f, 1.0f, 0.005f));
 
     //pickup
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("PICKUP_SYMMETRY", "Symmetry", 0.0f, 8.0f, 6.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("PICKUP_SYMMETRY", "Symmetry", 4.0f, 12.0f, 10.0f));
 
     //preamp
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_DRIVE", "Drive", 0.0f, 16.0f, 5.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_DRIVE", "Drive", 0.0f, 16.0f, 1.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_BASS", "Bass", 0.5f, 6.0f, 3.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_TREBLE", "Treble", 0.5f, 3.0f, 1.5f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("OUTPUT_GAIN", "Output Gain", 0.0f, 16.0f, 5.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("OUTPUT_GAIN", "Output Gain", 0.0f, 16.0f, 1.0f));
 
     //tremolo
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_DEPTH", "Tremolo Depth", 0.0f, 2.0f, 0.8f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_RATE", "Tremolo Rate", 0.5f, 3.0f, 1.4f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_DEPTH", "Tremolo Depth", 0.0f, 1.0f, 0.8f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_RATE", "Tremolo Rate", 0.5f, 9.0f, 1.4f));
 
     //reverb
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("WET_LEVEL", "Wet Level", 0.0f, 2.0f, 0.2f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("DRY_LEVEL", "Dry Level", 0.0f, 2.0f, 0.8f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("WET_LEVEL", "Wet Level", 0.0f, 1.0f, 0.2f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("DRY_LEVEL", "Dry Level", 0.0f, 1.0f, 0.8f));
 
     //on off
     params.push_back(std::make_unique<juce::AudioParameterBool>("TREM_SWITCH", "Tremolo Switch", true));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("REVERB_SWITCH", "Reverb Switch", true));
+    params.push_back(std::make_unique<juce::AudioParameterBool>("REVERB_SWITCH", "Reverb Switch", false));
     params.push_back(std::make_unique<juce::AudioParameterBool>("CABINET_SWITCH", "Cabinet Switch", true));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("DELAY_SWITCH", "Delay Switch", true));
+    params.push_back(std::make_unique<juce::AudioParameterBool>("DELAY_SWITCH", "Delay Switch", false));
 
     //delay
     params.push_back(std::make_unique<juce::AudioParameterFloat>("TIME", "Time", 0.0f, 1000.0f, 350.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("FEEDBACK", "Feedback", 0.0f, 0.95f, 0.4f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("MIX", "Mix", 0.0f, 1.0f, 0.3f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("TONE", "Tone", 100.0f, 5000.0f, 2500.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("MIX", "Mix", 0.0f, 1.0f, 0.2f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("TONE", "Tone", 100.0f, 5000.0f, 2000.0f));
 
     return { params.begin(), params.end() };
 
@@ -254,7 +254,7 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
             voice->setHardness(hardness);
             voice->setDecay(decayMult);
             voice->setRelease(release);
-            voice->getPickup().setParameters(9.0f, symmetry, 6000.0f);
+            voice->getPickup().setParameters(12.0f, symmetry, 12000.0f);
 
             preamp.setDrive(drive);
             preamp.setBassGain(bass);

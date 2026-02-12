@@ -26,7 +26,7 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
 
 
     //travel time
-    float delaySecs = 0.002f + (0.005f * (1.0f - (static_cast<float>(midiNoteNumber) / 127.0f)));
+    float delaySecs = 0.002f + (0.005f * (1.0f - (static_cast<float>(midiNoteNumber) / 112.0f)));
     float delaySamples = delaySecs * getSampleRate();
 
 
@@ -36,8 +36,8 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
     modalTine.setParams(currentFrequency, decayTime * decayMultiplier, toneBrightness);
 
     //kemenyseg
-    float stiffnessBase = 500000000.0f;
-    float stiffnessMultiplier = std::pow(1.12f, (midiNoteNumber) - 60.0f) * hammerHardness;
+    float stiffnessBase = 150000000.0f;
+    float stiffnessMultiplier = std::pow(1.18f, (midiNoteNumber) - 60.0f) * hammerHardness;
     float currentStiffness = stiffnessBase * stiffnessMultiplier;
 
     float massBase = 0.006f;
@@ -50,27 +50,28 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
     pickup.setFrequency(currentFrequency);
 
     float trebleBoost = std::pow(1.03f, midiNoteNumber);
-    baseGain = 5000.0f;
+    baseGain = 1.0f;
     outputGain = baseGain * trebleBoost;
 
     previousTinePos = 0.0f;
     prevIn = 0.0f;
     prevOut = 0.0f;
+    fadeoutGain = 1.0f;
 
     noteCurrentlyActive = true;
     isKeyHeld = true;
     damping = false;
+    isFading = false;
 }
 
-void RhodesVoice::stopNote(float velocity, bool tailOffAllowed) {
-    isKeyHeld = false;
-
+void RhodesVoice::stopNote(float velocity, bool tailOffAllowed) { 
     if (tailOffAllowed) {
         damping = true;
+        isKeyHeld = false;
     }
     else {
-        noteCurrentlyActive = false;
-        clearCurrentNote();
+        isKeyHeld = false;
+        isFading = true;
     }
 }
 
@@ -89,29 +90,27 @@ void RhodesVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         //kalapacs utes
         float hammerForce = hammer.getNextSample(tinePos);
         if(std::isnan(hammerForce)) hammerForce = 0.0f;
-        float hammerThump = hammer.getThump();
 
         //tine
-        float tineDisplacement = modalTine.process(hammerForce);
-        float velocitySignal = tineDisplacement - previousTinePos; //poziciobol sebesseg szamitasa
-        previousTinePos = tineDisplacement;
-        float filtered = velocitySignal - prevIn + (0.995f * prevOut);
-
-        if (std::abs(filtered) < 1.0e-8f) filtered = 0.0f;
-
-        prevIn = velocitySignal;
-        prevOut = filtered;
+        float tineVelocity = modalTine.process(hammerForce);
 
         addDamping();
 
         //erosites
-        float monoSample = filtered * outputGain;
-
-        //koppanas
-        float rawSignal = monoSample + hammerThump; //+ (bodySignal* 0.1f); 
+        float monoSample = tineVelocity * outputGain;
 
         //hangszedo
-        float pickupSignal = pickup.processSample(rawSignal);
+        float pickupSignal = pickup.processSample(monoSample);
+
+        if (isFading) {
+            fadeoutGain *= 0.9f;
+            pickupSignal *= fadeoutGain;
+            if (fadeoutGain < 0.001f) {
+                clearCurrentNote();
+                noteCurrentlyActive = false;
+                break;
+            }
+        }
 
         Stereo stereoOutput;
         //tremolo
@@ -122,14 +121,14 @@ void RhodesVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
             stereoOutput.left = pickupSignal;
             stereoOutput.right = pickupSignal;
         }
-        
+
         //csatornankent output es hangero beallitasa
         int index = startSample + sample;
         left[index] += stereoOutput.left * voiceVolume;
         if (right) right[index] += stereoOutput.right * voiceVolume;
         
         //hang leallitasi feltetelek
-        if (!hammer.isHammerActive() && !isKeyHeld && std::abs(pickupSignal < 0.000001f) && std::abs(monoSample) < 0.00001f) {
+        if (!hammer.isHammerActive() && !isKeyHeld && std::abs(pickupSignal) < 0.0001f && std::abs(monoSample) < 0.0001f) {
             noteCurrentlyActive = false;
             clearCurrentNote();
             break;
@@ -144,7 +143,7 @@ void RhodesVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     hammer.prepareHammer(specs);
 
     pickup.prepare(specs);
-    pickup.setParameters(9.0f, 6.0f, 6000.0f);
+    pickup.setParameters(14.0f, 6.0f, 12000.0f);
 
     tremolo.prepare(specs.sampleRate);
     tremolo.setTremRate(1.4f);
@@ -155,7 +154,7 @@ void RhodesVoice::addDamping() {
 
     if (damping) {
 
-        modalTine.applyDamping(releaseTime);
+        //modalTine.applyDamping(releaseTime);
     }
 
 }
