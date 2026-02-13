@@ -119,8 +119,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
 
     //preamp
     params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_DRIVE", "Drive", 0.0f, 16.0f, 1.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_BASS", "Bass", 0.5f, 6.0f, 3.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_TREBLE", "Treble", 0.5f, 3.0f, 1.5f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_BASS", "Bass", -15.0f, 15.0f, 0.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_TREBLE", "Treble", -15.0f, 15.0f, 0.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("OUTPUT_GAIN", "Output Gain", 0.0f, 16.0f, 1.0f));
 
     //tremolo
@@ -167,10 +167,10 @@ void ModalRhodesAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
     //meg tobb parameter
     preamp.prepare(specifications);
 
-    preamp.setDrive(2.0f);
-    preamp.setBassGain(3.0f);
-    preamp.setTrebleGain(1.5f);
-    preamp.setOutputLevel(1.6f);
+    preamp.setDrive(1.0f);
+    preamp.setBassGain(0.0f);
+    preamp.setTrebleGain(0.0f);
+    preamp.setOutputLevel(1.0f);
 
     cabinet.prepare(specifications);
 
@@ -248,6 +248,17 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     float delayfeedback = *apvts.getRawParameterValue("FEEDBACK");
     float delayMix = *apvts.getRawParameterValue("MIX");
     float delayTone = *apvts.getRawParameterValue("TONE");
+
+    preamp.setDrive(drive);
+    preamp.setBassGain(bass);
+    preamp.setTrebleGain(treble);
+    preamp.setOutputLevel(outputGain);
+
+    reverbParams.wetLevel = wet;
+    reverbParams.dryLevel = dry;
+    reverb.setParameters(reverbParams);
+
+    delay.setParameters(delayTime, delayfeedback, delayMix, delayTone);
     
     for (int i = 0; i < rhodesSynth.getNumVoices(); ++i) {
         if (auto* voice = dynamic_cast<RhodesVoice*>(rhodesSynth.getVoice(i))) {
@@ -256,20 +267,10 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
             voice->setRelease(release);
             voice->getPickup().setParameters(12.0f, symmetry, 12000.0f);
 
-            preamp.setDrive(drive);
-            preamp.setBassGain(bass);
-            preamp.setTrebleGain(treble);
-            preamp.setOutputLevel(outputGain);
-
             voice->getTremolo().setDepth(depth);
             voice->getTremolo().setTremRate(rate);
             voice->getTremolo().setTremoloState(isTremoloOn);
-
-            reverbParams.wetLevel = wet;
-            reverbParams.dryLevel = dry;
-            reverb.setParameters(reverbParams);
-
-            delay.setParameters(delayTime, delayfeedback, delayMix, delayTone);
+            
         }
     }
 

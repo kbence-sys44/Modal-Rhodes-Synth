@@ -35,11 +35,11 @@ private:
     juce::dsp::Gain<float> inputGain;
     juce::dsp::Gain<float> outputGain;
 
-    using FilterType = juce::dsp::IIR::Filter<float>;
-    using CoeffsType = juce::dsp::IIR::Coefficients<float>;
+    //float lastBassGain = 0.0f;
+    //float lastTrebleGain = 0.0f;
 
-    juce::dsp::ProcessorDuplicator<FilterType, CoeffsType> bassFilter;
-    juce::dsp::ProcessorDuplicator<FilterType, CoeffsType> trebleFilter;
+    juce::dsp::IIR::Filter<float> bassFilter[2]; //2 csatorna
+    juce::dsp::IIR::Filter<float> trebleFilter[2];
 
-    juce::dsp::ProcessorDuplicator<FilterType, CoeffsType> dcBlocker;
+    juce::dsp::StateVariableTPTFilter<float> dcBlocker[2];
 };

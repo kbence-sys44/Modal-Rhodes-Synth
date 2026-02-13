@@ -21,16 +21,29 @@ void::Preamp::prepare(const::juce::dsp::ProcessSpec& specs) {
     outputGain.prepare(specs);
     outputGain.setRampDurationSeconds(0.05);
 
-    outputGain.setGainDecibels(0.0f);
-    inputGain.setGainDecibels(0.0f);
+    for (int i = 0; i < 2; ++i) {
+        bassFilter[i].prepare(specs);
+        trebleFilter[i].prepare(specs);
 
-    bassFilter.state = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 80.0f, 0.707f, 1.0f);
-    trebleFilter.state = juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 4000.0f, 0.707f, 1.0f);
-    dcBlocker.state = juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 20.0f);
+        auto bassCoeffs = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 200.0f, 0.707f, 1.0f);
+        auto trebleCoeffs = juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 2500.0f, 0.707f, 1.0f);
 
-    bassFilter.prepare(specs);
+        bassFilter[i].coefficients = bassCoeffs;
+        trebleFilter[i].coefficients = trebleCoeffs;
+
+        dcBlocker[i].prepare(specs);
+        dcBlocker[i].setType(juce::dsp::StateVariableTPTFilterType::highpass);
+        dcBlocker[i].setCutoffFrequency(30.0f);
+    }
+
+    //bassFilter.state = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 200.0f, 0.707f, 1.0f);
+    //trebleFilter.state = juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 2500.0f, 0.707f, 1.0f);
+    //dcBlocker.state = juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 20.0f);
+
+    /*bassFilter.prepare(specs);
+    bassFilter.setType(juce::dsp::StateVariableTPTFilter::lowshelf)
     trebleFilter.prepare(specs);
-    dcBlocker.prepare(specs);
+    dcBlocker.prepare(specs);*/
 
     reset();
 }
@@ -38,9 +51,12 @@ void::Preamp::prepare(const::juce::dsp::ProcessSpec& specs) {
 void Preamp::reset() {
     inputGain.reset();
     outputGain.reset();
-    bassFilter.reset();
-    trebleFilter.reset();
-    dcBlocker.reset();
+    
+    for (int i = 0; i < 2; ++i) {
+        bassFilter[i].reset();
+        trebleFilter[i].reset();
+        dcBlocker[i].reset();
+    }
 }
 
 void Preamp::setDrive(float newDrive) {
@@ -52,13 +68,23 @@ void Preamp::setOutputLevel(float newDB) {
 }
 
 void Preamp::setBassGain(float newBassGain) {
+    //if (std::abs(newBassGain - lastBassGain) < 0.01f) return;
+ 
     float bassGainLin = juce::Decibels::decibelsToGain(newBassGain);
-    *bassFilter.state = *juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate,80.0f, 0.707f, bassGainLin);
+    auto newCoeffs = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 200.0f, 0.707f, bassGainLin);
+
+    bassFilter[0].coefficients = newCoeffs;
+    bassFilter[1].coefficients = newCoeffs;
 }
 
 void Preamp::setTrebleGain(float newTrebleGain) {
+    //if (std::abs(newTrebleGain - lastTrebleGain) < 0.01f) return;
+
     float trebleGainLin = juce::Decibels::decibelsToGain(newTrebleGain);
-    *trebleFilter.state = *juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 4000.0f, 0.707f, trebleGainLin);
+    auto newCoeffs = juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 2500.0f, 0.707f, trebleGainLin);
+
+    trebleFilter[0].coefficients = newCoeffs;
+    trebleFilter[1].coefficients = newCoeffs;
 }
 
 
@@ -77,10 +103,24 @@ void Preamp::process(juce::dsp::ProcessContextReplacing<float>& context) {
         }
     }
 
-    //filter lanc
-    dcBlocker.process(context); 
-    bassFilter.process(context);
-    trebleFilter.process(context);
+    //filter lanc olalankent
+    if (block.getNumChannels() > 0) {
+        auto leftBlock = block.getSingleChannelBlock(0);
+        juce::dsp::ProcessContextReplacing<float> leftContext(leftBlock);
+
+        dcBlocker[0].process(leftContext);
+        bassFilter[0].process(leftContext);
+        trebleFilter[0].process(leftContext);
+    }
+
+    if (block.getNumChannels() > 1) {
+        auto rightBlock = block.getSingleChannelBlock(1);
+        juce::dsp::ProcessContextReplacing<float> rightContext(rightBlock);
+
+        dcBlocker[1].process(rightContext);
+        bassFilter[1].process(rightContext);
+        trebleFilter[1].process(rightContext);
+    }
 
     //kimeneti erosites
     outputGain.process(context);
