@@ -84,8 +84,7 @@ void ModalTine::setupMode(float frequency, float decayMult, float tone) {
 
     const float ratios[] = {0.25f, 0.5f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.27f, 17.55f, 34.39f }; //felharmonikusok szorzoja
     const float decayRatios[] = {1.0f, 0.8f, 0.8f, 0.7f, 0.6f, 0.5f, 0.4f, 0.5f, 0.1f, 0.05f}; //a lecsenges annal kisebb minel magasabb frekvencia
-    float overtoneGain = std::pow(tone, 2.5f);
-    float gains[] = {0.0f * tone, 0.05f *tone, 1.0f* tone, 0.10f * tone , 0.05f * tone, 0.02f * tone , 0.01f * tone ,0.9f * overtoneGain, 0.8f * overtoneGain, 0.7f * overtoneGain }; //hangero
+    float gains[] = {0.02f * tone, 0.05f *tone, 1.0f* tone, 0.14f * tone , 0.12f * tone, 0.11f * tone , 0.07f * tone ,1.5f * tone, 1.3f * tone, 1.2f * tone }; //hangero
 
     size_t limit = std::min(modes.size(), sizeof(ratios) / sizeof(ratios[0]));
 

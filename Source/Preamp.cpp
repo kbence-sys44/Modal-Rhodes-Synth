@@ -71,7 +71,7 @@ void Preamp::setBassGain(float newBassGain) {
     //if (std::abs(newBassGain - lastBassGain) < 0.01f) return;
  
     float bassGainLin = juce::Decibels::decibelsToGain(newBassGain);
-    auto newCoeffs = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 200.0f, 0.707f, bassGainLin);
+    auto newCoeffs = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 80.0f, 0.707f, bassGainLin);
 
     bassFilter[0].coefficients = newCoeffs;
     bassFilter[1].coefficients = newCoeffs;
@@ -81,7 +81,7 @@ void Preamp::setTrebleGain(float newTrebleGain) {
     //if (std::abs(newTrebleGain - lastTrebleGain) < 0.01f) return;
 
     float trebleGainLin = juce::Decibels::decibelsToGain(newTrebleGain);
-    auto newCoeffs = juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 2500.0f, 0.707f, trebleGainLin);
+    auto newCoeffs = juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 4000.0f, 0.707f, trebleGainLin);
 
     trebleFilter[0].coefficients = newCoeffs;
     trebleFilter[1].coefficients = newCoeffs;

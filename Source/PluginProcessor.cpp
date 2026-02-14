@@ -110,7 +110,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
     //ADSR
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("HAMMER_HARDNESS", "Hammer Hardness", 0.01f, 0.1f, 0.02f)); //Attack;
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("HAMMER_HARDNESS", "Hammer Hardness", 0.0f, 2.0f, 1.0f)); //Attack;
     params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN_DECAY", "Sustain, Decay", 0.0f, 1.0f, 0.2f)); //lecsenges
     params.push_back(std::make_unique<juce::AudioParameterFloat>("DAMPER_RELEASE", "Release Time", 0.0f, 1.0f, 0.005f));
 
@@ -119,8 +119,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
 
     //preamp
     params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_DRIVE", "Drive", 0.0f, 16.0f, 1.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_BASS", "Bass", -15.0f, 15.0f, 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_TREBLE", "Treble", -15.0f, 15.0f, 0.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_BASS", "Bass", -12.0f, 12.0f, 0.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_TREBLE", "Treble", -24.0f, 24.0f, 0.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("OUTPUT_GAIN", "Output Gain", 0.0f, 16.0f, 1.0f));
 
     //tremolo

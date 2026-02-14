@@ -36,8 +36,8 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
     modalTine.setParams(currentFrequency, decayTime * decayMultiplier, toneBrightness);
 
     //kemenyseg
-    float stiffnessBase = 150000000.0f;
-    float stiffnessMultiplier = std::pow(1.18f, (midiNoteNumber) - 60.0f) * hammerHardness;
+    float stiffnessBase = 9000000.0f;
+    float stiffnessMultiplier = std::pow(1.16f, (midiNoteNumber) - 60.0f) * hammerHardness;
     float currentStiffness = stiffnessBase * stiffnessMultiplier;
 
     float massBase = 0.006f;
@@ -49,7 +49,7 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
     
     pickup.setFrequency(currentFrequency);
 
-    float trebleBoost = std::pow(1.03f, midiNoteNumber);
+    float trebleBoost = std::pow(1.02f, midiNoteNumber);
     baseGain = 1.0f;
     outputGain = baseGain * trebleBoost;
 
