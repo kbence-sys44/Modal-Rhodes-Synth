@@ -32,9 +32,8 @@ public:
     void pitchWheelMoved(int newPitchWheelValue) override {};
     void controllerMoved(int controllerNumber, int newControllerValue) override {};
 
-    void addDamping();
-
     void setHardness(float newHardness) { hammerHardness = newHardness; };
+    void setPickupDistance(float newDistance) { pickupDistance = newDistance; };
     void setDecay(float newDecay) { decayMultiplier = newDecay; };
     void setRelease(float newRelease) { releaseTime = newRelease; };
 
@@ -55,6 +54,8 @@ private:
     float currentVelocity = 0.0f;
     float outputGain = 1.0f;
     float fadeoutGain = 1.0f;
+
+    float pickupDistance = 1.0f;
 
     float previousTinePos = 0.0f;
 

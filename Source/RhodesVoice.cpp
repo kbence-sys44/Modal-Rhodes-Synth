@@ -68,6 +68,9 @@ void RhodesVoice::stopNote(float velocity, bool tailOffAllowed) {
     if (tailOffAllowed) {
         damping = true;
         isKeyHeld = false;
+
+        float dampFactor = (1.0f - releaseTime) * 5.0f;
+        modalTine.applyDamping(dampFactor);
     }
     else {
         isKeyHeld = false;
@@ -91,16 +94,19 @@ void RhodesVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         float hammerForce = hammer.getNextSample(tinePos);
         if(std::isnan(hammerForce)) hammerForce = 0.0f;
 
+        float invDistance = 1.0f - pickupDistance;
+        float distanceGain = 1.0f + (invDistance * 8.0f);
+
         //tine
         float tineVelocity = modalTine.process(hammerForce);
 
-        addDamping();
-
         //erosites
-        float monoSample = tineVelocity * outputGain;
+        float monoSample = tineVelocity  * distanceGain * 1.0f;
 
         //hangszedo
         float pickupSignal = pickup.processSample(monoSample);
+        float comp = 1.0f / (distanceGain * 0.8f + 0.2f);
+        pickupSignal *= comp;
 
         if (isFading) {
             fadeoutGain *= 0.9f;
@@ -148,13 +154,4 @@ void RhodesVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     tremolo.prepare(specs.sampleRate);
     tremolo.setTremRate(1.4f);
     tremolo.setDepth(0.8f);
-}
-
-void RhodesVoice::addDamping() {
-
-    if (damping) {
-
-        //modalTine.applyDamping(releaseTime);
-    }
-
 }

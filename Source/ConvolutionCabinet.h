@@ -24,7 +24,7 @@ public:
 
 private:
     double sampleRate = 44100.0;
-    float makeupGain = 5.0f;
+    float makeupGain = 5.5f;
 
     juce::dsp::Convolution cabinetConv;
 };

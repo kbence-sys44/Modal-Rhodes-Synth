@@ -179,7 +179,7 @@ void ModalRhodesAudioProcessorEditor::initializeSliders() {
     //sliderek definialasa
     std::vector<SliderConfig> config = {
 
-        {"HAMMER_HARDNESS", "Attack", ControlGroup::Main, false},
+        {"PICKUP_DISTANCE", "Attack", ControlGroup::Main, false},
         {"SUSTAIN_DECAY", "Decay", ControlGroup::Main, false},
         {"DAMPER_RELEASE", "Release", ControlGroup::Main, false},
 
@@ -429,7 +429,7 @@ void ModalRhodesAudioProcessorEditor::resized()
 
     //attack, decay, release knobok
     auto mainKnobWidth = titleSection.getWidth() / 3;
-    placeKnob("HAMMER_HARDNESS", titleSection, mainKnobWidth, true);
+    placeKnob("PICKUP_DISTANCE", titleSection, mainKnobWidth, true);
     placeKnob("SUSTAIN_DECAY", titleSection, mainKnobWidth, true);
     placeKnob("DAMPER_RELEASE", titleSection, mainKnobWidth, true);
 
