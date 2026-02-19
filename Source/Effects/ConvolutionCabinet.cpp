@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-//ez a modul azt szimulalja mintha a hang egy gitarerositorol szolna
+//ez a modul azt szimulalja azt mintha a hang egy gitarerositorol szolna
 //nem szukseges, de segiti a valosagos hangzast
 //betoltott IR minta fajlbol vetiti a szintetizalt hangra az erosito jelleget
 
@@ -32,10 +32,6 @@ void ConvolutionCabinet::prepare(const juce::dsp::ProcessSpec& specs) {
 
 void ConvolutionCabinet::reset() {
     cabinetConv.reset();
-}
-
-void ConvolutionCabinet::setParameters(float body, float brightness) {
-    //majd
 }
 
 void ConvolutionCabinet::process(juce::dsp::ProcessContextReplacing<float>& context) {

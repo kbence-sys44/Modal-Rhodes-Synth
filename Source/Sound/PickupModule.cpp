@@ -10,7 +10,6 @@
 
 //ez a modul a kapott tine elmozdulast elektromos jelle alakitja
 
-
 #include "PickupModule.h"
 
 void PickupModule::prepare(const juce::dsp::ProcessSpec& specs) {
@@ -80,7 +79,7 @@ float PickupModule::processSample(float inputSample) {
     }
 
     
-    processedSample = processedSample - (std::pow(processedSample, 3.0f) / 3.0f);//buzz
+    //processedSample = processedSample - (std::pow(processedSample, 3.0f) / 3.0f);//buzz
 
     processedSample = highpass.processSample(0, processedSample); //melyek tisztitasa
     return processedSample;

@@ -80,7 +80,7 @@ float ModalTine::process(float inputForce) {
     return outputVel;
 }
 
-//minden modusznak szukseges adatok megadasa
+//minden modusznak a szukseges adatok megadasa
 void ModalTine::setupMode(float frequency, float decayMult, float tone) {
 
     const float ratios[] = {0.25f, 0.5f, 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.27f, 17.55f, 34.39f }; //felharmonikusok szorzoja

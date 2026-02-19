@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    TremoloTest.h
-    Created: 1 Feb 2026 2:22:20pm
+    PreampTest.h
+    Created: 1 Feb 2026 2:33:22pm
     Author:  kadar
 
   ==============================================================================
@@ -10,14 +10,14 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "Tremolo.h"
+#include "../Effects/Preamp.h"
 
-class TremoloTest : public juce::UnitTest {
+class PreampTest : public juce::UnitTest {
 public:
-    TremoloTest() : juce::UnitTest("Tremolo Test") {}
+    PreampTest() : juce::UnitTest("Preamp Test") {}
     void runTest() override;
 private:
-    JUCE_LEAK_DETECTOR(TremoloTest)
+    JUCE_LEAK_DETECTOR(PreampTest)
 };
 
-extern TremoloTest tremoloTestInstance;
+extern PreampTest preampTestInstance;

@@ -11,7 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "PickupModule.h"
-#include "Tremolo.h"
+#include "../Effects/Tremolo.h"
 #include "ModalTine.h"
 #include "CrossleyHammer.h"
 
@@ -50,7 +50,7 @@ private:
     
     float baseGain = 5000.0f;
     float currentFrequency = 0.0f;
-    float voiceVolume = 1.0f;
+    float voiceVolume = 1.5f;
     float currentVelocity = 0.0f;
     float outputGain = 1.0f;
     float fadeoutGain = 1.0f;

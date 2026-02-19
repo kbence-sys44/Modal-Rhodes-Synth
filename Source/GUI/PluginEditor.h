@@ -9,8 +9,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "PluginProcessor.h"
-#include "TestRunner.h"
+#include "../Sound/PluginProcessor.h"
+#include "../UnitTests/TestRunner.h"
 #include "CustomToggleButton.h"
 #include "CustomKnobLnF.h"
 #include "MainKnobsLnF.h"

@@ -9,8 +9,6 @@
 */
 
 #pragma once
-
-#pragma once
 #include <JuceHeader.h>
 
 class CrossleyHammer

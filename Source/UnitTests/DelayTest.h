@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    PickupTest.h
-    Created: 1 Feb 2026 12:45:18pm
+    DelayTest.h
+    Created: 2 Feb 2026 5:27:23pm
     Author:  kadar
 
   ==============================================================================
@@ -10,14 +10,14 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "PickupModule.h"
+#include "../Effects/DelayModule.h"
 
-class PickupTest : public juce::UnitTest {
+class DelayTest : public juce::UnitTest {
 public:
-    PickupTest() : juce::UnitTest("Pickup Test") {}
+    DelayTest() : juce::UnitTest("Delay Test") {}
     void runTest() override;
 private:
-    JUCE_LEAK_DETECTOR(PickupTest)
+    JUCE_LEAK_DETECTOR(DelayTest)
 };
 
-extern PickupTest pickupTestInstance;
+extern DelayTest delayTestInstance;

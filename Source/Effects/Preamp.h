@@ -35,9 +35,6 @@ private:
     juce::dsp::Gain<float> inputGain;
     juce::dsp::Gain<float> outputGain;
 
-    //float lastBassGain = 0.0f;
-    //float lastTrebleGain = 0.0f;
-
     juce::dsp::IIR::Filter<float> bassFilter[2]; //2 csatorna
     juce::dsp::IIR::Filter<float> trebleFilter[2];
 

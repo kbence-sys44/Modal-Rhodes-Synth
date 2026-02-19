@@ -19,7 +19,6 @@ public:
 
     void prepare(const juce::dsp::ProcessSpec& specs);
     void reset();
-    void setParameters(float body, float brightness);
     void process(juce::dsp::ProcessContextReplacing<float>& context);
 
 private:

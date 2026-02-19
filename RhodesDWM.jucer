@@ -4,111 +4,110 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildStandalone,buildVST3"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn">
   <MAINGROUP id="JHWxRr" name="Modal-Rhodes">
-    <GROUP id="{AB6CD702-9356-685F-D99C-3629DBB14DC6}" name="Source">
-      <GROUP id="{3207601F-1F81-2893-C78D-0D4B78B05EEF}" name="Binary Data">
-        <FILE id="xi0ITL" name="CalSans-Regular.ttf" compile="0" resource="1"
-              file="Source/Fonts/CalSans-Regular.ttf"/>
-        <FILE id="K8ck9b" name="Felipa-Regular.ttf" compile="0" resource="1"
-              file="Source/Fonts/Felipa-Regular.ttf"/>
-        <FILE id="gNbcdr" name="Geo-Italic.ttf" compile="0" resource="1" file="Source/Fonts/Geo-Italic.ttf"/>
-        <FILE id="jSbXHY" name="Geo-Regular.ttf" compile="0" resource="1" file="Source/Fonts/Geo-Regular.ttf"/>
-        <FILE id="H8zJuE" name="Quicksand-Bold.ttf" compile="0" resource="1"
-              file="Source/Fonts/Quicksand-Bold.ttf"/>
-        <FILE id="QuDiXq" name="Quicksand-Light.ttf" compile="0" resource="1"
-              file="Source/Fonts/Quicksand-Light.ttf"/>
-        <FILE id="DJTqSy" name="Quicksand-Medium.ttf" compile="0" resource="1"
-              file="Source/Fonts/Quicksand-Medium.ttf"/>
-        <FILE id="wigSGU" name="Quicksand-Regular.ttf" compile="0" resource="1"
-              file="Source/Fonts/Quicksand-Regular.ttf"/>
-        <FILE id="uwlSmc" name="Quicksand-SemiBold.ttf" compile="0" resource="1"
-              file="Source/Fonts/Quicksand-SemiBold.ttf"/>
-        <FILE id="UXYj4b" name="RubikDistressed-Regular.ttf" compile="0" resource="1"
-              file="Source/Fonts/RubikDistressed-Regular.ttf"/>
-      </GROUP>
-      <GROUP id="{0F2655E1-7308-4DD1-5632-C3256DF240CD}" name="Sound">
-        <FILE id="cvseDu" name="ModalTine.cpp" compile="1" resource="0" file="Source/ModalTine.cpp"/>
-        <FILE id="E60vlF" name="ModalTine.h" compile="0" resource="0" file="Source/ModalTine.h"/>
-        <FILE id="HNinPQ" name="Preamp.cpp" compile="1" resource="0" file="Source/Preamp.cpp"/>
-        <FILE id="Up8xvS" name="Preamp.h" compile="0" resource="0" file="Source/Preamp.h"/>
-        <FILE id="Jryn0m" name="PickupModule.cpp" compile="1" resource="0"
-              file="Source/PickupModule.cpp"/>
-        <FILE id="R9Jvfo" name="PickupModule.h" compile="0" resource="0" file="Source/PickupModule.h"/>
-        <FILE id="tH918p" name="CrossleyHammer.cpp" compile="1" resource="0"
-              file="Source/CrossleyHammer.cpp"/>
-        <FILE id="sfA8vo" name="CrossleyHammer.h" compile="0" resource="0"
-              file="Source/CrossleyHammer.h"/>
-      </GROUP>
-      <GROUP id="{05F0820F-638A-B182-8EC2-7B79FB777DD2}" name="GUI">
-        <FILE id="BmaWeG" name="RunTestButton.cpp" compile="1" resource="0"
-              file="Source/RunTestButton.cpp"/>
-        <FILE id="SPDBw2" name="RunTestButton.h" compile="0" resource="0" file="Source/RunTestButton.h"/>
-        <FILE id="rjwuWw" name="DebugButton.cpp" compile="1" resource="0" file="Source/DebugButton.cpp"/>
-        <FILE id="Ou2Rhh" name="DebugButton.h" compile="0" resource="0" file="Source/DebugButton.h"/>
-        <FILE id="XW6KVI" name="OnOffButton.cpp" compile="1" resource="0" file="Source/OnOffButton.cpp"/>
-        <FILE id="NWjrzW" name="OnOffButton.h" compile="0" resource="0" file="Source/OnOffButton.h"/>
-        <FILE id="ZZTVld" name="VolumeFader.cpp" compile="1" resource="0" file="Source/VolumeFader.cpp"/>
-        <FILE id="GsBJYT" name="VolumeFader.h" compile="0" resource="0" file="Source/VolumeFader.h"/>
-        <FILE id="ZYzg26" name="SliderBundle.h" compile="0" resource="0" file="Source/SliderBundle.h"/>
-        <FILE id="q7EqSs" name="MainKnobsLnF.cpp" compile="1" resource="0"
-              file="Source/MainKnobsLnF.cpp"/>
-        <FILE id="oNZ4Ej" name="MainKnobsLnF.h" compile="0" resource="0" file="Source/MainKnobsLnF.h"/>
-        <FILE id="Ub2R1o" name="LevelMeter.cpp" compile="1" resource="0" file="Source/LevelMeter.cpp"/>
-        <FILE id="w6r57f" name="LevelMeter.h" compile="0" resource="0" file="Source/LevelMeter.h"/>
-        <FILE id="RsPCu2" name="CustomKnobLnF.cpp" compile="1" resource="0"
-              file="Source/CustomKnobLnF.cpp"/>
-        <FILE id="cZupAX" name="CustomKnobLnF.h" compile="0" resource="0" file="Source/CustomKnobLnF.h"/>
-        <FILE id="bYIE2i" name="PluginEditor.cpp" compile="1" resource="0"
-              file="Source/PluginEditor.cpp"/>
-        <FILE id="Ktz2E4" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-        <FILE id="eNa5MA" name="CustomToggleButton.cpp" compile="1" resource="0"
-              file="Source/CustomToggleButton.cpp"/>
-        <FILE id="Ii2Z5I" name="CustomToggleButton.h" compile="0" resource="0"
-              file="Source/CustomToggleButton.h"/>
-      </GROUP>
-      <GROUP id="{9A580926-B9EA-498E-6249-7716EEB3EDED}" name="Effects">
-        <FILE id="GmAFgv" name="ConvolutionCabinet.cpp" compile="1" resource="0"
-              file="Source/ConvolutionCabinet.cpp"/>
-        <FILE id="wRFyqB" name="ConvolutionCabinet.h" compile="0" resource="0"
-              file="Source/ConvolutionCabinet.h"/>
-        <FILE id="rp7CVY" name="Tremolo.cpp" compile="1" resource="0" file="Source/Tremolo.cpp"/>
-        <FILE id="sl9GN2" name="Tremolo.h" compile="0" resource="0" file="Source/Tremolo.h"/>
-        <FILE id="cEAXMB" name="DelayModule.cpp" compile="1" resource="0" file="Source/DelayModule.cpp"/>
-        <FILE id="iK1QM6" name="DelayModule.h" compile="0" resource="0" file="Source/DelayModule.h"/>
-      </GROUP>
-      <GROUP id="{83EA1C7E-56C6-EE67-6328-B6C1BBC59956}" name="Resources">
-        <FILE id="YAFWup" name="fender_twin_balanced.wav" compile="0" resource="1"
-              file="Source/Resources/fender_twin_balanced.wav"/>
-        <FILE id="gzZK74" name="fender_twin_clean.wav" compile="0" resource="1"
-              file="Source/Resources/fender_twin_clean.wav"/>
-        <FILE id="ZALttc" name="fender_twin_mid.wav" compile="0" resource="1"
-              file="Source/Resources/fender_twin_mid.wav"/>
-        <FILE id="AOKsEm" name="fender_deluxe_big.wav" compile="0" resource="1"
-              file="Source/Resources/fender_deluxe_big.wav"/>
-        <FILE id="EHfhrI" name="fender_deluxe_lean.wav" compile="0" resource="1"
-              file="Source/Resources/fender_deluxe_lean.wav"/>
-      </GROUP>
-      <GROUP id="{7388A61B-9184-7EF7-EDFB-AD064607BF58}" name="Tests">
-        <FILE id="dMApox" name="DelayTest.cpp" compile="1" resource="0" file="Source/DelayTest.cpp"/>
-        <FILE id="AfSVf1" name="DelayTest.h" compile="0" resource="0" file="Source/DelayTest.h"/>
-        <FILE id="qpSUwO" name="HammerTest.cpp" compile="1" resource="0" file="Source/HammerTest.cpp"/>
-        <FILE id="Z95iGe" name="HammerTest.h" compile="0" resource="0" file="Source/HammerTest.h"/>
-        <FILE id="fAkkgN" name="PickupTest.cpp" compile="1" resource="0" file="Source/PickupTest.cpp"/>
-        <FILE id="AFLPuz" name="PickupTest.h" compile="0" resource="0" file="Source/PickupTest.h"/>
-        <FILE id="kcVtUh" name="PreampTest.cpp" compile="1" resource="0" file="Source/PreampTest.cpp"/>
-        <FILE id="NEipSs" name="PreampTest.h" compile="0" resource="0" file="Source/PreampTest.h"/>
-        <FILE id="O9XRGh" name="TestRunner.h" compile="0" resource="0" file="Source/TestRunner.h"/>
-        <FILE id="rgdKde" name="TineTest.cpp" compile="1" resource="0" file="Source/TineTest.cpp"/>
-        <FILE id="GFMBfi" name="TineTest.h" compile="0" resource="0" file="Source/TineTest.h"/>
-        <FILE id="d82SSc" name="TremoloTest.cpp" compile="1" resource="0" file="Source/TremoloTest.cpp"/>
-        <FILE id="aVxfYC" name="TremoloTest.h" compile="0" resource="0" file="Source/TremoloTest.h"/>
-      </GROUP>
-      <FILE id="hDiaBj" name="RhodesSound.h" compile="0" resource="0" file="Source/RhodesSound.h"/>
-      <FILE id="ymCcc0" name="RhodesVoice.cpp" compile="1" resource="0" file="Source/RhodesVoice.cpp"/>
-      <FILE id="qnQheu" name="RhodesVoice.h" compile="0" resource="0" file="Source/RhodesVoice.h"/>
-      <FILE id="oCKNxS" name="PluginProcessor.cpp" compile="1" resource="0"
-            file="Source/PluginProcessor.cpp"/>
-      <FILE id="IR7Ys0" name="PluginProcessor.h" compile="0" resource="0"
-            file="Source/PluginProcessor.h"/>
+    <GROUP id="{849C226B-CFBA-265A-E5F9-944E0FB097F6}" name="Effects">
+      <FILE id="eQVHa9" name="ConvolutionCabinet.cpp" compile="1" resource="0"
+            file="Source/Effects/ConvolutionCabinet.cpp"/>
+      <FILE id="SWDlaF" name="ConvolutionCabinet.h" compile="0" resource="0"
+            file="Source/Effects/ConvolutionCabinet.h"/>
+      <FILE id="wYWfJ6" name="DelayModule.cpp" compile="1" resource="0" file="Source/Effects/DelayModule.cpp"/>
+      <FILE id="iRrXXu" name="DelayModule.h" compile="0" resource="0" file="Source/Effects/DelayModule.h"/>
+      <FILE id="el98i1" name="Preamp.cpp" compile="1" resource="0" file="Source/Effects/Preamp.cpp"/>
+      <FILE id="YOGGDE" name="Preamp.h" compile="0" resource="0" file="Source/Effects/Preamp.h"/>
+      <FILE id="kRUds3" name="Tremolo.cpp" compile="1" resource="0" file="Source/Effects/Tremolo.cpp"/>
+      <FILE id="sovQPm" name="Tremolo.h" compile="0" resource="0" file="Source/Effects/Tremolo.h"/>
+    </GROUP>
+    <GROUP id="{818AECBE-981D-3D22-C078-2BA041E52765}" name="Fonts">
+      <FILE id="e3NMPP" name="CalSans-Regular.ttf" compile="0" resource="1"
+            file="Source/Fonts/CalSans-Regular.ttf"/>
+      <FILE id="PZYabL" name="Felipa-Regular.ttf" compile="0" resource="1"
+            file="Source/Fonts/Felipa-Regular.ttf"/>
+      <FILE id="nu0I5s" name="Geo-Italic.ttf" compile="0" resource="1" file="Source/Fonts/Geo-Italic.ttf"/>
+      <FILE id="ZST9az" name="Geo-Regular.ttf" compile="0" resource="1" file="Source/Fonts/Geo-Regular.ttf"/>
+      <FILE id="HPTfGj" name="Quicksand-Bold.ttf" compile="0" resource="1"
+            file="Source/Fonts/Quicksand-Bold.ttf"/>
+      <FILE id="kuhTxZ" name="Quicksand-Light.ttf" compile="0" resource="1"
+            file="Source/Fonts/Quicksand-Light.ttf"/>
+      <FILE id="TYcvfE" name="Quicksand-Medium.ttf" compile="0" resource="1"
+            file="Source/Fonts/Quicksand-Medium.ttf"/>
+      <FILE id="DMcKdp" name="Quicksand-Regular.ttf" compile="0" resource="1"
+            file="Source/Fonts/Quicksand-Regular.ttf"/>
+      <FILE id="IkvwAT" name="Quicksand-SemiBold.ttf" compile="0" resource="1"
+            file="Source/Fonts/Quicksand-SemiBold.ttf"/>
+      <FILE id="TItvUK" name="RubikDistressed-Regular.ttf" compile="0" resource="1"
+            file="Source/Fonts/RubikDistressed-Regular.ttf"/>
+    </GROUP>
+    <GROUP id="{BBB87F1D-EED3-6056-955B-616013EC6A8C}" name="GUI">
+      <FILE id="llx96p" name="CustomKnobLnF.cpp" compile="1" resource="0"
+            file="Source/GUI/CustomKnobLnF.cpp"/>
+      <FILE id="j7Lw0A" name="CustomKnobLnF.h" compile="0" resource="0" file="Source/GUI/CustomKnobLnF.h"/>
+      <FILE id="Miuqtr" name="CustomToggleButton.cpp" compile="1" resource="0"
+            file="Source/GUI/CustomToggleButton.cpp"/>
+      <FILE id="pkb8w3" name="CustomToggleButton.h" compile="0" resource="0"
+            file="Source/GUI/CustomToggleButton.h"/>
+      <FILE id="vao9y4" name="DebugButton.cpp" compile="1" resource="0" file="Source/GUI/DebugButton.cpp"/>
+      <FILE id="FIjFsG" name="DebugButton.h" compile="0" resource="0" file="Source/GUI/DebugButton.h"/>
+      <FILE id="mXECf3" name="LevelMeter.cpp" compile="1" resource="0" file="Source/GUI/LevelMeter.cpp"/>
+      <FILE id="BlbpNv" name="LevelMeter.h" compile="0" resource="0" file="Source/GUI/LevelMeter.h"/>
+      <FILE id="ksDkmz" name="MainKnobsLnF.cpp" compile="1" resource="0"
+            file="Source/GUI/MainKnobsLnF.cpp"/>
+      <FILE id="jwLBbU" name="MainKnobsLnF.h" compile="0" resource="0" file="Source/GUI/MainKnobsLnF.h"/>
+      <FILE id="KYCSL1" name="OnOffButton.cpp" compile="1" resource="0" file="Source/GUI/OnOffButton.cpp"/>
+      <FILE id="qBTbKp" name="OnOffButton.h" compile="0" resource="0" file="Source/GUI/OnOffButton.h"/>
+      <FILE id="qXU7tF" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/GUI/PluginEditor.cpp"/>
+      <FILE id="ZN34bI" name="PluginEditor.h" compile="0" resource="0" file="Source/GUI/PluginEditor.h"/>
+      <FILE id="q1az3T" name="RunTestButton.cpp" compile="1" resource="0"
+            file="Source/GUI/RunTestButton.cpp"/>
+      <FILE id="TfxkOh" name="RunTestButton.h" compile="0" resource="0" file="Source/GUI/RunTestButton.h"/>
+      <FILE id="IzRrwX" name="SliderBundle.h" compile="0" resource="0" file="Source/GUI/SliderBundle.h"/>
+      <FILE id="f2nvab" name="VolumeFader.cpp" compile="1" resource="0" file="Source/GUI/VolumeFader.cpp"/>
+      <FILE id="otvnkB" name="VolumeFader.h" compile="0" resource="0" file="Source/GUI/VolumeFader.h"/>
+    </GROUP>
+    <GROUP id="{2E951DF9-3DDD-F621-A0EF-F8FE1F8B0D98}" name="Resources">
+      <FILE id="thJAQ7" name="fender_deluxe_big.wav" compile="0" resource="1"
+            file="Source/Resources/fender_deluxe_big.wav"/>
+      <FILE id="QyQeDh" name="fender_deluxe_lean.wav" compile="0" resource="1"
+            file="Source/Resources/fender_deluxe_lean.wav"/>
+      <FILE id="ZLKOLd" name="fender_twin_balanced.wav" compile="0" resource="1"
+            file="Source/Resources/fender_twin_balanced.wav"/>
+      <FILE id="GxpWT8" name="fender_twin_clean.wav" compile="0" resource="1"
+            file="Source/Resources/fender_twin_clean.wav"/>
+      <FILE id="Az7pOF" name="fender_twin_mid.wav" compile="0" resource="1"
+            file="Source/Resources/fender_twin_mid.wav"/>
+    </GROUP>
+    <GROUP id="{B272765A-5649-0F68-D390-74537709E55B}" name="Sound">
+      <FILE id="zWcPZs" name="CrossleyHammer.cpp" compile="1" resource="0"
+            file="Source/Sound/CrossleyHammer.cpp"/>
+      <FILE id="JkIzOk" name="CrossleyHammer.h" compile="0" resource="0"
+            file="Source/Sound/CrossleyHammer.h"/>
+      <FILE id="XAVHsh" name="ModalTine.cpp" compile="1" resource="0" file="Source/Sound/ModalTine.cpp"/>
+      <FILE id="sGK6JG" name="ModalTine.h" compile="0" resource="0" file="Source/Sound/ModalTine.h"/>
+      <FILE id="YYD38x" name="PickupModule.cpp" compile="1" resource="0"
+            file="Source/Sound/PickupModule.cpp"/>
+      <FILE id="vo0Kac" name="PickupModule.h" compile="0" resource="0" file="Source/Sound/PickupModule.h"/>
+      <FILE id="MCTrOl" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/Sound/PluginProcessor.cpp"/>
+      <FILE id="TcMT1W" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/Sound/PluginProcessor.h"/>
+      <FILE id="W3r8ct" name="RhodesSound.h" compile="0" resource="0" file="Source/Sound/RhodesSound.h"/>
+      <FILE id="BgUzGy" name="RhodesVoice.cpp" compile="1" resource="0" file="Source/Sound/RhodesVoice.cpp"/>
+      <FILE id="O1tD7N" name="RhodesVoice.h" compile="0" resource="0" file="Source/Sound/RhodesVoice.h"/>
+    </GROUP>
+    <GROUP id="{AB6CD702-9356-685F-D99C-3629DBB14DC6}" name="Source"/>
+    <GROUP id="{79D28CD6-3BE0-8659-B091-29146370547F}" name="UnitTests">
+      <FILE id="bdtdz2" name="DelayTest.cpp" compile="1" resource="0" file="Source/UnitTests/DelayTest.cpp"/>
+      <FILE id="ruYMuG" name="DelayTest.h" compile="0" resource="0" file="Source/UnitTests/DelayTest.h"/>
+      <FILE id="KyDL2p" name="HammerTest.cpp" compile="1" resource="0" file="Source/UnitTests/HammerTest.cpp"/>
+      <FILE id="tpxCM4" name="HammerTest.h" compile="0" resource="0" file="Source/UnitTests/HammerTest.h"/>
+      <FILE id="wMcU8I" name="PickupTest.cpp" compile="1" resource="0" file="Source/UnitTests/PickupTest.cpp"/>
+      <FILE id="wH0oeE" name="PickupTest.h" compile="0" resource="0" file="Source/UnitTests/PickupTest.h"/>
+      <FILE id="r3xbMp" name="PreampTest.cpp" compile="1" resource="0" file="Source/UnitTests/PreampTest.cpp"/>
+      <FILE id="t2mYDS" name="PreampTest.h" compile="0" resource="0" file="Source/UnitTests/PreampTest.h"/>
+      <FILE id="iERXj6" name="TestRunner.h" compile="0" resource="0" file="Source/UnitTests/TestRunner.h"/>
+      <FILE id="cdlkdR" name="TineTest.cpp" compile="1" resource="0" file="Source/UnitTests/TineTest.cpp"/>
+      <FILE id="uAN2wv" name="TineTest.h" compile="0" resource="0" file="Source/UnitTests/TineTest.h"/>
+      <FILE id="vKJWZR" name="TremoloTest.cpp" compile="1" resource="0" file="Source/UnitTests/TremoloTest.cpp"/>
+      <FILE id="n7uF7v" name="TremoloTest.h" compile="0" resource="0" file="Source/UnitTests/TremoloTest.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>
@@ -131,8 +130,8 @@
   <EXPORTFORMATS>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="RhodesDWM"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="RhodesDWM"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Modal Rhodes"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Modal Rhodes"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../JUCE/modules"/>

@@ -10,7 +10,7 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "ModalTine.h"
+#include "../Sound/ModalTine.h"
 
 class TineTest : public juce::UnitTest {
 public:

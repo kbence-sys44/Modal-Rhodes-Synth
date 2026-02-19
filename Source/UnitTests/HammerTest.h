@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    PreampTest.h
-    Created: 1 Feb 2026 2:33:22pm
+    HammerTest.h
+    Created: 23 Dec 2025 4:57:43pm
     Author:  kadar
 
   ==============================================================================
@@ -10,14 +10,14 @@
 
 #pragma once
 #include <JuceHeader.h>
-#include "Preamp.h"
+#include "../Sound/CrossleyHammer.h"
 
-class PreampTest : public juce::UnitTest {
+class HammerTest : public juce::UnitTest{
 public:
-    PreampTest() : juce::UnitTest("Preamp Test") {}
+    HammerTest() : juce::UnitTest("Hammer Test") {}
     void runTest() override;
 private:
-    JUCE_LEAK_DETECTOR(PreampTest)
+    JUCE_LEAK_DETECTOR(HammerTest)
 };
 
-extern PreampTest preampTestInstance;
+extern HammerTest hammerTestInstance;

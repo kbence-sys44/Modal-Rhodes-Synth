@@ -11,9 +11,9 @@
 #include <JuceHeader.h>
 #include "RhodesVoice.h"
 #include "RhodesSound.h"
-#include "ConvolutionCabinet.h"
-#include "Preamp.h"
-#include "DelayModule.h"
+#include "../Effects/Preamp.h"
+#include "../Effects/ConvolutionCabinet.h"
+#include "../Effects/DelayModule.h"
 
 //==============================================================================
 /**

@@ -95,22 +95,4 @@ void CustomKnob::drawRotarySlider(juce::Graphics& g, int x, int y, int width, in
     g.setColour(juce::Colours::black.withAlpha(0.85f));
     g.fillPath(path);
 
-
-    //mouse down ertek kiiras
-    /*
-    if (slider.isMouseButtonDown()) {
-        g.setColour(juce::Colours::black.withAlpha(0.7f));
-        //g.fillRoundedRectangle(centre.x - 20, centre.y - 10, 40, 20, 4.0f);
-
-        g.setColour(juce::Colours::darkslategrey);
-        g.setFont(13.0f);
-
-        juce::String text = juce::String(slider.getValue(), 1);
-        if (slider.getTextValueSuffix().isNotEmpty()) {
-            text += slider.getTextValueSuffix();
-        }
-
-        g.drawText(text, x, y, width, height, juce::Justification::centred, false);
-
-    }*/
 }

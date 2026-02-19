@@ -61,7 +61,6 @@ float CrossleyHammer::getNextSample(float objectPos) {
         float compressionVel = hammerVel; //-objectVel
 
         //hunt-crossley F=K*x^p*(1+lambda*v)
-        //minel gyorsabb az utes, annal kemenyebbnek tunik az anyag
 
         float stiffnessForce = stiffness * std::pow(compression, exponent);
         float dampForce = 1.0f + (damping * compressionVel);

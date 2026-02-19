@@ -36,15 +36,6 @@ void::Preamp::prepare(const::juce::dsp::ProcessSpec& specs) {
         dcBlocker[i].setCutoffFrequency(30.0f);
     }
 
-    //bassFilter.state = juce::dsp::IIR::Coefficients<float>::makeLowShelf(sampleRate, 200.0f, 0.707f, 1.0f);
-    //trebleFilter.state = juce::dsp::IIR::Coefficients<float>::makeHighShelf(sampleRate, 2500.0f, 0.707f, 1.0f);
-    //dcBlocker.state = juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, 20.0f);
-
-    /*bassFilter.prepare(specs);
-    bassFilter.setType(juce::dsp::StateVariableTPTFilter::lowshelf)
-    trebleFilter.prepare(specs);
-    dcBlocker.prepare(specs);*/
-
     reset();
 }
 
