@@ -46,6 +46,8 @@ private:
     
     std::vector<Modals> modes;    
 
+    juce::Random random;
+
     void setupMode(float frequency, float decayMult, float tone);
 
     JUCE_LEAK_DETECTOR(ModalTine)

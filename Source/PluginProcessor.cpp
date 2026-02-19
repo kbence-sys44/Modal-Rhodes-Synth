@@ -110,7 +110,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
     //ADSR
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("HAMMER_HARDNESS", "Hammer Hardness", 0.0f, 2.0f, 1.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("HAMMER_HARDNESS", "Hammer Hardness", 0.0f, 3.0f, 1.5f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("PICKUP_DISTANCE", "Pickup Distance", 0.0f, 1.0f, 0.5f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN_DECAY", "Sustain, Decay", 0.0f, 1.0f, 0.5f)); //lecsenges
     params.push_back(std::make_unique<juce::AudioParameterFloat>("DAMPER_RELEASE", "Release Time", 0.0f, 1.0f, 0.1f));
