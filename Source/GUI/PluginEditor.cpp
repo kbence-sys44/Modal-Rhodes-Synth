@@ -578,13 +578,17 @@ void ModalRhodesAudioProcessorEditor::timerCallback() {
 
     for (auto& s : sliders) {
         if (s->slider->isMouseOverOrDragging()) {
-            juce::String minimumValue = "MIN: " + juce::String(s->slider->getMinimum(), 1);
+            bool isPercentage = s->slider->getTextValueSuffix() == " %" ? true : false;
+            float textMultiplier = isPercentage ? 100.0f : 1.0f;
+            float dotLength = isPercentage ? 0.0f : 1.0f;
+
+            juce::String minimumValue = "MIN: " + juce::String(s->slider->getMinimum() * textMultiplier, dotLength);
             minLabel.setText(minimumValue, juce::dontSendNotification);
 
-            juce::String maximumValue = "MAX: " + juce::String(s->slider->getMaximum(), 1);
+            juce::String maximumValue = "MAX: " + juce::String(s->slider->getMaximum() * textMultiplier, dotLength);
             maxLabel.setText(maximumValue, juce::dontSendNotification);
 
-            juce::String actualValue = juce::String(s->slider->getValue(), 1);
+            juce::String actualValue = juce::String(s->slider->getValue() * textMultiplier, dotLength);
             if (s->slider->getTextValueSuffix().isNotEmpty()) actualValue += s->slider->getTextValueSuffix();
 
             actualLabel.setText(actualValue, juce::dontSendNotification);
