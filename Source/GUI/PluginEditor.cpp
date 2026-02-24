@@ -174,38 +174,39 @@ void ModalRhodesAudioProcessorEditor::initializeSliders() {
         juce::String name;
         ControlGroup group;
         bool isLinear = false;
+        juce::String suffix = "";
     };
 
     //sliderek definialasa
     std::vector<SliderConfig> config = {
 
-        {"PICKUP_DISTANCE", "Attack", ControlGroup::Main, false},
-        {"SUSTAIN_DECAY", "Decay", ControlGroup::Main, false},
-        {"DAMPER_RELEASE", "Release", ControlGroup::Main, false},
+        {"PICKUP_DISTANCE", "Attack", ControlGroup::Main, false, ""},
+        {"SUSTAIN_DECAY", "Decay", ControlGroup::Main, false, ""},
+        {"DAMPER_RELEASE", "Release", ControlGroup::Main, false, ""},
 
-        {"TREM_DEPTH", "Depth", ControlGroup::Tremolo, false},
-        {"TREM_RATE", "Rate", ControlGroup::Tremolo, false},
+        {"TREM_DEPTH", "Depth", ControlGroup::Tremolo, false, " %"},
+        {"TREM_RATE", "Rate", ControlGroup::Tremolo, false, " Hz"},
 
-        {"WET_LEVEL", "Wet Level", ControlGroup::Reverb, false},
-        {"DRY_LEVEL", "Dry Level", ControlGroup::Reverb, false},
+        {"WET_LEVEL", "Wet Level", ControlGroup::Reverb, false, " %"},
+        {"DRY_LEVEL", "Dry Level", ControlGroup::Reverb, false, " %"},
 
-        {"TIME", "Time", ControlGroup::Delay, false},
-        {"FEEDBACK", "Feedback", ControlGroup::Delay, false},
-        {"MIX", "Mix", ControlGroup::Delay, false},
-        {"TONE", "Tone", ControlGroup::Delay, false},
+        {"TIME", "Time", ControlGroup::Delay, false, " ms"},
+        {"FEEDBACK", "Feedback", ControlGroup::Delay, false, " %"},
+        {"MIX", "Mix", ControlGroup::Delay, false, " %"},
+        {"TONE", "Tone", ControlGroup::Delay, false, " Hz"},
 
-        {"PREAMP_BASS", "Bass", ControlGroup::Preamp, false},
-        {"PREAMP_TREBLE", "Treble", ControlGroup::Preamp, false},
-        {"PICKUP_SYMMETRY", "Symmetry", ControlGroup::Preamp, false},//nem preamp de ez igy egyszerubb code szempontjabol
+        {"PREAMP_BASS", "Bass", ControlGroup::Preamp, false, " dB"},
+        {"PREAMP_TREBLE", "Treble", ControlGroup::Preamp, false, " dB"},
+        {"PICKUP_SYMMETRY", "Symmetry", ControlGroup::Preamp, false, ""},//nem preamp de ez igy egyszerubb code szempontjabol
 
-        {"PREAMP_DRIVE", "Drive", ControlGroup::Output, true},
-        {"OUTPUT_GAIN", "Output", ControlGroup::Output, true},
+        {"PREAMP_DRIVE", "Drive", ControlGroup::Output, true, " dB"},
+        {"OUTPUT_GAIN", "Output", ControlGroup::Output, true, " dB"},
 
     };
 
     for (const auto& cfg : config) {
 
-        addSlider(cfg.id, cfg.name, cfg.group);
+        addSlider(cfg.id, cfg.name, cfg.group, cfg.suffix);
 
         if (cfg.isLinear) {
             auto* s = findSlider(cfg.id);
@@ -577,7 +578,6 @@ void ModalRhodesAudioProcessorEditor::timerCallback() {
 
     for (auto& s : sliders) {
         if (s->slider->isMouseOverOrDragging()) {
-
             juce::String minimumValue = "MIN: " + juce::String(s->slider->getMinimum(), 1);
             minLabel.setText(minimumValue, juce::dontSendNotification);
 
@@ -604,7 +604,7 @@ void ModalRhodesAudioProcessorEditor::timerCallback() {
 
 }
 
-void ModalRhodesAudioProcessorEditor::addSlider(juce::String parameterID, juce::String name, ControlGroup group) {
+void ModalRhodesAudioProcessorEditor::addSlider(juce::String parameterID, juce::String name, ControlGroup group, juce::String suffix) {
     auto newBundle = std::make_unique<SliderStruct>();
     newBundle->parameterID = parameterID;
     newBundle->group = group;
@@ -612,6 +612,7 @@ void ModalRhodesAudioProcessorEditor::addSlider(juce::String parameterID, juce::
     newBundle->slider = std::make_unique<juce::Slider>();
     newBundle->slider->setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
     newBundle->slider->setTextBoxStyle(juce::Slider::NoTextBox, true, 40, 15);
+    newBundle->slider->setTextValueSuffix(suffix);
 
     if (group == ControlGroup::Main) newBundle->slider->setLookAndFeel(&MainKnobsLnF);
     else if( group == ControlGroup::Output && (parameterID == "PREAMP_DRIVE" || parameterID == "OUTPUT_GAIN")) newBundle->slider->setSliderStyle(juce::Slider::LinearVertical);

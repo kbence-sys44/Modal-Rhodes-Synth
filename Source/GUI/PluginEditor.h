@@ -57,7 +57,7 @@ private:
 
     //sliderek
     std::vector<std::unique_ptr<SliderStruct>> sliders;
-    void addSlider(juce::String parameterID, juce::String name, ControlGroup group);
+    void addSlider(juce::String parameterID, juce::String name, ControlGroup group, juce::String suffix = "");
     SliderStruct* findSlider(juce::String parameterID);
     void placeKnob(juce::String parameterID, juce::Rectangle<int>& area, int width, bool isMain);
 

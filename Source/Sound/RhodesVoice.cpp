@@ -36,8 +36,8 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
     modalTine.setParams(currentFrequency, decayTime * decayMultiplier, toneBrightness);
 
     //kemenyseg
-    float stiffnessBase = 200000000.0f;
-    float stiffnessMultiplier = std::pow(1.2f, (midiNoteNumber) - 60.0f) * hammerHardness;
+    float stiffnessBase = 6000000.0f * (pickupDistance * 3.0f);
+    float stiffnessMultiplier = std::pow(1.18f, (midiNoteNumber) - 60.0f);
     float currentStiffness = stiffnessBase * stiffnessMultiplier;
 
     float massBase = 0.006f;
@@ -45,7 +45,7 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
     if (currentMass < 0.001f) currentMass = 0.001f;
 
     hammer.setParameters(currentStiffness, currentMass);
-    hammer.triggerHammer(currentVelocity, delaySamples, midiNoteNumber);
+    hammer.triggerHammer(velocity, delaySamples, midiNoteNumber);
     
     pickup.setFrequency(currentFrequency);
 
@@ -90,14 +90,14 @@ void RhodesVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         float hammerForce = hammer.getNextSample(tinePos);
         if(std::isnan(hammerForce)) hammerForce = 0.0f;
 
-        float invDistance = 1.0f - pickupDistance;
+        float invDistance = pickupDistance;
         float distanceGain = 1.0f + (invDistance * 8.0f);
 
         //tine
         float tineVelocity = modalTine.process(hammerForce);
 
-        float thumpSignal = hammerForce * 0.7f;
-        float mixedSignal = tineVelocity + thumpSignal;
+        float thumpSignal = hammerForce * 0.1;
+        float mixedSignal = tineVelocity; // +  thumpSignal;
 
         //erosites
         float monoSample = mixedSignal * distanceGain * outputGain;

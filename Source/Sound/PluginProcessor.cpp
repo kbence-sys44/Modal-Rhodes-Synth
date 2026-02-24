@@ -116,7 +116,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
     params.push_back(std::make_unique<juce::AudioParameterFloat>("DAMPER_RELEASE", "Release Time", 0.0f, 1.0f, 0.1f));
 
     //pickup
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("PICKUP_SYMMETRY", "Symmetry", 4.0f, 12.0f, 10.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("PICKUP_SYMMETRY", "Symmetry", 4.0f, 12.0f, 6.0f));
 
     //preamp
     params.push_back(std::make_unique<juce::AudioParameterFloat>("PREAMP_DRIVE", "Drive", -60.0f, 12.0f, 0.0f));
@@ -134,7 +134,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
 
     //on off
     params.push_back(std::make_unique<juce::AudioParameterBool>("TREM_SWITCH", "Tremolo Switch", true));
-    params.push_back(std::make_unique<juce::AudioParameterBool>("REVERB_SWITCH", "Reverb Switch", false));
+    params.push_back(std::make_unique<juce::AudioParameterBool>("REVERB_SWITCH", "Reverb Switch", true));
     params.push_back(std::make_unique<juce::AudioParameterBool>("CABINET_SWITCH", "Cabinet Switch", true));
     params.push_back(std::make_unique<juce::AudioParameterBool>("DELAY_SWITCH", "Delay Switch", false));
 

@@ -39,7 +39,7 @@ private:
 
     float mass = 0.002f; //2g
     float stiffness = 5000000.0f; //  N/m^p
-    float exponent = 2.5f; // a filc linearitasa, 1 lin, 3 kemenyedo
+    float exponent = 2.55f; // a filc linearitasa, 1 lin, 3 kemenyedo
     float damping = 0.8f; //energia elnyeles
 
     juce::Random random;

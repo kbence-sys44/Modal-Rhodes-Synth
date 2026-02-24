@@ -52,7 +52,7 @@ private:
     float currentFrequency = 0.0f;
     float voiceVolume = 1.5f;
     float currentVelocity = 0.0f;
-    float outputGain = 1.0f;
+    float outputGain = 0.8f;
     float fadeoutGain = 1.0f;
 
     float pickupDistance = 1.0f;
