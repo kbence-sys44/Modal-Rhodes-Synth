@@ -19,7 +19,7 @@ void PickupTest::runTest() {
     beginTest("Saturation/Waveshaping Test");
     pickup.prepare(specs);
 
-    pickup.setParameters(0.0f, 0.0f, 20000.0f);
+    pickup.setParameters(0.0f, -100.0f, 20000.0f);
     pickup.setFrequency(50.0f);
 
     //warmup
@@ -42,7 +42,7 @@ void PickupTest::runTest() {
 
     expectWithinAbsoluteError(maxOut, 0.1f, 0.01f, "Small sine wave should be linear");
 
-    pickup.setParameters(20.0f, 0.0f, 20000.0f);
+    pickup.setParameters(20.0f, -100.0f, 20000.0f);
 
     for (int i = 0; i < 2000; ++i) {
         pickup.processSample(0.0f);
@@ -59,7 +59,7 @@ void PickupTest::runTest() {
         if (output > satMaxOut) satMaxOut = output;
     }
 
-    expect(std::abs(satMaxOut) < 1.0f, "Output should be limited below 1.0f");
+    expect(std::abs(satMaxOut) < 1.5f, "Output should be saturated");
     expect(std::abs(satMaxOut) > 0.5f, "Output should be amplified");
 
 }

@@ -21,6 +21,9 @@ void::Preamp::prepare(const::juce::dsp::ProcessSpec& specs) {
     outputGain.prepare(specs);
     outputGain.setRampDurationSeconds(0.05);
 
+    inputGain.setGainDecibels(0.0f);
+    outputGain.setGainDecibels(0.0f);
+
     for (int i = 0; i < 2; ++i) {
         bassFilter[i].prepare(specs);
         trebleFilter[i].prepare(specs);
