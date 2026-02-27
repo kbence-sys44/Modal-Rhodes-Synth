@@ -20,15 +20,14 @@ void CrossleyHammer::prepareHammer(const juce::dsp::ProcessSpec& specs) {
     active = false;
     force = 0.0f;
     hammerPos = -0.01f; //1cm
-    thumpFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, 300.0f);
-    thumpFilter.reset();
+
 }
 
 void CrossleyHammer::triggerHammer(float velocity, float delayInSamples, int noteNum) {
 
-    float initialSpeed = velocity * 1.0f;
+    float initialSpeed = velocity;
 
-    hammerPos = -0.005f; //kezdeti pozicio
+    hammerPos = -0.01f; //kezdeti pozicio
     hammerVel = initialSpeed;
 
     travelDelayCounter = static_cast<int>(delayInSamples);
@@ -39,8 +38,6 @@ void CrossleyHammer::triggerHammer(float velocity, float delayInSamples, int not
 
     force = 0.0f;
     active = true;
-
-    thumpFilter.reset();
 
 }
 
