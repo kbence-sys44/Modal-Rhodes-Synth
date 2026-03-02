@@ -36,7 +36,7 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
     modalTine.setParams(currentFrequency, decayTime * decayMultiplier, toneBrightness);
 
     //kemenyseg
-    float stiffnessBase = 6000000.0f * (pickupDistance * 3.0f);
+    float stiffnessBase = 6000000.0f * (hammerHardness * 3.0f);
     float stiffnessMultiplier = std::pow(1.18f, (midiNoteNumber) - 60.0f);
     float currentStiffness = stiffnessBase * stiffnessMultiplier;
 
@@ -94,10 +94,11 @@ void RhodesVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         float distanceGain = 1.0f + (invDistance * 8.0f);
 
         //tine
-        float tineVelocity = modalTine.process(hammerForce);
+        float tineSignal = modalTine.process(hammerForce);
 
-        float thumpSignal = hammerForce * 0.1;
-        float mixedSignal = tineVelocity; // +  thumpSignal;
+        float thumpSignal = hammerForce * 0.1f;
+        float resonantThump = thumpResonator.processSample(0, thumpSignal);
+        float mixedSignal = tineSignal + resonantThump;
 
         //erosites
         float monoSample = mixedSignal * distanceGain * outputGain;
@@ -153,4 +154,8 @@ void RhodesVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     tremolo.prepare(specs.sampleRate);
     tremolo.setTremRate(1.4f);
     tremolo.setDepth(0.8f);
+
+    thumpResonator.prepare(specs);
+    thumpResonator.setType(juce::dsp::StateVariableTPTFilterType::bandpass);
+    thumpResonator.setCutoffFrequency(80.0f);
 }

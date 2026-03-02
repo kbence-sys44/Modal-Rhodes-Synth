@@ -110,8 +110,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
 
     //ADSR
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("HAMMER_HARDNESS", "Hammer Hardness", 0.0f, 3.0f, 1.5f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("PICKUP_DISTANCE", "Pickup Distance", 0.0f, 1.0f, 0.5f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("HAMMER_HARDNESS", "Hammer Hardness", 0.0f, 1.0f, 0.5f));
+    //params.push_back(std::make_unique<juce::AudioParameterFloat>("PICKUP_DISTANCE", "Pickup Distance", 0.0f, 1.0f, 0.5f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>("SUSTAIN_DECAY", "Sustain, Decay", 0.0f, 1.0f, 0.5f)); //lecsenges
     params.push_back(std::make_unique<juce::AudioParameterFloat>("DAMPER_RELEASE", "Release Time", 0.0f, 1.0f, 0.1f));
 
@@ -125,8 +125,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout ModalRhodesAudioProcessor::c
     params.push_back(std::make_unique<juce::AudioParameterFloat>("OUTPUT_GAIN", "Output Gain", -60.0f, 12.0f, 0.0f));
 
     //tremolo
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_DEPTH", "Tremolo Depth", 0.0f, 1.0f, 0.8f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_RATE", "Tremolo Rate", 0.5f, 9.0f, 1.4f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_DEPTH", "Tremolo Depth", 0.0f, 1.0f, 0.9f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>("TREM_RATE", "Tremolo Rate", 0.5f, 9.0f, 3.0f));
 
     //reverb
     params.push_back(std::make_unique<juce::AudioParameterFloat>("WET_LEVEL", "Wet Level", 0.0f, 1.0f, 0.2f));
@@ -224,8 +224,8 @@ bool ModalRhodesAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
 
 void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    //float hardness = *apvts.getRawParameterValue("HAMMER_HARDNESS");
-    float pickupDist = *apvts.getRawParameterValue("PICKUP_DISTANCE");
+    float hardness = *apvts.getRawParameterValue("HAMMER_HARDNESS");
+    //float pickupDist = *apvts.getRawParameterValue("PICKUP_DISTANCE");
     float decayMult = *apvts.getRawParameterValue("SUSTAIN_DECAY");
     float release = *apvts.getRawParameterValue("DAMPER_RELEASE");
     float symmetry = *apvts.getRawParameterValue("PICKUP_SYMMETRY");
@@ -264,8 +264,8 @@ void ModalRhodesAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     
     for (int i = 0; i < rhodesSynth.getNumVoices(); ++i) {
         if (auto* voice = dynamic_cast<RhodesVoice*>(rhodesSynth.getVoice(i))) {
-            //voice->setHardness(hardness);
-            voice->setPickupDistance(pickupDist);
+            voice->setHardness(hardness);
+            //voice->setPickupDistance(pickupDist);
             voice->setDecay(decayMult);
             voice->setRelease(release);
             voice->getPickup().setParameters(12.0f, symmetry, 12000.0f);

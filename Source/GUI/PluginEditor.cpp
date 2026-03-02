@@ -180,7 +180,7 @@ void ModalRhodesAudioProcessorEditor::initializeSliders() {
     //sliderek definialasa
     std::vector<SliderConfig> config = {
 
-        {"PICKUP_DISTANCE", "Attack", ControlGroup::Main, false, ""},
+        {"HAMMER_HARDNESS", "Hardness", ControlGroup::Main, false, ""},
         {"SUSTAIN_DECAY", "Decay", ControlGroup::Main, false, ""},
         {"DAMPER_RELEASE", "Release", ControlGroup::Main, false, ""},
 
@@ -341,9 +341,9 @@ void ModalRhodesAudioProcessorEditor::drawDec(juce::Graphics& g) {
     //fo szekcio elvalaszto vonalak
     g.setColour(juce::Colours::black.withAlpha(0.15f));
     auto bounds = mainSectionBounds.toFloat();
-    float titleWidth = bounds.getWidth() / 2.7f;
+    float titleWidth = bounds.getWidth() / 2.8f;
     float knobAreaWidth = bounds.getWidth() - titleWidth;
-    float oneKnobWidth = knobAreaWidth / 3.0f - 5.0f;
+    float oneKnobWidth = knobAreaWidth / 3.0f;
     float lineTop = bounds.getY() + 15.0f;
     float lineBottom = bounds.getBottom() - 15.0f;
 
@@ -424,13 +424,13 @@ void ModalRhodesAudioProcessorEditor::resized()
     auto titleSection = controllArea.removeFromBottom(horizontalSectionHeight);
     mainSectionBounds = titleSection;
 
-    auto titleTextArea = titleSection.removeFromLeft(titleSection.getWidth() / 2.7);
+    auto titleTextArea = titleSection.removeFromLeft(titleSection.getWidth() / 2.8);
     titleLabel.setBounds(titleTextArea);
     debugButton.setBounds(titleTextArea.getX() + 5, titleTextArea.getY() + 5, 20, 20);
 
     //attack, decay, release knobok
     auto mainKnobWidth = titleSection.getWidth() / 3;
-    placeKnob("PICKUP_DISTANCE", titleSection, mainKnobWidth, true);
+    placeKnob("HAMMER_HARDNESS", titleSection, mainKnobWidth, true);
     placeKnob("SUSTAIN_DECAY", titleSection, mainKnobWidth, true);
     placeKnob("DAMPER_RELEASE", titleSection, mainKnobWidth, true);
 
@@ -627,7 +627,7 @@ void ModalRhodesAudioProcessorEditor::addSlider(juce::String parameterID, juce::
     newBundle->label = std::make_unique<juce::Label>();
     newBundle->label->setText(name, juce::dontSendNotification);
 
-    if(group == ControlGroup::Main) newBundle->label->setFont(regularFont.withHeight(22.0f));
+    if(group == ControlGroup::Main) newBundle->label->setFont(regularFont.withHeight(18.0f));
     else newBundle->label->setFont(regularFont);
 
     newBundle->label->setJustificationType(juce::Justification::centred);

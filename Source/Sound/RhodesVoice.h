@@ -68,6 +68,7 @@ private:
     float prevOut = 0.0f;
 
     juce::dsp::IIR::Filter<float> dcBlocker;
+    juce::dsp::StateVariableTPTFilter<float> thumpResonator;
     juce::Random random;
 
     float hammerHardness = 1.0f;

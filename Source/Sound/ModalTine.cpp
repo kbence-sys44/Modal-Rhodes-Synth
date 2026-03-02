@@ -101,7 +101,7 @@ void ModalTine::setupMode(float frequency, float decayMult, float tone) {
 
             float tau = decayMult * decayRatios[i];
             modes[i].decay = 1.0f / (tau + 0.001f);
-            modes[i].gain = gains[i];
+            modes[i].gain = gains[i] * 1.2f;
             modes[i].mass = 0.001f;
         }
 

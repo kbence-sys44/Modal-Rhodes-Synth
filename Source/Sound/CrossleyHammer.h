@@ -39,8 +39,8 @@ private:
 
     float mass = 0.002f; //2g
     float stiffness = 5000000.0f; //  N/m^p
-    float exponent = 2.5f; // a filc linearitasa, 1 lin, 3 kemenyedo
-    float damping = 0.8f; //energia elnyeles
+    float exponent = 2.6f; // a filc linearitasa, 1 lin, 3 kemenyedo
+    float damping = 0.6f; //energia elnyeles
 
     juce::Random random;
 
