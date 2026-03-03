@@ -69,7 +69,6 @@ private:
     juce::Synthesiser rhodesSynth;
 
     Preamp preamp;
-
     juce::dsp::Reverb reverb;
     juce::dsp::Reverb::Parameters reverbParams;
     ConvolutionCabinet cabinet;

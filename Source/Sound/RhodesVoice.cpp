@@ -67,6 +67,8 @@ void RhodesVoice::stopNote(float velocity, bool tailOffAllowed) {
 
         float dampFactor = (1.0f - releaseTime) * 5.0f;
         modalTine.applyDamping(dampFactor);
+
+        releaseNoiseEnv = 1.0f; //felengedesi zaj inditasa
     }
     else {
         isKeyHeld = false;
@@ -95,10 +97,25 @@ void RhodesVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
 
         //tine
         float tineSignal = modalTine.process(hammerForce);
-
         float thumpSignal = hammerForce * 0.1f;
+        
         float resonantThump = thumpResonator.processSample(0, thumpSignal);
-        float mixedSignal = tineSignal + resonantThump;
+        
+        //egyeb zajok
+        float damperNoise = 0.0f;
+        float keyUpNoise = 0.0f;
+        if (releaseNoiseEnv > 0.0001f) {
+            float rawNoise = (noiseRNG.nextFloat() * 2.0f) - 1.0f;
+
+            damperNoise = damperFilter.processSample(0, rawNoise) * releaseNoiseEnv * 0.004f;
+            keyUpNoise = keyUpFilter.processSample(0, rawNoise) * releaseNoiseEnv * 0.015f;
+
+            releaseNoiseEnv *= 0.994f;
+        }
+
+
+        //osszeadas
+        float mixedSignal = tineSignal + resonantThump + damperNoise + keyUpNoise;
 
         //erosites
         float monoSample = mixedSignal * distanceGain * outputGain;
@@ -158,4 +175,13 @@ void RhodesVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     thumpResonator.prepare(specs);
     thumpResonator.setType(juce::dsp::StateVariableTPTFilterType::bandpass);
     thumpResonator.setCutoffFrequency(80.0f);
+
+    damperFilter.prepare(specs);
+    damperFilter.setType(juce::dsp::StateVariableTPTFilterType::highpass);
+    damperFilter.setCutoffFrequency(5000.0f);
+
+    keyUpFilter.prepare(specs);
+    keyUpFilter.setType(juce::dsp::StateVariableTPTFilterType::lowpass);
+    keyUpFilter.setCutoffFrequency(300.0f);
+
 }

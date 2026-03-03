@@ -67,6 +67,11 @@ private:
     float prevIn = 0.0f;
     float prevOut = 0.0f;
 
+    juce::Random noiseRNG;
+    float releaseNoiseEnv = 0.0f;
+    juce::dsp::StateVariableTPTFilter<float> damperFilter;
+    juce::dsp::StateVariableTPTFilter<float> keyUpFilter;
+
     juce::dsp::IIR::Filter<float> dcBlocker;
     juce::dsp::StateVariableTPTFilter<float> thumpResonator;
     juce::Random random;
