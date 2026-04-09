@@ -14,6 +14,7 @@
 #include "../Effects/Tremolo.h"
 #include "ModalTine.h"
 #include "CrossleyHammer.h"
+#include <cmath>
 
 
 class RhodesVoice : public juce::SynthesiserVoice

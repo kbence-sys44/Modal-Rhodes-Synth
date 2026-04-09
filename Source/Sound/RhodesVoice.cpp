@@ -32,11 +32,11 @@ void RhodesVoice::startNote(int midiNoteNumber, float velocity, juce::Synthesise
 
     //tine params
     float decayTime = juce::jmap((float)midiNoteNumber, 21.0f, 108.0f, 3.5f, 0.4f);
-    float toneBrightness = velocity;
+    float toneBrightness = cbrt(velocity);
     modalTine.setParams(currentFrequency, decayTime * decayMultiplier, toneBrightness);
 
     //kemenyseg
-    float stiffnessBase = 6000000.0f * (hammerHardness * 3.0f);
+    float stiffnessBase = 3000000.0f * (hammerHardness * 3.0f);
     float stiffnessMultiplier = std::pow(1.18f, (midiNoteNumber) - 60.0f);
     float currentStiffness = stiffnessBase * stiffnessMultiplier;
 
@@ -93,29 +93,29 @@ void RhodesVoice::renderNextBlock(juce::AudioBuffer<float>& outputBuffer, int st
         if(std::isnan(hammerForce)) hammerForce = 0.0f;
 
         float invDistance = pickupDistance;
-        float distanceGain = 1.0f + (invDistance * 8.0f);
+        float distanceGain = 1.0f + (invDistance * 10.0f);
 
         //tine
         float tineSignal = modalTine.process(hammerForce);
-        float thumpSignal = hammerForce * 0.1f;
+        float thumpSignal = hammerForce * 0.01f;
         
-        float resonantThump = thumpResonator.processSample(0, thumpSignal);
+        //float resonantThump = thumpResonator.processSample(0, thumpSignal);
         
         //egyeb zajok
         float damperNoise = 0.0f;
         float keyUpNoise = 0.0f;
-        if (releaseNoiseEnv > 0.0001f) {
+        if (releaseNoiseEnv > 0.001f) {
             float rawNoise = (noiseRNG.nextFloat() * 2.0f) - 1.0f;
 
-            damperNoise = damperFilter.processSample(0, rawNoise) * releaseNoiseEnv * 0.004f;
-            keyUpNoise = keyUpFilter.processSample(0, rawNoise) * releaseNoiseEnv * 0.015f;
+            //damperNoise = damperFilter.processSample(0, rawNoise) * releaseNoiseEnv * 0.004f;
+            //keyUpNoise = keyUpFilter.processSample(0, rawNoise) * releaseNoiseEnv * 0.015f;
 
             releaseNoiseEnv *= 0.994f;
         }
 
 
         //osszeadas
-        float mixedSignal = tineSignal + resonantThump + damperNoise + keyUpNoise;
+        float mixedSignal = tineSignal + keyUpNoise;// +resonantThump;
 
         //erosites
         float monoSample = mixedSignal * distanceGain * outputGain;
@@ -166,7 +166,7 @@ void RhodesVoice::prepare(const juce::dsp::ProcessSpec& specs) {
     hammer.prepareHammer(specs);
 
     pickup.prepare(specs);
-    pickup.setParameters(14.0f, 6.0f, 12000.0f);
+    pickup.setParameters(14.0f, 4.0f, 12000.0f);
 
     tremolo.prepare(specs.sampleRate);
     tremolo.setTremRate(1.4f);

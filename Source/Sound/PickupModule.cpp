@@ -27,7 +27,7 @@ void PickupModule::prepare(const juce::dsp::ProcessSpec& specs) {
     gain.reset(sampleRate, 0.02);
     symmetryGain.reset(sampleRate, 0.02);
 
-    setParameters(0.0f, 0.0f, 6000.0f);
+    setParameters(0.0f, 0.0f, 12000.0f);
 }
 
 void PickupModule::reset() {

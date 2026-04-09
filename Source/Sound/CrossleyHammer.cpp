@@ -80,7 +80,8 @@ float CrossleyHammer::getNextSample(float objectPos) {
 
     }
 
-    return force;
+    float forceScale = 0.1f;
+    return force * forceScale;
 }
 
 bool CrossleyHammer::isHammerActive() const {
